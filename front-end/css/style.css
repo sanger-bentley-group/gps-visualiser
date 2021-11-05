@@ -1,0 +1,48 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+}
+
+.unbold {
+    font-weight: normal;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    background-color: darkgrey;
+}
+
+.flex-container section {
+    flex: 1;
+}
+
+.flex-container aside {
+    flex: 1;
+    background-color: whitesmoke;
+    border-radius: 15px 0px 0px 15px;
+    margin: 1% 0%;
+}
+
+#map-title-bg {
+    background-color: whitesmoke;
+    text-align: center;
+    padding: 0.5%;
+    border-radius: 15px 15px 0px 0px;
+    margin: 0% 5%;
+}
+
+#sidebar-title {
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .flex-container {
+      flex-direction: column-reverse;
+    }
+    .flex-container aside {
+        border-radius: 0px;
+        margin: 0%;
+        border-radius: 0px 0px 15px 15px;
+    }
+}
