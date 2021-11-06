@@ -56,7 +56,7 @@
 {
    fill: #e0e0e0;
    stroke:#ffffff;
-   stroke-width:0.5;
+   stroke-width:2;
    fill-rule:evenodd;
 }
 

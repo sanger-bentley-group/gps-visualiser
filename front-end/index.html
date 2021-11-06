@@ -8,27 +8,39 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="flex-container">
-        <section>
-            <object id="map" type="image/svg+xml" data="images/world-map.svg"></object>        
-            <div id="map-title-bg">
-                <H1>Select a Country for Historical Data, Antibiotic Resistance and more...</H1>
-            </div>
-        </section>
-        <aside>
-            <div id="sidebar-title">
-                <h2>Global Serotypes and Lineages</h2>
-                <h3 class="unbold">(After the Latest Vaccination)</h3>
-            </div>
-            <div id="country-selector">
-
-            </div>
-            <div id=global-display>
-
-            </div>
-        </aside>
+    <div class="container"> 
+        <main>
+            <section>
+                <object id="map" type="image/svg+xml" data="images/world-map.svg"></object>        
+                <div id="map-title-bg">
+                    <h1>Select a Country for Historical Data, Antibiotic Resistance and more...</h1>
+                </div>
+            </section>
+            <aside>
+                <div id="sidebar-title">
+                    <h2>Global Serotypes and Lineages</h2>
+                    <h3 class="unbold">(After the Latest Vaccination)</h3>
+                </div>
+                <div id="country-selector">
+    
+                </div>
+                <div id=global-display>
+    
+                </div>
+            </aside>
+        </main>
     </div>
 
-    <script src="scripts/main.js"></script>
+    <div class="modal-overlay modal-hidden"></div>
+    <div class="modal-wrapper modal-hidden">
+        <div class="modal-content">
+            <a href="#" id="close-btn" class="modal-close">&times;</a>
+            <div class="country-view">
+                <h3>Placeholder</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js" defer></script>
 </body>
 </html>
