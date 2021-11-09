@@ -1,3 +1,12 @@
+function getJSON(url){
+    let req = new XMLHttpRequest();
+    req.open("GET",url,false);
+    req.send(null);
+    return req.responseText;          
+}
+
+const alpha2 = JSON.parse(getJSON('./data/alpha2.json'));
+
 window.onload = function(){
     let overlay = document.querySelector('.modal-overlay');
     let modal = document.querySelector('.modal-wrapper');
@@ -16,12 +25,13 @@ window.onload = function(){
             while (target.id.length != 2) {
                 target = target.parentNode;
             }
+
             let country = target.id;
+            let countryViewTitle = document.querySelector('#country-view-title')
+            countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`
 
             overlay.classList.remove('modal-hidden');
             modal.classList.remove('modal-hidden');
-            // temporary output for alpha-2 country code
-            console.log(country);
         }
     }
 
