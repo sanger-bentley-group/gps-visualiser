@@ -1,12 +1,3 @@
-function getJSON(url){
-    let req = new XMLHttpRequest();
-    req.open("GET",url,false);
-    req.send(null);
-    return req.responseText;          
-}
-
-const alpha2 = JSON.parse(getJSON('./data/alpha2.json'));
-
 window.onload = function(){
     let overlay = document.querySelector('.modal-overlay');
     let modal = document.querySelector('.modal-wrapper');
@@ -28,10 +19,23 @@ window.onload = function(){
 
             let country = target.id;
             let countryViewTitle = document.querySelector('#country-view-title')
-            countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`
 
+            // alpha2 is loaded by HTML as a const in a separated alpha2.js
+            countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`
             overlay.classList.remove('modal-hidden');
             modal.classList.remove('modal-hidden');
+
+            /* 
+            Alternative code to load alpha2 using fetch with alpha2.json
+
+            fetch('./data/alpha2.json')
+                .then(res => res.json())
+                .then(alpha2 => {
+                    countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`;
+                    overlay.classList.remove('modal-hidden');
+                    modal.classList.remove('modal-hidden');                
+                })
+            */
         }
     }
 
