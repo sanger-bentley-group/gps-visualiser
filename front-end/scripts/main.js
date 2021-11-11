@@ -24,18 +24,6 @@ window.onload = function(){
             countryViewTitle.innerHTML = `<h1>${alpha2Country[country.toUpperCase()]}</h1>`
             overlay.classList.remove('modal-hidden');
             modal.classList.remove('modal-hidden');
-
-            /* 
-            Alternative code to load alpha2 using fetch with alpha2.json
-
-            fetch('./data/alpha2.json')
-                .then(res => res.json())
-                .then(alpha2 => {
-                    countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`;
-                    overlay.classList.remove('modal-hidden');
-                    modal.classList.remove('modal-hidden');                
-                })
-            */
         }
     }
 
