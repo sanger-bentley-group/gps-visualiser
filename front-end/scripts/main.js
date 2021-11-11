@@ -20,8 +20,8 @@ window.onload = function(){
             let country = target.id;
             let countryViewTitle = document.querySelector('#country-view-title')
 
-            // alpha2 is loaded by HTML as a const in a separated alpha2.js
-            countryViewTitle.innerHTML = `<h1>${alpha2[country.toUpperCase()]}</h1>`
+            // alpha2Country is loaded by HTML as a const in a separated alpha2.js
+            countryViewTitle.innerHTML = `<h1>${alpha2Country[country.toUpperCase()]}</h1>`
             overlay.classList.remove('modal-hidden');
             modal.classList.remove('modal-hidden');
 

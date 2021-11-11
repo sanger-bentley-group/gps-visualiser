@@ -1,4 +1,4 @@
-const alpha2 = {
+const alpha2Country = {
   "AF": "Afghanistan",
   "AX": "Aland Islands",
   "AL": "Albania",
@@ -246,3 +246,5 @@ const alpha2 = {
   "ZM": "Zambia",
   "ZW": "Zimbabwe"
 };
+
+const countryAlpha2 = Object.entries(alpha2Country).reduce((acc, [key, value]) => (acc[value] = key, acc), {})
