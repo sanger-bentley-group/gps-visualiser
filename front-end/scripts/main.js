@@ -1,3 +1,4 @@
+// Delay script until all elemenets are loaded to ensure SVG is loaded
 window.onload = function(){
     let overlay = document.querySelector('.modal-overlay');
     let modal = document.querySelector('.modal-wrapper');
@@ -8,6 +9,51 @@ window.onload = function(){
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', closeModal);
 
+    // countries is a const in countries.js; All countries with available data
+    // Add label and class to countires with available data
+    countries.forEach(country => {
+        let countryGroup = map.querySelector(`#${country}`);
+
+        // Add label
+        let bbox = countryGroup.getBBox(); 
+        let x = Math.floor(bbox.x + bbox.width/2.0); 
+        let y = Math.floor(bbox.y + bbox.height/2.0);
+
+        let countryLabel = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+        countryLabel.setAttribute('x', x);
+        countryLabel.setAttribute('y', y);
+        countryLabel.setAttribute("text-anchor", "middle");
+        countryLabel.classList.add("country-label");
+        countryLabel.textContent = alpha2Country[country.toUpperCase()];
+        countryGroup.parentNode.append(countryLabel)
+
+        // Add label background
+        textbbox = countryLabel.getBBox();
+        let labelBG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        let padding = 20;
+        labelBG.setAttribute("x", textbbox.x - padding / 2);
+        labelBG.setAttribute("y", textbbox.y - padding / 2);
+        labelBG.setAttribute("rx", 10);
+        labelBG.setAttribute("ry", 10);
+        labelBG.setAttribute("width", textbbox.width + padding);
+        labelBG.setAttribute("height", textbbox.height + padding);
+        labelBG.setAttribute("fill", "white");
+        labelBG.setAttribute("fill-opacity", "0.7");
+        labelBG.classList.add("country-label");
+        countryLabel.before(labelBG);
+
+        // Highlight countries
+        countryGroup.classList.add('data-available');
+        let paths = countryGroup.querySelectorAll('path');
+        if (paths.length > 0) {
+            paths.forEach(p => p.classList.remove('landxx'));
+        } else {
+            
+        }
+        
+    }) 
+
+    // Show country view modal 
     function showModal(e) {
         let target = e.target;
         // #svg2985 means ocean target
@@ -17,16 +63,22 @@ window.onload = function(){
                 target = target.parentNode;
             }
 
-            let country = target.id;
-            let countryViewTitle = document.querySelector('#country-view-title')
+            let selectedCountry = target.id;
 
-            // alpha2Country is loaded by HTML as a const in a separated alpha2.js
-            countryViewTitle.innerHTML = `<h1>${alpha2Country[country.toUpperCase()]}</h1>`
-            overlay.classList.remove('modal-hidden');
-            modal.classList.remove('modal-hidden');
+            // Limit response to countries with available data
+            if (countries.indexOf(selectedCountry) !== -1) {
+                let countryViewTitle = document.querySelector('#country-view-title');
+
+                // alpha2Country is a const in the alpha2.js
+                countryViewTitle.innerHTML = `<h1>${alpha2Country[selectedCountry.toUpperCase()]}</h1>`;
+                overlay.classList.remove('modal-hidden');
+                modal.classList.remove('modal-hidden');
+            }
+
         }
     }
 
+    // Close country view modal
     function closeModal(e) { 
         overlay.classList.add('modal-hidden');
         modal.classList.add('modal-hidden');
