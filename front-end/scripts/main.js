@@ -71,8 +71,8 @@ window.onload = function(){
 
                 // alpha2Country is a const in the alpha2.js
                 countryViewTitle.innerHTML = `<h1>${alpha2Country[selectedCountry.toUpperCase()]}</h1>`;
-                overlay.classList.remove('modal-hidden');
-                modal.classList.remove('modal-hidden');
+                overlay.classList.remove('hidden');
+                modal.classList.remove('hidden');
             }
 
         }
@@ -80,8 +80,8 @@ window.onload = function(){
 
     // Close country view modal
     function closeModal(e) { 
-        overlay.classList.add('modal-hidden');
-        modal.classList.add('modal-hidden');
+        overlay.classList.add('hidden');
+        modal.classList.add('hidden');
     }
 
 

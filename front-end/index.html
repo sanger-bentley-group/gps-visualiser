@@ -15,7 +15,7 @@
                 <!-- source for the svg: https://commons.wikimedia.org/wiki/File:BlankMap-World-Compact.svg -->
                 <object id="map" type="image/svg+xml" data="images/world-map.svg"></object>
                 <div id="map-title-bg">
-                    <h1>Select a Country for Historical Data, Antibiotic Resistance and more...</h1>
+                    <h2>Select a Country for Historical Data, Antibiotic Resistance and more...</h2>
                 </div>
             </section>
             <aside>
@@ -33,13 +33,52 @@
         </main>
     </div>
 
-    <div class="modal-overlay modal-hidden"></div>
-    <div class="modal-wrapper modal-hidden">
+    <div class="modal-overlay hidden"></div>
+    <div class="modal-wrapper hidden">
         <div class="modal-content">
             <a href="#" id="close-btn" class="modal-close">&times;</a>
             <div class="country-view">
                 <div id="country-view-title"></div>
                 <div id="country-view-readout"><h2 class="unbold">Select a Serotype or Lineage</h2></div>
+                <div id="country-view-serotype">
+                    <!-- Placeholder Start: to be dynmically generated -->
+                    <div style="height: 600px; line-height:600px; text-align:center;">
+                        [Linesages by Serotypes chart to be rendered by D3.js]
+                    </div>
+                    <!-- Placeholder End -->
+                </div>
+                <div id="country-view-antibiotic" class="hidden">
+                    <!-- Placeholder Start: to be dynmically generated -->
+                    <div style="height: 600px; line-height:600px; text-align:center;">
+                        [Antibiotic Resistance by Lineages chart to be rendered by D3.js]
+                    </div>
+                    <!-- Placeholder End -->
+                </div>
+                <div id="country-view-selectors"> 
+                    <div>
+                        <h2>Age Group</h2>
+                        <!-- Placeholder Start: to be dynmically generated -->
+                        <select name="age-selector" id="age-selector">
+                            <option value='0'>≤ 5 yo</option>
+                            <option value='1'>> 5 yo</option>
+                        </select>
+                        <!-- Placeholder End -->
+                    </div>
+                    <div>
+                        <h2>Data</h2>
+                        <select id="data-selector">
+                            <option value='serotype'>Lineages by Serotypes</option>
+                            <option value='antibiotic'>Antibiotic Resistance by Lineages</option>
+                        </select>
+                    </div>
+                    <div>
+                        <h2>Type</h2>
+                        <select id="type-selector">
+                            <option value='disease'>Disease</option>
+                            <option value='antibiotic'>Carriage</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
