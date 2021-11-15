@@ -1,9 +1,9 @@
 // Delay script until all elemenets are loaded to ensure SVG is loaded
 window.onload = function(){
-    let overlay = document.querySelector('.modal-overlay');
-    let modal = document.querySelector('.modal-wrapper');
+    let overlay = document.querySelector('#country-view-overlay');
+    let modal = document.querySelector('#country-view-wrapper');
     let closeBtn = document.querySelector('#close-btn');
-    let map = document.querySelector('#map').contentDocument;
+    let map = document.querySelector('#world-map').contentDocument;
 
     map.addEventListener('click', showModal);
     closeBtn.addEventListener('click', closeModal);

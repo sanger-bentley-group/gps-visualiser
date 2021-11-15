@@ -158,11 +158,12 @@
 <!-- Additional class for countires with available data  -->
 
 .data-available {
-  fill: #8094A0
+  fill: #8094A0;
+  transition: all 0.2s ease-out;
 }
 
 .data-available:hover {
-  fill: #3CBAFF
+  fill: #3CBAFF;
 }
 
 .country-label {

@@ -13,28 +13,49 @@
         <main>
             <section>
                 <!-- source for the svg: https://commons.wikimedia.org/wiki/File:BlankMap-World-Compact.svg -->
-                <object id="map" type="image/svg+xml" data="images/world-map.svg"></object>
-                <div id="map-title-bg">
+                <object id="world-map" type="image/svg+xml" data="images/world-map.svg"></object>
+                <div class="title-bg">
                     <h2>Select a Country for Historical Data, Antibiotic Resistance and more...</h2>
                 </div>
             </section>
             <aside>
-                <div id="sidebar-title">
-                    <h2>Global Serotypes and Lineages</h2>
-                    <h3 class="unbold">(After the Latest Vaccination)</h3>
-                </div>
-                <div id="country-selector">
-    
-                </div>
-                <div id=global-display>
-    
+                <div class="aside-content">
+                    <div id="sidebar-title">
+                        <h2>Global Serotypes and Lineages</h2>
+                        <h3 class="unbold">(After the Latest Vaccination)</h3>
+                    </div>
+                    <div class="hor-selectors">
+                        <button type="button">Select All</button>
+                        <button type="button">Deslect All</button>
+                    </div>
+                    <div id="country-selector">
+                        [Flags]
+                    </div>
+                    <div id=global-display>
+                        <!-- Placeholder Start: to be dynmically generated -->
+                        <div style="height: 200px; line-height:200px; text-align:center; background: LightCyan;">
+                            [Global View chart to be rendered by D3.js]
+                        </div>
+                        <!-- Placeholder End -->
+                    </div>
+                    <div class="hor-selectors">
+                        <div>
+                            <h2>Type</h2>
+                            <div class="toggle">
+                                <input type="radio" name="aside-type" value="disease" id="aside-type-disease" checked="checked" />
+                                <label for="aside-type-disease">Disease</label>
+                                <input type="radio" name="aside-type" value="carriage" id="aside-type-carriage" />
+                                <label for="aside-type-carriage">Carriage</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </aside>
         </main>
     </div>
 
-    <div class="modal-overlay hidden"></div>
-    <div class="modal-wrapper hidden">
+    <div class="modal-overlay hidden" id="country-view-overlay"></div>
+    <div class="modal-wrapper hidden" id="country-view-wrapper">
         <div class="modal-content">
             <a href="#" id="close-btn" class="modal-close">&times;</a>
             <div class="country-view">
@@ -42,41 +63,48 @@
                 <div id="country-view-readout"><h2 class="unbold">Select a Serotype or Lineage</h2></div>
                 <div id="country-view-serotype">
                     <!-- Placeholder Start: to be dynmically generated -->
-                    <div style="height: 600px; line-height:600px; text-align:center;">
+                    <div style="height: 400px; line-height:400px; text-align:center; background: LightCyan;">
                         [Linesages by Serotypes chart to be rendered by D3.js]
                     </div>
                     <!-- Placeholder End -->
                 </div>
                 <div id="country-view-antibiotic" class="hidden">
                     <!-- Placeholder Start: to be dynmically generated -->
-                    <div style="height: 600px; line-height:600px; text-align:center;">
+                    <div style="height: 400px; line-height:400px; text-align:center; background: LightCyan;">
                         [Antibiotic Resistance by Lineages chart to be rendered by D3.js]
                     </div>
                     <!-- Placeholder End -->
                 </div>
-                <div id="country-view-selectors"> 
+                <div class="hor-selectors"> 
                     <div>
                         <h2>Age Group</h2>
                         <!-- Placeholder Start: to be dynmically generated -->
-                        <select name="age-selector" id="age-selector">
-                            <option value='0'>≤ 5 yo</option>
-                            <option value='1'>> 5 yo</option>
-                        </select>
+
+                        <div class="toggle">
+                            <input type="radio" name="country-view-age" value="0" id="country-view-age-0" checked="checked"/>
+                            <label for="country-view-age-0">≤ 5 yo</label>
+                            <input type="radio" name="country-view-age" value="1" id="country-view-age-1" />
+                            <label for="country-view-age-1">> 5 yo</label>
+                        </div>
                         <!-- Placeholder End -->
                     </div>
                     <div>
                         <h2>Data</h2>
-                        <select id="data-selector">
-                            <option value='serotype'>Lineages by Serotypes</option>
-                            <option value='antibiotic'>Antibiotic Resistance by Lineages</option>
-                        </select>
+                        <div class="toggle">
+                            <input type="radio" name="country-view-data" value="serotype" id="country-view-data-serotype" checked="checked"/>
+                            <label for="country-view-data-serotype">Lineages by Serotypes</label>
+                            <input type="radio" name="country-view-data" value="antibiotic" id="country-view-data-antibiotic" />
+                            <label for="country-view-data-antibiotic">Antibiotic Resistance by Lineages</label>
+                        </div>
                     </div>
                     <div>
                         <h2>Type</h2>
-                        <select id="type-selector">
-                            <option value='disease'>Disease</option>
-                            <option value='antibiotic'>Carriage</option>
-                        </select>
+                        <div class="toggle">
+                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" checked="checked"/>
+                            <label for="country-view-type-disease">Disease</label>
+                            <input type="radio" name="country-view-type" value="carriage" id="country-view-type-carriage" />
+                            <label for="country-view-type-carriage">Carriage</label>
+                        </div>
                     </div>
                 </div>
             </div>
