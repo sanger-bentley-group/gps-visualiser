@@ -5,29 +5,25 @@ window.onload = function(){
     let closeBtn = document.querySelector('#close-btn');
     let map = document.querySelector('#world-map').contentDocument;
 
-    map.addEventListener('click', showModal);
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', closeModal);
 
-    // countries is a const in countries.js; All countries with available data
     // Add label and class to countires with available data
+    // 'countries' is a const from countries.js exported by backend, contains alpha-2 codes of all countries with available data
     countries.forEach(country => {
         let countryGroup = map.querySelector(`#${country}`);
 
-        // Add label
-        let bbox = countryGroup.getBBox(); 
-        let x = Math.floor(bbox.x + bbox.width/2.0); 
-        let y = Math.floor(bbox.y + bbox.height/2.0);
+        // Highlight country
+        countryGroup.classList.add('country-label');
 
-        let countryLabel = document.createElementNS("http://www.w3.org/2000/svg", 'text');
-        countryLabel.setAttribute('x', x);
-        countryLabel.setAttribute('y', y);
-        countryLabel.setAttribute("text-anchor", "middle");
-        countryLabel.classList.add("country-label");
-        countryLabel.textContent = alpha2Country[country.toUpperCase()];
-        countryGroup.parentNode.append(countryLabel)
+        // Add label group, enable the label and move it into the label group
+        let countryLabel = map.querySelector(`#${country}-label`);
+        let labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        labelGroup.setAttribute('id', `${country}-label-group`)
+        labelGroup.classList.add('country-label');
+        countryLabel.before(labelGroup);
+        countryLabel.style.display = 'block'
+        labelGroup.append(countryLabel);
 
-        // Add label background
+        // Add label background and move it into the label group
         textbbox = countryLabel.getBBox();
         let labelBG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         let padding = 20;
@@ -38,52 +34,76 @@ window.onload = function(){
         labelBG.setAttribute("width", textbbox.width + padding);
         labelBG.setAttribute("height", textbbox.height + padding);
         labelBG.setAttribute("fill", "white");
-        labelBG.setAttribute("fill-opacity", "0.7");
-        labelBG.classList.add("country-label");
+        labelBG.classList.add('country-label-bg');
         countryLabel.before(labelBG);
-
-        // Highlight countries
-        countryGroup.classList.add('data-available');
-        let paths = countryGroup.querySelectorAll('path');
-        if (paths.length > 0) {
-            paths.forEach(p => p.classList.remove('landxx'));
-        } else {
-            
-        }
-        
     }) 
 
-    // Show country view modal 
+
+    // Show and close country view modal 
+    map.addEventListener('click', showModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    
     function showModal(e) {
-        let target = e.target;
-        // #svg2985 means ocean target
-        if (target.id != 'svg2985') {
-            // different layer numbers for different countries, move target to parentNode until alpha-2 country code is found
-            while (target.id.length != 2) {
-                target = target.parentNode;
-            }
+        let selectedCountry = getCountry(e.target);
 
-            let selectedCountry = target.id;
+        // Limit response to countries with available data
+        if (countries.indexOf(selectedCountry) !== -1) {
+            let countryViewTitle = document.querySelector('#country-view-title');
 
-            // Limit response to countries with available data
-            if (countries.indexOf(selectedCountry) !== -1) {
-                let countryViewTitle = document.querySelector('#country-view-title');
-
-                // alpha2Country is a const in the alpha2.js
-                countryViewTitle.innerHTML = `<h1>${alpha2Country[selectedCountry.toUpperCase()]}</h1>`;
-                overlay.classList.remove('hidden');
-                modal.classList.remove('hidden');
-            }
-
+            // alpha2Country is a const in the alpha2.js
+            countryViewTitle.innerHTML = `<h1>${alpha2Country[selectedCountry]}</h1>`;
+            overlay.classList.remove('hidden');
+            modal.classList.remove('hidden');
         }
     }
 
-    // Close country view modal
-    function closeModal(e) { 
+    function closeModal() { 
         overlay.classList.add('hidden');
         modal.classList.add('hidden');
     }
 
+
+    // Sync the animation between path and label
+    map.addEventListener('mouseover', hoverLink);
+    map.addEventListener('mouseout', unhoverLink);
+
+    function hoverLink(e) {
+        let selectedCountry = getCountry(e.target);
+
+        if (countries.indexOf(selectedCountry) !== -1) {
+            map.querySelector(`#${selectedCountry}`).classList.add('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).classList.add('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.add('country-label-bg-active');
+        }
+            
+    }
+
+    function unhoverLink(e) {
+        let selectedCountry = getCountry(e.target);
+
+        if (countries.indexOf(selectedCountry) !== -1) {
+            map.querySelector(`#${selectedCountry}`).classList.remove('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).classList.remove('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.remove('country-label-bg-active');
+        }
+            
+    }
+
+
+    // Helper function, get country from event target
+    function getCountry(target) {
+        if (target.tagName.toLowerCase() == 'svg') {
+            return;
+        }
+
+        // Move target to parentNode until it is just below svg (for path) or #labels (for label)
+        while (target.parentNode.tagName.toLowerCase() != 'svg' && target.parentNode.id.toLowerCase() != 'labels') {
+            target = target.parentNode; 
+        }
+
+        return target.id.slice(0, 2);
+    }
 
 }
 
