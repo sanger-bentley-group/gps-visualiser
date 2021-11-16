@@ -223,5 +223,6 @@ section .title-bg {
 
     .country-view .hor-selectors {
         flex-direction: column;
+        align-items: center;
     }
 }
