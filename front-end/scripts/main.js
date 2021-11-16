@@ -5,15 +5,13 @@ window.onload = function(){
     let closeBtn = document.querySelector('#close-btn');
     let map = document.querySelector('#world-map').contentDocument;
 
-    map.addEventListener('click', showModal);
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', closeModal);
 
-    // countries is a const in countries.js; All countries with available data
     // Add label and class to countires with available data
+    // 'countries' is a const from countries.js exported by backend, contains alpha-2 codes of all countries with available data
     countries.forEach(country => {
         let countryGroup = map.querySelector(`#${country}`);
 
+        // Highlight country
         countryGroup.classList.add('country-label');
 
         // Add label group, enable the label and move it into the label group
@@ -24,7 +22,6 @@ window.onload = function(){
         countryLabel.before(labelGroup);
         countryLabel.style.display = 'block'
         labelGroup.append(countryLabel);
-
 
         // Add label background and move it into the label group
         textbbox = countryLabel.getBBox();
@@ -41,7 +38,12 @@ window.onload = function(){
         countryLabel.before(labelBG);
     }) 
 
-    // Show country view modal 
+
+    // Show and close country view modal 
+    map.addEventListener('click', showModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    
     function showModal(e) {
         let selectedCountry = getCountry(e.target);
 
@@ -56,13 +58,13 @@ window.onload = function(){
         }
     }
 
-    // Close country view modal
     function closeModal() { 
         overlay.classList.add('hidden');
         modal.classList.add('hidden');
     }
 
 
+    // Sync the animation between path and label
     map.addEventListener('mouseover', hoverLink);
     map.addEventListener('mouseout', unhoverLink);
 
@@ -89,7 +91,7 @@ window.onload = function(){
     }
 
 
-    // Get country from event target
+    // Helper function, get country from event target
     function getCountry(target) {
         if (target.tagName.toLowerCase() == 'svg') {
             return;
@@ -101,7 +103,6 @@ window.onload = function(){
         }
 
         return target.id.slice(0, 2);
-
     }
 
 }
