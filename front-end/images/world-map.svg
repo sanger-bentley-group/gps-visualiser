@@ -163,7 +163,7 @@
 }
 
 .data-available:hover {
-  fill: #3CBAFF;
+  fill: #4B9DEA;
 }
 
 .country-label {
