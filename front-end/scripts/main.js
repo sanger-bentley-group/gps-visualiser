@@ -39,13 +39,36 @@ window.onload = function(){
 
         // Fill country-selector with flags based on countries.js
         // Flags from https://flagicons.lipis.dev/
-        let flagElement = document.createElement("object")
+        let flagElement = document.createElement('object')
         flagElement.setAttribute('id', `${country}-flag`)
-        flagElement.setAttribute('class', 'flag')
+        flagElement.classList.add('flag')
         flagElement.setAttribute('type', 'image/svg+xml')
         flagElement.setAttribute('data', `images/flags/${country}.svg`)
-        countrySelector.appendChild(flagElement)
+
+        let flagName = document.createTextNode(`${country}`)
+
+        let flagDiv = document.createElement('div')
+        flagDiv.appendChild(flagElement)
+        flagDiv.appendChild(flagName)
+
+        let flagLabel = document.createElement('label')
+        flagLabel.classList.add('flag-group')
+        flagLabel.setAttribute('for', `${country.toLowerCase()}-cb`)
+        flagLabel.append(flagDiv)
+
+        let flagInput = document.createElement('input')
+        flagInput.setAttribute('type', 'checkbox')
+        flagInput.classList.add('flag-cb')
+        flagInput.setAttribute('checked', 'checked')
+        flagInput.setAttribute('id', `${country.toLowerCase()}-cb`)
+        flagInput.setAttribute('name', `${country.toLowerCase()}-cb`)
+        flagInput.setAttribute('value', `${country}`)
         
+        let cbDiv = document.createElement('div')
+        cbDiv.appendChild(flagInput)
+        cbDiv.appendChild(flagLabel)
+
+        countrySelector.appendChild(cbDiv)
     }) 
 
 

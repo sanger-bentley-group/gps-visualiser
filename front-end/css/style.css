@@ -127,6 +127,29 @@ section .title-bg {
     justify-content: space-around;
 }
 
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flag {
+    margin: 5px;
+    width: 50px;
+    display: block;
+    pointer-events: none;
+}
+
+.flag-cb {
+    display: none;
+}
+
+.flag-cb + .flag-group {
+    opacity: 0.5;
+}
+
+.flag-cb:checked + .flag-group {
+    opacity: 1;
+}
+
 
 /* || BUTTON */
 
@@ -146,10 +169,6 @@ button:hover{
 
 button:active{
     background-color: #2bdfe6;
-}
-
-.flag {
-    width: 50px;
 }
 
 
