@@ -4,7 +4,7 @@ window.onload = function(){
     let modal = document.querySelector('#country-view-wrapper');
     let closeBtn = document.querySelector('#close-btn');
     let map = document.querySelector('#world-map').contentDocument;
-
+    let countrySelector = document.querySelector('#country-selector');
 
     // Add label and class to countires with available data
     // 'countries' is a const from countries.js exported by backend, contains alpha-2 codes of all countries with available data
@@ -36,6 +36,16 @@ window.onload = function(){
         labelBG.setAttribute("fill", "white");
         labelBG.classList.add('country-label-bg');
         countryLabel.before(labelBG);
+
+        // Fill country-selector with flags based on countries.js
+        // Flags from https://flagicons.lipis.dev/
+        let flagElement = document.createElement("object")
+        flagElement.setAttribute('id', `${country}-flag`)
+        flagElement.setAttribute('class', 'flag')
+        flagElement.setAttribute('type', 'image/svg+xml')
+        flagElement.setAttribute('data', `images/flags/${country}.svg`)
+        countrySelector.appendChild(flagElement)
+        
     }) 
 
 

@@ -148,6 +148,11 @@ button:active{
     background-color: #2bdfe6;
 }
 
+.flag {
+    width: 50px;
+}
+
+
 /* || TOGGLE */
 
 .toggle {
