@@ -139,14 +139,14 @@ section .title-bg {
 }
 
 .flag-cb {
-    display: none;
+    display: inline;
 }
 
-.flag-cb + .flag-group {
+.flag-cb + .flag-group > div {
     opacity: 0.5;
 }
 
-.flag-cb:checked + .flag-group {
+.flag-cb:checked + .flag-group > div {
     opacity: 1;
 }
 

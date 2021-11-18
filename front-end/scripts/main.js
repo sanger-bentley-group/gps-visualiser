@@ -39,39 +39,62 @@ window.onload = function(){
 
         // Fill country-selector with flags based on countries.js
         // Flags from https://flagicons.lipis.dev/
-        let flagElement = document.createElement('object')
-        flagElement.setAttribute('id', `${country}-flag`)
-        flagElement.classList.add('flag')
-        flagElement.setAttribute('type', 'image/svg+xml')
-        flagElement.setAttribute('data', `images/flags/${country}.svg`)
+        let flagElement = document.createElement('object');
+        flagElement.setAttribute('id', `${country}-flag`);
+        flagElement.classList.add('flag');
+        flagElement.setAttribute('type', 'image/svg+xml');
+        flagElement.setAttribute('data', `images/flags/${country}.svg`);
 
-        let flagName = document.createTextNode(`${country}`)
+        let flagName = document.createTextNode(`${country}`);
 
-        let flagDiv = document.createElement('div')
-        flagDiv.appendChild(flagElement)
-        flagDiv.appendChild(flagName)
+        let flagDiv = document.createElement('div');
+        flagDiv.appendChild(flagElement);
+        flagDiv.appendChild(flagName);
 
-        let flagLabel = document.createElement('label')
-        flagLabel.classList.add('flag-group')
-        flagLabel.setAttribute('for', `${country.toLowerCase()}-cb`)
-        flagLabel.append(flagDiv)
+        let flagLabel = document.createElement('label');
+        flagLabel.classList.add('flag-group');
+        flagLabel.setAttribute('for', `${country.toLowerCase()}-cb`);
+        flagLabel.append(flagDiv);
 
-        let flagInput = document.createElement('input')
-        flagInput.setAttribute('type', 'checkbox')
-        flagInput.classList.add('flag-cb')
-        flagInput.setAttribute('checked', 'checked')
-        flagInput.setAttribute('id', `${country.toLowerCase()}-cb`)
-        flagInput.setAttribute('name', `${country.toLowerCase()}-cb`)
-        flagInput.setAttribute('value', `${country}`)
+        let flagInput = document.createElement('input');
+        flagInput.type = 'checkbox';
+        flagInput.classList.add('flag-cb');
+        flagInput.checked = true;
+        flagInput.id = `${country.toLowerCase()}-cb`;
+        flagInput.name = `${country.toLowerCase()}-cb`;
+        flagInput.value = `${country}`;
         
-        let cbDiv = document.createElement('div')
-        cbDiv.appendChild(flagInput)
-        cbDiv.appendChild(flagLabel)
+        let cbDiv = document.createElement('div');
+        cbDiv.appendChild(flagInput);
+        cbDiv.appendChild(flagLabel);
 
-        countrySelector.appendChild(cbDiv)
+        countrySelector.appendChild(cbDiv);
     }) 
 
 
+    // Save state of selection 
+    let countrySelection = countries
+
+    document.querySelector('#sidebar-select-all').addEventListener('click', () => {
+        countrySelection = countries;
+        
+        let flagCBs = document.querySelectorAll('.flag-cb');
+        console.log(countrySelection)
+        flagCBs.forEach(flagCB => {
+            flagCB.checked = true;
+        })
+    })
+    document.querySelector('#sidebar-deselect-all').addEventListener('click', () => {
+        countrySelection = [];
+
+        let flagCBs = document.querySelectorAll('.flag-cb');
+        console.log(countrySelection)
+        flagCBs.forEach(flagCB => {
+            flagCB.checked = false;
+        })
+    })
+
+    
     // Show and close country view modal 
     map.addEventListener('click', showModal);
     closeBtn.addEventListener('click', closeModal);
@@ -126,12 +149,12 @@ window.onload = function(){
 
     // Helper function, get country from event target
     function getCountry(target) {
-        if (target.tagName.toLowerCase() == 'svg') {
+        if (target.tagName.toLowerCase() === 'svg') {
             return;
         }
 
         // Move target to parentNode until it is just below svg (for path) or #labels (for label)
-        while (target.parentNode.tagName.toLowerCase() != 'svg' && target.parentNode.id.toLowerCase() != 'labels') {
+        while (target.parentNode.tagName.toLowerCase() !== 'svg' && target.parentNode.id.toLowerCase() !== 'labels') {
             target = target.parentNode; 
         }
 
