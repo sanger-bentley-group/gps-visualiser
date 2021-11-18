@@ -139,17 +139,37 @@ section .title-bg {
 }
 
 .flag-cb {
-    display: inline;
+    display: none;
 }
 
 .flag-cb + .flag-group > div {
-    opacity: 0.5;
+    opacity: 0.3;
+    filter: saturate(50%);
 }
 
 .flag-cb:checked + .flag-group > div {
     opacity: 1;
+    filter: saturate(100%);
 }
 
+[tooltip]:before {            
+    position : absolute;
+    content : attr(tooltip);
+    opacity : 0;
+
+    transition: all 0.2s ease-out;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 10px 10px 8px #888888;
+}
+
+[tooltip]:hover:before {        
+    opacity : 1;
+
+    background: white;
+    margin-top: -20px;
+    margin-left: 10px;    
+}
 
 /* || BUTTON */
 
