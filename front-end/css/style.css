@@ -17,6 +17,7 @@ body {
     background-color: darkgrey;
 }
 
+
 /* || SITEWIDE */
 
 .container {
@@ -152,6 +153,9 @@ section .title-bg {
     filter: saturate(100%);
 }
 
+
+/* || TOOLTIP */
+
 [tooltip]:before {            
     position : absolute;
     content : attr(tooltip);
@@ -170,6 +174,7 @@ section .title-bg {
     margin-top: -20px;
     margin-left: 10px;    
 }
+
 
 /* || BUTTON */
 

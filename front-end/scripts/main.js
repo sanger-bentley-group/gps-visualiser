@@ -88,8 +88,7 @@ window.onload = function(){
                 countrySelection = countrySelection.filter(item => item !== e.target.value);
             }
 
-            // Tmp code for testing
-            document.querySelector('#tmp-output').innerHTML = countrySelection;
+            updateCountrySelection();
         })
 
         // addEventListener to highlight country in map when hovering its flag
@@ -123,8 +122,7 @@ window.onload = function(){
             flagCB.checked = true;
         })
 
-        // Tmp code for testing
-        document.querySelector('#tmp-output').innerHTML = countrySelection;
+        updateCountrySelection();
     })
 
     document.querySelector('#sidebar-deselect-all').addEventListener('click', () => {
@@ -135,9 +133,15 @@ window.onload = function(){
             flagCB.checked = false;
         })
 
-        // Tmp code for testing
-        document.querySelector('#tmp-output').innerHTML = countrySelection;
+        updateCountrySelection();
     })
+
+
+    // Update global view charts based on current countrySelection
+    // Tmp code only, WIP
+    function updateCountrySelection() {
+        document.querySelector('#tmp-output').innerHTML = countrySelection;
+    }
 
     
     // Show and close country view modal 
