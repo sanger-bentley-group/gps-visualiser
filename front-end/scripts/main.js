@@ -154,7 +154,6 @@ window.onload = function(){
     // addEventListener to global view type selector
     // Update global view charts based on current type selector
     // TMP code only, WIP
-
     document.querySelectorAll('input[name="aside-type"]').forEach(input => {
         input.addEventListener('change', (e) => {
             document.querySelector('#tmp-aside-type').innerHTML = e.target.value;
@@ -188,7 +187,6 @@ window.onload = function(){
     // addEventListener to country view age and type selectors
     // Update country view charts based on current selectors
     // TMP code only, WIP
-
     document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
         input.addEventListener('change', (e) => {
             document.querySelectorAll('.tmp-modal-age').forEach(output => {
