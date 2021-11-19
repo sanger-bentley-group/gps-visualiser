@@ -16,7 +16,7 @@ window.onload = function(){
 
 
     // Add label and class to countires with available data
-    countries.forEach(country => {
+    countrySelection.forEach(country => {
         let countryGroup = map.querySelector(`#${country}`);
 
         // Highlight country
@@ -89,12 +89,12 @@ window.onload = function(){
             }
 
             updateCountrySelection();
-        })
+        });
 
         // addEventListener to highlight country in map when hovering its flag
         cbDiv.addEventListener('mouseover', hoverFlag);
         cbDiv.addEventListener('mouseout', unhoverFlag);
-    }) 
+    });
 
 
     // Functions for hovering flag to highlight country in map
@@ -120,10 +120,10 @@ window.onload = function(){
         let flagCBs = document.querySelectorAll('.flag-cb');
         flagCBs.forEach(flagCB => {
             flagCB.checked = true;
-        })
+        });
 
         updateCountrySelection();
-    })
+    });
 
     document.querySelector('#sidebar-deselect-all').addEventListener('click', () => {
         countrySelection = [];
@@ -131,18 +131,36 @@ window.onload = function(){
         let flagCBs = document.querySelectorAll('.flag-cb');
         flagCBs.forEach(flagCB => {
             flagCB.checked = false;
-        })
+        });
 
         updateCountrySelection();
-    })
+    });
 
 
     // Update global view charts based on current countrySelection
-    // Tmp code only, WIP
+    // TMP code only, WIP
+    updateCountrySelection();
+
     function updateCountrySelection() {
-        document.querySelector('#tmp-output').innerHTML = countrySelection;
+        if (countrySelection.length !== 0) {
+            document.querySelector('#tmp-aside-country').innerHTML = countrySelection;
+        } else {
+            document.querySelector('#tmp-aside-country').innerHTML = 'NONE';
+        }
+        
     }
 
+
+    // addEventListener to global view type selector
+    // Update global view charts based on current type selector
+    // TMP code only, WIP
+
+    document.querySelectorAll('input[name="aside-type"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            document.querySelector('#tmp-aside-type').innerHTML = e.target.value;
+        });
+    });
+    
     
     // Show and close country view modal 
     map.addEventListener('click', showModal);
@@ -165,6 +183,43 @@ window.onload = function(){
         overlay.classList.add('hidden');
         modal.classList.add('hidden');
     }
+
+
+    // addEventListener to country view age and type selectors
+    // Update country view charts based on current selectors
+    // TMP code only, WIP
+
+    document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            document.querySelectorAll('.tmp-modal-age').forEach(output => {
+                output.innerHTML = e.target.value;
+            });
+        });
+    });
+
+    document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            document.querySelectorAll('.tmp-modal-type').forEach(output => {
+                output.innerHTML = e.target.value;
+            });
+        });
+    });
+
+
+    // addEventListener to country view data selector
+    // Change div visibility charts based on current selector
+    // TMP code only, WIP
+    document.querySelectorAll('input[name="country-view-data"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            if (e.target.value === 'serotype') {
+                document.querySelector('#country-view-serotype').classList.remove('hidden')
+                document.querySelector('#country-view-antibiotic').classList.add('hidden')
+            } else if (e.target.value === 'antibiotic') {
+                document.querySelector('#country-view-serotype').classList.add('hidden')
+                document.querySelector('#country-view-antibiotic').classList.remove('hidden')
+            }
+        });
+    });
 
 
     // Sync the animation between path and label

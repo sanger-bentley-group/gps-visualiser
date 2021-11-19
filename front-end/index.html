@@ -44,8 +44,10 @@
                         <!-- Placeholder Start: to be dynmically generated -->
                         
                         <div style="height: 200px; line-height:40px; text-align:center; background: LightCyan;">
-                            Current Selection:
-                            <div id="tmp-output"></div>
+                            <span class="bold">Current Selection:</span>
+                            <div id="tmp-aside-country"></div>
+                            <span class="bold">Current Type: </span>
+                            <div id="tmp-aside-type">disease</div>
                             [Global View chart to be rendered by D3.js]
                         </div>
                         <!-- Placeholder End -->
@@ -75,14 +77,22 @@
                 <div id="country-view-readout"><h2 class="unbold">Select a Serotype or Lineage</h2></div>
                 <div id="country-view-serotype">
                     <!-- Placeholder Start: to be dynmically generated -->
-                    <div style="height: 400px; line-height:400px; text-align:center; background: LightCyan;">
+                    <div style="height: 400px; line-height:40px; text-align:center; background: LightCyan;">
+                        <span class="bold">Current Age Group:</span>
+                        <div class="tmp-modal-age">≤ 5 yo</div>
+                        <span class="bold">Current Type:</span> 
+                        <div class="tmp-modal-type">disease</div>
                         [Linesages by Serotypes chart to be rendered by D3.js]
                     </div>
                     <!-- Placeholder End -->
                 </div>
                 <div id="country-view-antibiotic" class="hidden">
                     <!-- Placeholder Start: to be dynmically generated -->
-                    <div style="height: 400px; line-height:400px; text-align:center; background: LightCyan;">
+                    <div style="height: 400px; line-height:40px; text-align:center; background: LightCyan;">
+                        <span class="bold">Current Age Group:</span>
+                        <div class="tmp-modal-age">≤ 5 yo</div>
+                        <span class="bold">Current Type:</span> 
+                        <div class="tmp-modal-type">disease</div>
                         [Antibiotic Resistance by Lineages chart to be rendered by D3.js]
                     </div>
                     <!-- Placeholder End -->
@@ -92,9 +102,9 @@
                         <h2>Age Group</h2>
                         <!-- Placeholder Start: to be dynmically generated -->
                         <div class="toggle">
-                            <input type="radio" name="country-view-age" value="0" id="country-view-age-0" checked="checked"/>
+                            <input type="radio" name="country-view-age" value="≤ 5 yo" id="country-view-age-0" checked="checked"/>
                             <label for="country-view-age-0">≤ 5 yo</label>
-                            <input type="radio" name="country-view-age" value="1" id="country-view-age-1" />
+                            <input type="radio" name="country-view-age" value="> 5 yo" id="country-view-age-1" />
                             <label for="country-view-age-1">> 5 yo</label>
                         </div>
                         <!-- Placeholder End -->

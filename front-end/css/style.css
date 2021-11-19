@@ -252,6 +252,10 @@ button:active{
     font-weight: normal;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .hidden {
     display: none;
 }
