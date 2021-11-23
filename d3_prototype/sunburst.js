@@ -1,50 +1,56 @@
 // Convert from https://observablehq.com/@kerryrodden/sequences-sunburst
 // Another good reference https://embed.plnkr.co/plunk/3cBfxm
 
+// Too link multiple charts in mouse event
+// https://stackoverflow.com/questions/52861971/how-to-link-multiple-graph-networks-in-d3js-so-that-an-event-in-one-calls-the-sa
+// https://stackoverflow.com/questions/35090256/mouseover-event-on-two-charts-at-the-same-time-d3-js
 
-async function start() {
-    const csvData = await d3.text("sequence.csv");
-    const csvParsed = d3.csvParseRows(csvData)
+async function drawSunburst(src, target) {
+    const csv = await d3.text(src);
+    const csvParsed = d3.csvParseRows(csv)
     
-    let data = buildHierarchy(csvParsed);
+    let hierarchyData = buildHierarchy(csvParsed);
 
     let width = 640;
     let radius = width / 2;
   
     let partition = data =>
     d3.partition().size([2 * Math.PI, radius * radius])(
-      d3
-        .hierarchy(data)
-        .sum(d => d.value)
-        .sort((a, b) => b.value - a.value)
+        d3
+            .hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value)
     );
 
+    // Set color here, can be set to name specific color
+    // color = d3
+    //   .scaleOrdinal()
+    //   .domain(["home", "product", "search", "account", "other", "end"])
+    //   .range(["#5d85cf", "#7c6561", "#da7847", "#6fb971", "#9e70cf", "#bbbbbb"])
     let color = d3.scaleOrdinal(d3.schemeTableau10);
 
     let arc = d3
-    .arc()
-    .startAngle(d => d.x0)
-    .endAngle(d => d.x1)
-    .padAngle(1 / radius)
-    .padRadius(radius)
-    .innerRadius(d => Math.sqrt(d.y0))
-    .outerRadius(d => Math.sqrt(d.y1) - 1);
+        .arc()
+        .startAngle(d => d.x0)
+        .endAngle(d => d.x1)
+        .padAngle(1 / radius)
+        .padRadius(radius)
+        .innerRadius(d => Math.sqrt(d.y0))
+        .outerRadius(d => Math.sqrt(d.y1) - 1);
 
     let mousearc = d3
-    .arc()
-    .startAngle(d => d.x0)
-    .endAngle(d => d.x1)
-    .innerRadius(d => Math.sqrt(d.y0))
-    .outerRadius(radius);
+        .arc()
+        .startAngle(d => d.x0)
+        .endAngle(d => d.x1)
+        .innerRadius(d => Math.sqrt(d.y0))
+        .outerRadius(radius);
   
     const chart = await (() => {
-        const root = partition(data);
+        const root = partition(hierarchyData);
         const svg = d3.create("svg");
     
-         // Make this into a view, so that the currently hovered sequence is available to the breadcrumb
         const element = svg.node();
-        element.value = { sequence: [], percentage: 0.0 };
-    
+
         const label = svg
             .append("text")
             .attr("text-anchor", "middle")
@@ -94,18 +100,17 @@ async function start() {
             )
             .join("path")
             .attr("fill", d => color(d.data.name))
+            .attr("fill-opacity", 0.3)
             .attr("d", arc);
     
+        // Setting mouseleave and mouseenter events
         svg
             .append("g")
             .attr("fill", "none")
             .attr("pointer-events", "all")
             .on("mouseleave", () => {
-            path.attr("fill-opacity", 1);
+            path.attr("fill-opacity", 0.3);
             label.style("visibility", "hidden");
-            // Update the value of this view
-            element.value = { sequence: [], percentage: 0.0 };
-            element.dispatchEvent(new CustomEvent("input"));
             })
             .selectAll("path")
             .data(
@@ -135,10 +140,7 @@ async function start() {
                 .style("visibility", null)
                 .select(".absolute")
                 .text(`${d.value} of ${root.value}`);
-            // Update the value of this view with the currently hovered sequence and percentage
-            element.value = { sequence, percentage };
-            element.dispatchEvent(new CustomEvent("input"));
-            
+
             // Add path
             let pathOut = [];
             let cur = d;
@@ -155,10 +157,9 @@ async function start() {
             });
         return element;
     })();
-    document.querySelector("#chart").appendChild(chart);
+    document.querySelector(target).appendChild(chart);
   }
   
-start();
   
 function buildHierarchy(csv) {
     // Helper function that transforms the given CSV into a hierarchical format.
@@ -201,3 +202,5 @@ function buildHierarchy(csv) {
     }
     return root;
 }
+
+drawSunburst('sequence.csv', '#chart');
