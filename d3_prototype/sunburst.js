@@ -3,9 +3,9 @@
 
 
 async function start() {
-    const csvData = await d3.text("visit-sequences@1.csv");
-
+    const csvData = await d3.text("sequence.csv");
     const csvParsed = d3.csvParseRows(csvData)
+    
     let data = buildHierarchy(csvParsed);
 
     let width = 640;
@@ -19,10 +19,7 @@ async function start() {
         .sort((a, b) => b.value - a.value)
     );
 
-    let color = d3
-    .scaleOrdinal()
-    .domain(["home", "product", "search", "account", "other", "end"])
-    .range(["#5d85cf", "#7c6561", "#da7847", "#6fb971", "#9e70cf", "#bbbbbb"]);
+    let color = d3.scaleOrdinal(d3.schemeTableau10);
 
     let arc = d3
     .arc()
@@ -40,7 +37,7 @@ async function start() {
     .innerRadius(d => Math.sqrt(d.y0))
     .outerRadius(radius);
   
-    const chart = await (async () => {
+    const chart = await (() => {
         const root = partition(data);
         const svg = d3.create("svg");
     
@@ -65,10 +62,21 @@ async function start() {
     
         label
             .append("tspan")
+            .attr("class", "absolute")
             .attr("x", 0)
             .attr("y", 0)
             .attr("dy", "1.5em")
-            .text("of visits begin with this sequence");
+            .attr("font-size", "1.5em")
+            .text("");
+        
+        label
+            .append("tspan")
+            .attr("class", "path")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("dy", "5em")
+            .attr("font-size", "1em")
+            .text("");
     
         svg
             .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
@@ -123,11 +131,28 @@ async function start() {
                 .style("visibility", null)
                 .select(".percentage")
                 .text(percentage + "%");
+            label
+                .style("visibility", null)
+                .select(".absolute")
+                .text(`${d.value} of ${root.value}`);
             // Update the value of this view with the currently hovered sequence and percentage
             element.value = { sequence, percentage };
             element.dispatchEvent(new CustomEvent("input"));
+            
+            // Add path
+            let pathOut = [];
+            let cur = d;
+              while (cur.parent) {
+                pathOut.unshift(cur.data.name);
+                cur = cur.parent;
+            }
+            label
+                .style("visibility", null)
+                .select(".path")
+                .text(`${pathOut.join(" - ")}`);
+
+
             });
-    
         return element;
     })();
     document.querySelector("#chart").appendChild(chart);
