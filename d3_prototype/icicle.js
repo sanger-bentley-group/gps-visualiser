@@ -1,27 +1,28 @@
-// Convert from https://observablehq.com/@kerryrodden/sequences-sunburst
-// Another good reference https://embed.plnkr.co/plunk/3cBfxm
+// Convert from https://observablehq.com/@kerryrodden/sequences-icicle
 
-// To link multiple charts in mouse event
 // https://stackoverflow.com/questions/52861971/how-to-link-multiple-graph-networks-in-d3js-so-that-an-event-in-one-calls-the-sa
 // https://stackoverflow.com/questions/35090256/mouseover-event-on-two-charts-at-the-same-time-d3-js
 
 
-drawSunburst('sequence.csv', '#chart1');
+drawIcicle('sequence.csv', '#chart2');
 
-async function drawSunburst(src, target) {
+async function drawIcicle(src, target) {
     const csv = await d3.text(src);
     const csvParsed = d3.csvParseRows(csv);
     const hierarchyData = buildHierarchy(csvParsed);
 
     let width = 640;
-    let radius = width / 2;
-  
+    let height = 150;
+
     let partition = data =>
-    d3.partition().size([2 * Math.PI, radius * radius])(
-        d3
-            .hierarchy(data)
-            .sum(d => d.value)
-            .sort((a, b) => b.value - a.value)
+    d3
+        .partition()
+        .padding(1)
+        .size([width, height])(
+            d3
+                .hierarchy(data)
+                .sum(d => d.value)
+                .sort((a, b) => b.value - a.value)
     );
 
     // Set color here, can be set to name specific color
@@ -31,105 +32,72 @@ async function drawSunburst(src, target) {
     //   .range(["#5d85cf", "#7c6561", "#da7847", "#6fb971", "#9e70cf", "#bbbbbb"])
     let color = d3.scaleOrdinal(d3.schemeTableau10);
 
-    let arc = d3
-        .arc()
-        .startAngle(d => d.x0)
-        .endAngle(d => d.x1)
-        .padAngle(1 / radius)
-        .padRadius(radius)
-        .innerRadius(d => Math.sqrt(d.y0))
-        .outerRadius(d => Math.sqrt(d.y1) - 1);
+    let segmentX = d => (d.x0);
+    let segmentY = d => (d.y0);
+    let segmentWidth = d => (d.x1 - d.x0);
+    let segmentHeight = d => (d.y1 - d.y0);
 
-    let mousearc = d3
-        .arc()
-        .startAngle(d => d.x0)
-        .endAngle(d => d.x1)
-        .innerRadius(d => Math.sqrt(d.y0))
-        .outerRadius(radius);
-  
     const chart = await (() => {
         const root = partition(hierarchyData);
         const svg = d3.create("svg");
-    
-        const element = svg.node();
+
+        const element = svg.node(); 
 
         const label = svg
             .append("text")
-            .attr("text-anchor", "middle")
+            .attr("text-anchor", "left")
+            .attr("dominant-baseline", "central")
             .attr("fill", "#000")
-    
-        label
-            .append("tspan")
-            .attr("class", "percentage")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("dy", "-0.1em")
-            .attr("font-size", "3em")
-            .text("0%");
-    
-        label
-            .append("tspan")
-            .attr("class", "absolute")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("dy", "1.5em")
-            .attr("font-size", "1.5em")
-            .text(`0 of ${root.value}`);
         
         label
             .append("tspan")
-            .attr("class", "path")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("dy", "3em")
-            .attr("font-size", "1.5em")
-            .text("");
-    
+            .attr("class", "percentage")
+            .attr("x", 400)
+            .attr("y", 25)
+            .attr("font-size", "2em")
+            .text("0%");
+        
+        label
+            .append("tspan")
+            .attr("class", "absolute")
+            .attr("x", 400)
+            .attr("y", 75)
+            .attr("font-size", "2em")
+            .text(`0 of ${root.value}`);
+
         svg
-            .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
+            .attr("viewBox", `0 0 ${width} ${height}`)
             .style("max-width", `${width}px`)
             .style("font", "12px sans-serif");
-    
-        const path = svg
+
+        const segment = svg
             .append("g")
-            .selectAll("path")
-            .data(
-            root.descendants().filter(d => {
-                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-                return d.depth && d.x1 - d.x0 > 0.001;
-            })
+            .attr("transform", d =>
+              `translate(0, ${-root.y1})`
             )
-            .join("path")
+            .selectAll("rect")
+            .data(
+              root.descendants().filter(d => {
+                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
+                return d.depth && segmentWidth(d) >= 0.1;
+              })
+            )
+            .join("rect")
             .attr("fill", d => color(d.data.name))
             .attr("fill-opacity", 0.3)
-            .attr("d", arc);
-    
-        // Setting mouseleave and mouseenter events
-        svg
-            .append("g")
-            .attr("fill", "none")
-            .attr("pointer-events", "all")
+            .attr("x", segmentX)
+            .attr("y", segmentY)
+            .attr("width", segmentWidth)
+            .attr("height", segmentHeight)
             .on("mouseleave", () => {
-                path.attr("fill-opacity", 0.3);
+                segment.attr("fill-opacity", 0.3);
                 label
-                .select(".percentage")
-                .text("0%");
+                    .select(".percentage")
+                    .text("0%");
                 label
                     .select(".absolute")
                     .text(`0 of ${root.value}`);
-                label
-                    .select(".path")
-                    .text("");
             })
-            .selectAll("path")
-            .data(
-            root.descendants().filter(d => {
-                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-                return d.depth && d.x1 - d.x0 > 0.001;
-            })
-            )
-            .join("path")
-            .attr("d", mousearc)
             .on("mouseenter", (event, d) => {
                 // Get the ancestors of the current segment, minus the root
                 const sequence = d
@@ -137,7 +105,7 @@ async function drawSunburst(src, target) {
                     .reverse()
                     .slice(1);
                 // Highlight the ancestors
-                path.attr("fill-opacity", node =>
+                segment.attr("fill-opacity", node =>
                     sequence.indexOf(node) >= 0 ? 1.0 : 0.3
                 );
                 const percentage = ((100 * d.value) / root.value).toPrecision(3);
@@ -147,25 +115,13 @@ async function drawSunburst(src, target) {
                 label
                     .select(".absolute")
                     .text(`${d.value} of ${root.value}`);
-
-                // Add path
-                let pathOut = [];
-                let cur = d;
-                while (cur.parent) {
-                    pathOut.unshift(cur.data.name);
-                    cur = cur.parent;
-                }
-                label
-                    .select(".path")
-                    .text(`${pathOut.join(" - ")}`);
             });
         return element;
     })();
     document.querySelector(target).appendChild(chart);
-  }
-  
-  
-  function buildHierarchy(csv) {
+}
+
+function buildHierarchy(csv) {
     // Helper function that transforms the given CSV into a hierarchical format.
     const root = { name: "root", children: [] };
     for (let i = 0; i < csv.length; i++) {
