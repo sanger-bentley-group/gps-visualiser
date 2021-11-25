@@ -71,9 +71,23 @@ async function drawIcicle(src, target) {
             .attr("y", segmentY)
             .attr("width", segmentWidth)
             .attr("height", segmentHeight)
+            .attr("data-path", d => {
+                const sequence = d
+                    .ancestors()
+                    .reverse()
+                    .slice(1);
+
+                const output = [];
+                    sequence.forEach(node => {
+                        output.push(node.data.name)
+                    });
+                return `${output.join(' - ').replaceAll(' ','_')}`;
+            })
+            .attr("data-dValue", d => `${d.value}`)
+            .attr("data-rValue", `${root.value}`)
             .on("mouseleave", () => {
                 segment.attr("fill-opacity", 0.3);
-  
+
                 outputPath.innerHTML = 'None';
                 outputPre.innerHTML = `0%`;
                 outputAbs.innerHTML = `0 of ${root.value}`;
@@ -98,7 +112,7 @@ async function drawIcicle(src, target) {
 
                 outputPre.innerHTML = `${percentage}%`;
                 outputAbs.innerHTML = `${d.value} of ${root.value}`;
-            });
+            })
         return element;
     })();
     document.querySelector(target).appendChild(chart);
