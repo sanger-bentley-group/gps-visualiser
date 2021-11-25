@@ -3,8 +3,12 @@
 // https://stackoverflow.com/questions/52861971/how-to-link-multiple-graph-networks-in-d3js-so-that-an-event-in-one-calls-the-sa
 // https://stackoverflow.com/questions/35090256/mouseover-event-on-two-charts-at-the-same-time-d3-js
 
-
 drawIcicle('sequence.csv', '#chart2');
+drawIcicle('sequence.csv', '#chart3');
+
+let outputPath = document.querySelector('#output')
+let outputPre = document.querySelector('#AU-precentage')
+let outputAbs = document.querySelector('#AU-absolute')
 
 async function drawIcicle(src, target) {
     const csv = await d3.text(src);
@@ -41,29 +45,9 @@ async function drawIcicle(src, target) {
         const root = partition(hierarchyData);
         const svg = d3.create("svg");
 
-        const element = svg.node(); 
+        outputAbs.innerHTML = `0 of ${root.value}`;
 
-        const label = svg
-            .append("text")
-            .attr("text-anchor", "left")
-            .attr("dominant-baseline", "central")
-            .attr("fill", "#000")
-        
-        label
-            .append("tspan")
-            .attr("class", "percentage")
-            .attr("x", 400)
-            .attr("y", 25)
-            .attr("font-size", "2em")
-            .text("0%");
-        
-        label
-            .append("tspan")
-            .attr("class", "absolute")
-            .attr("x", 400)
-            .attr("y", 75)
-            .attr("font-size", "2em")
-            .text(`0 of ${root.value}`);
+        const element = svg.node(); 
 
         svg
             .attr("viewBox", `0 0 ${width} ${height}`)
@@ -72,9 +56,7 @@ async function drawIcicle(src, target) {
 
         const segment = svg
             .append("g")
-            .attr("transform", d =>
-              `translate(0, ${-root.y1})`
-            )
+            .attr("transform", `translate(0, ${-root.y1 / 2})`)
             .selectAll("rect")
             .data(
               root.descendants().filter(d => {
@@ -91,12 +73,10 @@ async function drawIcicle(src, target) {
             .attr("height", segmentHeight)
             .on("mouseleave", () => {
                 segment.attr("fill-opacity", 0.3);
-                label
-                    .select(".percentage")
-                    .text("0%");
-                label
-                    .select(".absolute")
-                    .text(`0 of ${root.value}`);
+  
+                outputPath.innerHTML = 'None';
+                outputPre.innerHTML = `0%`;
+                outputAbs.innerHTML = `0 of ${root.value}`;
             })
             .on("mouseenter", (event, d) => {
                 // Get the ancestors of the current segment, minus the root
@@ -109,12 +89,15 @@ async function drawIcicle(src, target) {
                     sequence.indexOf(node) >= 0 ? 1.0 : 0.3
                 );
                 const percentage = ((100 * d.value) / root.value).toPrecision(3);
-                label
-                    .select(".percentage")
-                    .text(`${percentage}%`);
-                label
-                    .select(".absolute")
-                    .text(`${d.value} of ${root.value}`);
+
+                output = [];
+                sequence.forEach(node => {
+                    output.push(node.data.name)
+                });
+                outputPath.innerHTML = `${output.join(' - ')}`;
+
+                outputPre.innerHTML = `${percentage}%`;
+                outputAbs.innerHTML = `${d.value} of ${root.value}`;
             });
         return element;
     })();

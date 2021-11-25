@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>D3.js Prototype</title>
 </head>
 <body>
-    <div id="chart1">
-    </div>
-    <div id="chart2">
+    <div id="chart1"></div>
+    <div>
+        <div>
+            Output:
+            <span id="output">None</span>
+        </div>
+        <div class="aside-country-container">
+            <object class="flag" type="image/svg+xml" data="AU.svg"></object>
+            <div class="icicle" id="chart2"></div>
+            <div class="values-container">
+                <div id="AU-precentage">0%</div>
+                <div id="AU-absolute"></div>
+            </div>
+        </div>
+        <div class="aside-country-container">
+            <object class="flag" type="image/svg+xml" data="BR.svg"></object>
+            <span class="icicle" id="chart3"></span>
+            <div class="values-container">
+                Values
+            </div>
+        </div>
     </div>
     <script src="https://d3js.org/d3.v7.min.js" defer></script>
     <script type="module" src="sunburst.js" defer></script>
