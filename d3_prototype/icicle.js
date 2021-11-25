@@ -3,12 +3,28 @@
 // https://stackoverflow.com/questions/52861971/how-to-link-multiple-graph-networks-in-d3js-so-that-an-event-in-one-calls-the-sa
 // https://stackoverflow.com/questions/35090256/mouseover-event-on-two-charts-at-the-same-time-d3-js
 
-drawIcicle('sequence.csv', '#chart2');
-drawIcicle('sequence.csv', '#chart3');
+
+go();
 
 let outputPath = document.querySelector('#output')
 let outputPre = document.querySelector('#AU-precentage')
 let outputAbs = document.querySelector('#AU-absolute')
+
+async function go(){
+    await drawIcicle('sequence.csv', '#chart2');
+    await drawIcicle('sequence.csv', '#chart3');
+
+    document.querySelectorAll('.icicle').forEach(chart => {
+        console.log(chart.id);
+        let target = chart.querySelector('[data-path="Serotype_2_-_GPSC_4"]')
+        console.log(target.getAttribute('data-path'));
+        console.log(target.getAttribute('data-dValue'));
+        console.log(target.getAttribute('data-rValue'));
+        console.log('--------')
+    })
+    
+};
+
 
 async function drawIcicle(src, target) {
     const csv = await d3.text(src);
@@ -71,6 +87,7 @@ async function drawIcicle(src, target) {
             .attr("y", segmentY)
             .attr("width", segmentWidth)
             .attr("height", segmentHeight)
+            .attr("class", "test")
             .attr("data-path", d => {
                 const sequence = d
                     .ancestors()
