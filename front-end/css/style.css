@@ -197,6 +197,11 @@ button:active{
     background-color: #2bdfe6;
 }
 
+button:focus{
+    outline: none;
+}
+
+
 
 /* || TOGGLE */
 
