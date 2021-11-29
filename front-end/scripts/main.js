@@ -1,15 +1,19 @@
-// 'countries' is a const from countries.js exported by backend, contains alpha-2 codes of all countries with available data
-// 'alpha2Country' is a const in the alpha2.js, provides conversion from alpha-2 code to country name
-// 'countryAlpha2' is a generated const in the alpha2.js based on alpha2Country, provides conversion from country name to alpha-2 code
+// 'countries.json' is exported by backend, contains alpha-2 codes of all countries with available data
+// 'alpha2.json' provides conversion from alpha-2 code to country name
 
-// Delay script until all elemenets are loaded to ensure SVG is loaded
-window.onload = function(){
-    let overlay = document.querySelector('#country-view-overlay');
-    let modal = document.querySelector('#country-view-wrapper');
-    let closeBtn = document.querySelector('#close-btn');
-    let map = document.querySelector('#world-map').contentDocument;
-    let countrySelector = document.querySelector('#country-selector');
+// Delay main function until the world-map.svg is loaded
+const mapObject = document.querySelector('#world-map');
+mapObject.addEventListener('load', () => main());
 
+async function main() {
+    const map = mapObject.contentDocument;
+    const countries = await (await fetch('data/countries.json')).json();
+    const alpha2 = await (await fetch('data/alpha2.json')).json();
+
+    const overlay = document.querySelector('#country-view-overlay');
+    const modal = document.querySelector('#country-view-wrapper');
+    const closeBtn = document.querySelector('#close-btn');
+    const countrySelector = document.querySelector('#country-selector');
 
     // Initialise array to save state of country selection 
     let countrySelection = countries.sort();
@@ -56,7 +60,7 @@ window.onload = function(){
         let flagName = document.createTextNode(`${country}`);
 
         let flagDiv = document.createElement('div');
-        flagDiv.setAttribute('tooltip', `${alpha2Country[country]}`); // Custom arrtibute for tooltip support
+        flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom arrtibute for tooltip support
         flagDiv.appendChild(flagElement);
         flagDiv.appendChild(flagName);
 
@@ -99,14 +103,14 @@ window.onload = function(){
 
     // Functions for hovering flag to highlight country in map
     function hoverFlag(e) {
-        let selectedCountry = e.target.childNodes[0].id.slice(0, 2);
+        let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
         map.querySelector(`#${selectedCountry}`).classList.add('country-label-active')
         map.querySelector(`#${selectedCountry}-label-group`).classList.add('country-label-active');
         map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.add('country-label-bg-active');
     }
 
     function unhoverFlag(e) {
-        let selectedCountry = e.target.childNodes[0].id.slice(0, 2);
+        let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
         map.querySelector(`#${selectedCountry}`).classList.remove('country-label-active')
         map.querySelector(`#${selectedCountry}-label-group`).classList.remove('country-label-active');
         map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.remove('country-label-bg-active');
@@ -172,7 +176,7 @@ window.onload = function(){
         // Limit response to countries with available data
         if (countries.indexOf(selectedCountry) !== -1) {
             let countryViewTitle = document.querySelector('#country-view-title');
-            countryViewTitle.innerHTML = `<h1>${alpha2Country[selectedCountry]}</h1>`;
+            countryViewTitle.innerHTML = `<h1>${alpha2[selectedCountry]}</h1>`;
             overlay.classList.remove('hidden');
             modal.classList.remove('hidden');
         }
