@@ -1,4 +1,4 @@
-// 'countries.json' is exported by backend, contains alpha-2 codes of all countries with available data
+// 'summary.json' is exported by backend, provide summary for all countries with available data
 // 'alpha2.json' provides conversion from alpha-2 code to country name
 
 // Delay main function until the world-map.svg is loaded
@@ -7,7 +7,7 @@ mapObject.addEventListener('load', () => main());
 
 async function main() {
     const map = mapObject.contentDocument;
-    const countries = await (await fetch('data/countries.json')).json();
+    const summary = await (await fetch('data/summary.json')).json();
     const alpha2 = await (await fetch('data/alpha2.json')).json();
 
     const overlay = document.querySelector('#country-view-overlay');
@@ -16,7 +16,8 @@ async function main() {
     const countrySelector = document.querySelector('#country-selector');
 
     // Initialise array to save state of country selection 
-    let countrySelection = countries.sort();
+    const countries = Object.keys(summary).sort();
+    let countrySelection = countries;
 
 
     // Add label and class to countires with available data
@@ -177,14 +178,14 @@ async function main() {
         if (countries.indexOf(selectedCountry) !== -1) {
             let countryViewTitle = document.querySelector('#country-view-title');
             countryViewTitle.innerHTML = `<h1>${alpha2[selectedCountry]}</h1>`;
-            overlay.classList.remove('hidden');
-            modal.classList.remove('hidden');
+            overlay.classList.remove('removed');
+            modal.classList.remove('removed');
         }
     }
 
     function closeModal() { 
-        overlay.classList.add('hidden');
-        modal.classList.add('hidden');
+        overlay.classList.add('removed');
+        modal.classList.add('removed');
     }
 
 
@@ -214,11 +215,13 @@ async function main() {
     document.querySelectorAll('input[name="country-view-data"]').forEach(input => {
         input.addEventListener('change', (e) => {
             if (e.target.value === 'serotype') {
-                document.querySelector('#country-view-serotype').classList.remove('hidden')
-                document.querySelector('#country-view-antibiotic').classList.add('hidden')
+                document.querySelector('#country-view-serotype').classList.remove('removed')
+                document.querySelector('#country-view-antibiotic').classList.add('removed')
+                document.querySelector('#country-view-type-toggle').classList.remove('hidden')
             } else if (e.target.value === 'antibiotic') {
-                document.querySelector('#country-view-serotype').classList.add('hidden')
-                document.querySelector('#country-view-antibiotic').classList.remove('hidden')
+                document.querySelector('#country-view-serotype').classList.add('removed')
+                document.querySelector('#country-view-antibiotic').classList.remove('removed')
+                document.querySelector('#country-view-type-toggle').classList.add('hidden')
             }
         });
     });
