@@ -14,3 +14,9 @@
     flex-direction: column;
     min-width: 20%;
 }
+
+.country-view-period-container {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+}

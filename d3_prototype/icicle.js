@@ -4,15 +4,15 @@
 go();
 
 async function go(){
-    await drawIcicle('AU.csv', '#chart2');
-    await drawIcicle('BR.csv', '#chart3');
+    await drawIcicle('AU.csv', '#chart3');
+    await drawIcicle('BR.csv', '#chart4');
 
     let charts = document.querySelectorAll('.icicle')
 
     charts.forEach(chart => {
         let chartId = chart.id;
         let absolute = document.querySelector(`#${chartId}-absolute`);
-        let path = document.querySelector('#output');
+        let path = document.querySelector('#icicle-output');
 
         let rValue = chart.childNodes[0].getAttribute('data-rValue');
         absolute.innerHTML = `0 of ${rValue}`;
@@ -70,6 +70,7 @@ async function go(){
                 
                 percentage.innerHTML = '0%';
                 absolute.innerHTML = `0 of ${rValue}`;
+                path.innerHTML = 'None';
 
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
                     if (selectedPath) {
@@ -85,7 +86,7 @@ async function go(){
             });
         })
     })
-};
+}
 
 
 async function drawIcicle(src, target) {
