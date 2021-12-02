@@ -20,3 +20,8 @@
     justify-content: space-around;
     flex-direction: row;
 }
+
+path, rect {
+    transition: all 0.2s ease-out;
+}
+

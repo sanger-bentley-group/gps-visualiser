@@ -7,7 +7,7 @@ async function go(){
     await drawIcicle('AU.csv', '#chart3');
     await drawIcicle('BR.csv', '#chart4');
 
-    let charts = document.querySelectorAll('.icicle')
+    let charts = document.querySelectorAll('.icicle');
 
     charts.forEach(chart => {
         let chartId = chart.id;
@@ -84,8 +84,8 @@ async function go(){
                         }
                     }
             });
-        })
-    })
+        });
+    });
 }
 
 
@@ -148,7 +148,6 @@ async function drawIcicle(src, target) {
             .attr('y', segmentY)
             .attr('width', segmentWidth)
             .attr('height', segmentHeight)
-            .attr('class', 'test')
             .attr('data-path', d => {
                 const sequence = d
                     .ancestors()

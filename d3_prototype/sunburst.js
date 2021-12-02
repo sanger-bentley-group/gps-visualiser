@@ -1,9 +1,5 @@
 // Convert from https://observablehq.com/@kerryrodden/sequences-sunburst
-// Another good reference https://embed.plnkr.co/plunk/3cBfxm
 
-// To link multiple charts in mouse event
-// https://stackoverflow.com/questions/52861971/how-to-link-multiple-graph-networks-in-d3js-so-that-an-event-in-one-calls-the-sa
-// https://stackoverflow.com/questions/35090256/mouseover-event-on-two-charts-at-the-same-time-d3-js
 
 go();
 
@@ -11,7 +7,78 @@ async function go(){
     await drawSunburst('AU.csv', '#chart1');
     await drawSunburst('BR.csv', '#chart2');
 
-    let charts = document.querySelectorAll('.sunburst')
+    let charts = document.querySelectorAll('.sunburst');
+    
+    charts.forEach(chart => {
+        let path = document.querySelector('#sunburst-output');
+
+        // Update chart visual, absolute, percentage and path output
+        chart.addEventListener('mouseover', (e) => {
+            if (e.target instanceof SVGPathElement) {
+                let dataPath = e.target.getAttribute('data-path');
+                path.innerHTML = dataPath.replaceAll('_', ' ').replaceAll('-', ' - ');
+                // Highlight same path in all charts, update absolute and percentage
+                charts.forEach(chart => {
+                    let svg = chart.childNodes[0];
+
+                    let percentage = svg.querySelector(`.percentage`);
+                    let absolute = svg.querySelector(`.absolute`);
+
+                    let rValue = svg.getAttribute('data-rValue');
+
+                    let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
+                    if (selectedPath) {
+                        selectedPath.setAttribute('fill-opacity', '1.0');
+
+                        let dValue = selectedPath.getAttribute('data-dValue');
+                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`
+                        absolute.innerHTML = `${dValue} of ${rValue}`;
+
+                        // If path is child, highlight parent as well
+                        let pathArray = dataPath.split('-');
+                        if (pathArray.length === 2) {
+                            let selectedParent = chart.querySelector(`[data-path='${pathArray[0]}']`);
+                            selectedParent.setAttribute('fill-opacity', '1.0');
+                        }
+                    } else {
+                        percentage.innerHTML = '0%';
+                        absolute.innerHTML = `0 of ${rValue}`;
+                    }
+                });
+            }
+        });
+
+        // Reset chart absolute, percentage and path output
+        chart.addEventListener('mouseout', (e) => {
+            let dataPath = e.target.getAttribute('data-path');
+
+            // Reset same path in all charts, reset absolute and percentage
+            charts.forEach(chart => {
+                let svg = chart.childNodes[0];
+
+                let percentage = svg.querySelector(`.percentage`);
+                let absolute = svg.querySelector(`.absolute`);
+
+                let rValue = svg.getAttribute('data-rValue');
+                
+                percentage.innerHTML = '0%';
+                absolute.innerHTML = `0 of ${rValue}`;
+                path.innerHTML = 'None';
+
+                let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
+                    if (selectedPath) {
+                        selectedPath.setAttribute('fill-opacity', '0.3');
+
+                        // If path is child, reset parent as well
+                        let pathArray = dataPath.split('-');
+                        if (pathArray.length === 2) {
+                            let selectedParent = chart.querySelector(`[data-path='${pathArray[0]}']`);
+                            selectedParent.setAttribute('fill-opacity', '0.3');
+                        }
+                    }
+            });
+        });
+    });
 }
 
 async function drawSunburst(src, target) {
@@ -82,19 +149,20 @@ async function drawSunburst(src, target) {
             .attr("font-size", "1.5em")
             .text(`0 of ${root.value}`);
         
-        label
-            .append("tspan")
-            .attr("class", "path")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("dy", "3em")
-            .attr("font-size", "1.5em")
-            .text("");
+        // label
+        //     .append("tspan")
+        //     .attr("class", "path")
+        //     .attr("x", 0)
+        //     .attr("y", 0)
+        //     .attr("dy", "3em")
+        //     .attr("font-size", "1.5em")
+        //     .text("");
     
         svg
             .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
             .style("max-width", `${width}px`)
-            .style("font", "12px sans-serif");
+            .style("font", "12px sans-serif")
+            .attr('data-rValue', `${root.value}`);;
     
         const path = svg
             .append("g")
@@ -108,63 +176,76 @@ async function drawSunburst(src, target) {
             .join("path")
             .attr("fill", d => color(d.data.name))
             .attr("fill-opacity", 0.3)
-            .attr("d", arc);
-    
-        // Setting mouseleave and mouseenter events
-        svg
-            .append("g")
-            .attr("fill", "none")
-            .attr("pointer-events", "all")
-            .on("mouseleave", () => {
-                path.attr("fill-opacity", 0.3);
-                label
-                .select(".percentage")
-                .text("0%");
-                label
-                    .select(".absolute")
-                    .text(`0 of ${root.value}`);
-                label
-                    .select(".path")
-                    .text("");
-            })
-            .selectAll("path")
-            .data(
-            root.descendants().filter(d => {
-                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-                return d.depth && d.x1 - d.x0 > 0.001;
-            })
-            )
-            .join("path")
-            .attr("d", mousearc)
-            .on("mouseenter", (event, d) => {
-                // Get the ancestors of the current segment, minus the root
+            .attr("d", arc)
+            .attr('data-path', d => {
                 const sequence = d
                     .ancestors()
                     .reverse()
                     .slice(1);
-                // Highlight the ancestors
-                path.attr("fill-opacity", node =>
-                    sequence.indexOf(node) >= 0 ? 1.0 : 0.3
-                );
-                const percentage = ((100 * d.value) / root.value).toPrecision(3);
-                label
-                    .select(".percentage")
-                    .text(`${percentage}%`);
-                label
-                    .select(".absolute")
-                    .text(`${d.value} of ${root.value}`);
 
-                // Add path
-                let pathOut = [];
-                let cur = d;
-                while (cur.parent) {
-                    pathOut.unshift(cur.data.name);
-                    cur = cur.parent;
-                }
-                label
-                    .select(".path")
-                    .text(`${pathOut.join(" - ")}`);
-            });
+                const output = [];
+                    sequence.forEach(node => {
+                        output.push(node.data.name)
+                    });
+                return `${output.join('-').replaceAll(' ','_')}`;
+            })
+            .attr('data-dValue', d => `${d.value}`);
+    
+        // Setting mouseleave and mouseenter events
+        // svg
+        //     .append("g")
+        //     .attr("fill", "none")
+        //     .attr("pointer-events", "all")
+        //     .on("mouseleave", () => {
+        //         path.attr("fill-opacity", 0.3);
+        //         label
+        //         .select(".percentage")
+        //         .text("0%");
+        //         label
+        //             .select(".absolute")
+        //             .text(`0 of ${root.value}`);
+        //         label
+        //             .select(".path")
+        //             .text("");
+        //     })
+        //     .selectAll("path")
+        //     .data(
+        //     root.descendants().filter(d => {
+        //         // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
+        //         return d.depth && d.x1 - d.x0 > 0.001;
+        //     })
+        //     )
+        //     .join("path")
+        //     .attr("d", mousearc)
+        //     .on("mouseenter", (event, d) => {
+        //         // Get the ancestors of the current segment, minus the root
+        //         const sequence = d
+        //             .ancestors()
+        //             .reverse()
+        //             .slice(1);
+        //         // Highlight the ancestors
+        //         path.attr("fill-opacity", node =>
+        //             sequence.indexOf(node) >= 0 ? 1.0 : 0.3
+        //         );
+        //         const percentage = ((100 * d.value) / root.value).toPrecision(3);
+        //         label
+        //             .select(".percentage")
+        //             .text(`${percentage}%`);
+        //         label
+        //             .select(".absolute")
+        //             .text(`${d.value} of ${root.value}`);
+
+        //         // Add path
+        //         let pathOut = [];
+        //         let cur = d;
+        //         while (cur.parent) {
+        //             pathOut.unshift(cur.data.name);
+        //             cur = cur.parent;
+        //         }
+        //         label
+        //             .select(".path")
+        //             .text(`${pathOut.join(" - ")}`);
+        //     });
         return element;
     })();
     document.querySelector(target).appendChild(chart);
