@@ -37,7 +37,7 @@ async function go(){
                         selectedPath.setAttribute('fill-opacity', '1.0');
 
                         let dValue = selectedPath.getAttribute('data-dValue');
-                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`
+                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`;
                         absolute.innerHTML = `${dValue} of ${rValue}`;
 
                         // If path is child, highlight parent as well
@@ -136,10 +136,10 @@ async function drawIcicle(src, target) {
             .attr('transform', `translate(0, ${-root.y1 / 2})`)
             .selectAll('rect')
             .data(
-              root.descendants().filter(d => {
-                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-                return d.depth && segmentWidth(d) >= 0.1;
-              })
+                root.descendants().filter(d => {
+                    // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
+                    return d.depth && segmentWidth(d) >= 0.1;
+                })
             )
             .join('rect')
             .attr('fill', d => color(d.data.name))
@@ -160,7 +160,7 @@ async function drawIcicle(src, target) {
                     });
                 return `${output.join('-').replaceAll(' ','_')}`;
             })
-            .attr('data-dValue', d => `${d.value}`)
+            .attr('data-dValue', d => `${d.value}`);
         return element;
     })();
     document.querySelector(target).appendChild(chart);

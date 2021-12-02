@@ -31,7 +31,7 @@ async function go(){
                         selectedPath.setAttribute('fill-opacity', '1.0');
 
                         let dValue = selectedPath.getAttribute('data-dValue');
-                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`
+                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`;
                         absolute.innerHTML = `${dValue} of ${rValue}`;
 
                         // If path is child, highlight parent as well
@@ -123,13 +123,12 @@ async function drawSunburst(src, target) {
     const chart = await (() => {
         const root = partition(hierarchyData);
         const svg = d3.create("svg");
-    
         const element = svg.node();
 
         const label = svg
             .append("text")
             .attr("text-anchor", "middle")
-            .attr("fill", "#000")
+            .attr("fill", "#000");
     
         label
             .append("tspan")
@@ -148,30 +147,21 @@ async function drawSunburst(src, target) {
             .attr("dy", "1.5em")
             .attr("font-size", "1.5em")
             .text(`0 of ${root.value}`);
-        
-        // label
-        //     .append("tspan")
-        //     .attr("class", "path")
-        //     .attr("x", 0)
-        //     .attr("y", 0)
-        //     .attr("dy", "3em")
-        //     .attr("font-size", "1.5em")
-        //     .text("");
     
         svg
             .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
             .style("max-width", `${width}px`)
             .style("font", "12px sans-serif")
-            .attr('data-rValue', `${root.value}`);;
+            .attr('data-rValue', `${root.value}`);
     
         const path = svg
             .append("g")
             .selectAll("path")
             .data(
-            root.descendants().filter(d => {
-                // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-                return d.depth && d.x1 - d.x0 > 0.001;
-            })
+                root.descendants().filter(d => {
+                    // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
+                    return d.depth && d.x1 - d.x0 > 0.001;
+                })
             )
             .join("path")
             .attr("fill", d => color(d.data.name))
@@ -190,62 +180,6 @@ async function drawSunburst(src, target) {
                 return `${output.join('-').replaceAll(' ','_')}`;
             })
             .attr('data-dValue', d => `${d.value}`);
-    
-        // Setting mouseleave and mouseenter events
-        // svg
-        //     .append("g")
-        //     .attr("fill", "none")
-        //     .attr("pointer-events", "all")
-        //     .on("mouseleave", () => {
-        //         path.attr("fill-opacity", 0.3);
-        //         label
-        //         .select(".percentage")
-        //         .text("0%");
-        //         label
-        //             .select(".absolute")
-        //             .text(`0 of ${root.value}`);
-        //         label
-        //             .select(".path")
-        //             .text("");
-        //     })
-        //     .selectAll("path")
-        //     .data(
-        //     root.descendants().filter(d => {
-        //         // Don't draw the root node, and for efficiency, filter out nodes that would be too small to see
-        //         return d.depth && d.x1 - d.x0 > 0.001;
-        //     })
-        //     )
-        //     .join("path")
-        //     .attr("d", mousearc)
-        //     .on("mouseenter", (event, d) => {
-        //         // Get the ancestors of the current segment, minus the root
-        //         const sequence = d
-        //             .ancestors()
-        //             .reverse()
-        //             .slice(1);
-        //         // Highlight the ancestors
-        //         path.attr("fill-opacity", node =>
-        //             sequence.indexOf(node) >= 0 ? 1.0 : 0.3
-        //         );
-        //         const percentage = ((100 * d.value) / root.value).toPrecision(3);
-        //         label
-        //             .select(".percentage")
-        //             .text(`${percentage}%`);
-        //         label
-        //             .select(".absolute")
-        //             .text(`${d.value} of ${root.value}`);
-
-        //         // Add path
-        //         let pathOut = [];
-        //         let cur = d;
-        //         while (cur.parent) {
-        //             pathOut.unshift(cur.data.name);
-        //             cur = cur.parent;
-        //         }
-        //         label
-        //             .select(".path")
-        //             .text(`${pathOut.join(" - ")}`);
-        //     });
         return element;
     })();
     document.querySelector(target).appendChild(chart);
