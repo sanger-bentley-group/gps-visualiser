@@ -29,7 +29,7 @@ async function icicle(countries){
             
             let percentageDiv = document.createElement('div');
             percentageDiv.id = `${icicleId}-percentage`;
-            percentageDiv.innerHTML = '0%'
+            percentageDiv.innerHTML = '--%'
 
             let absoluteDiv = document.createElement('div');
             absoluteDiv.id = `${icicleId}-absolute`;
@@ -56,7 +56,7 @@ async function icicle(countries){
         let path = document.querySelector('#icicle-output');
 
         let rValue = chart.childNodes[0].getAttribute('data-rValue');
-        absolute.innerHTML = `0 of ${rValue}`;
+        absolute.innerHTML = `-- / ${rValue}`;
 
         // Update chart visual, absolute, percentage and path output
         chart.addEventListener('mouseover', (e) => {
@@ -79,7 +79,7 @@ async function icicle(countries){
 
                         let dValue = selectedPath.getAttribute('data-dValue');
                         percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`;
-                        absolute.innerHTML = `${dValue} of ${rValue}`;
+                        absolute.innerHTML = `${dValue} / ${rValue}`;
 
                         // If path is child, highlight parent as well
                         let pathArray = dataPath.split('-');
@@ -89,7 +89,7 @@ async function icicle(countries){
                         }
                     } else {
                         percentage.innerHTML = '0%';
-                        absolute.innerHTML = `0 of ${rValue}`;
+                        absolute.innerHTML = `0 / ${rValue}`;
                     }
                     
                 });
@@ -109,8 +109,8 @@ async function icicle(countries){
 
                 let rValue = chart.childNodes[0].getAttribute('data-rValue');
                 
-                percentage.innerHTML = '0%';
-                absolute.innerHTML = `0 of ${rValue}`;
+                percentage.innerHTML = '--%';
+                absolute.innerHTML = `-- / ${rValue}`;
                 path.innerHTML = 'Select a Serotype or Lineage';
 
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);

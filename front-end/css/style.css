@@ -73,11 +73,11 @@ main .aside-country-container {
     align-items: center;
 }
 
-main aside .values-container {
+main aside .values-container div {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    min-width: 20%;
+    min-width: 30%;
 }
 
 section .title-bg {
