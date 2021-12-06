@@ -3,7 +3,7 @@
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
-mapObject.addEventListener('load', () => main());
+mapObject.onload = main();
 
 async function main() {
     const map = mapObject.contentDocument;
@@ -61,7 +61,7 @@ async function main() {
         let flagName = document.createTextNode(`${country}`);
 
         let flagDiv = document.createElement('div');
-        flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom arrtibute for tooltip support
+        flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom attribute for tooltip support
         flagDiv.appendChild(flagElement);
         flagDiv.appendChild(flagName);
 
@@ -142,9 +142,13 @@ async function main() {
     });
 
 
+    // Draw the icicle charts for both disease and carriage type for all countires with available data 
+    // function icicle in icicle.js
+    icicle(countries)
+
     // Update global view charts based on current countrySelection
     // TMP code only, WIP
-    updateCountrySelection();
+    // updateCountrySelection();
 
     function updateCountrySelection() {
         if (countrySelection.length !== 0) {

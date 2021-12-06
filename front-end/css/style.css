@@ -17,6 +17,10 @@ body {
     background-color: darkgrey;
 }
 
+path, rect {
+    transition: all 0.2s ease-out;
+}
+
 
 /* || SITEWIDE */
 
@@ -61,6 +65,19 @@ main aside div {
 
 main .aside-content {
     width: 95%;
+}
+
+main .aside-country-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+main aside .values-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    min-width: 20%;
 }
 
 section .title-bg {
