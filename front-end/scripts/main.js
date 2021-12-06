@@ -3,7 +3,14 @@
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
-mapObject.onload = main();
+mapObject.addEventListener("load", function() {
+    main();
+});
+// addEventListener method not detecting SVG loading reliably in FireFox in some situations
+if (navigator.userAgent.indexOf("Chrome") == -1 ) {
+    mapObject.onload = main();
+}
+
 
 async function main() {
     const map = mapObject.contentDocument;

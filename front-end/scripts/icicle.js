@@ -169,6 +169,7 @@ async function drawIcicle(src, target) {
         svg
             .attr('viewBox', `0 0 ${width} ${height}`)
             .style('max-width', `${width}px`)
+            .style('width', `100%`)
             .style('font', '12px sans-serif')
             .attr('data-rValue', `${root.value}`);
 
