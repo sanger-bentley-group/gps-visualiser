@@ -43,11 +43,11 @@ main {
     background-color: darkgrey;
 }
 
-main section {
+section {
     flex: 1.2;
 }
 
-main aside {
+aside {
     flex: 1;
     background-color: whitesmoke;
     border-radius: 15px 0px 0px 15px;
@@ -63,17 +63,17 @@ main aside div {
     text-align: center;
 }
 
-main .aside-content {
+.aside-content {
     width: 95%;
 }
 
-main .aside-country-container {
+.aside-country-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
 
-main aside .values-container div {
+aside .values-container div {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -168,6 +168,10 @@ section .title-bg {
 .flag-cb:checked + .flag-group > div {
     opacity: 1;
     filter: saturate(100%);
+}
+
+.warning {
+    color: red;
 }
 
 

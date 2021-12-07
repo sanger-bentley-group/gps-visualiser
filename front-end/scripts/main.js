@@ -154,25 +154,37 @@ async function main() {
     icicle(countries)
 
     // Update global view charts based on current countrySelection
-    // TMP code only, WIP
-    // updateCountrySelection();
-
     function updateCountrySelection() {
-        if (countrySelection.length !== 0) {
-            document.querySelector('#tmp-aside-country').innerHTML = countrySelection;
-        } else {
-            document.querySelector('#tmp-aside-country').innerHTML = 'NONE';
+        for (const country of countries) {
+            if (countrySelection.indexOf(country) === -1) {
+                for (const selected of document.querySelectorAll(`.aside-${country}-container`)){
+                    selected.classList.add('removed');
+                }
+            } else {
+                for (const selected of document.querySelectorAll(`.aside-${country}-container`)){
+                    selected.classList.remove('removed');
+                }
+            }
         }
-        
+        if (countrySelection.length === 0) {
+            document.querySelector('#global-icicles-warning').classList.remove('removed');    
+        } else {
+            document.querySelector('#global-icicles-warning').classList.add('removed');
+        }
     }
 
 
     // addEventListener to global view type selector
     // Update global view charts based on current type selector
-    // TMP code only, WIP
     document.querySelectorAll('input[name="aside-type"]').forEach(input => {
         input.addEventListener('change', (e) => {
-            document.querySelector('#tmp-aside-type').innerHTML = e.target.value;
+            if (e.target.value === 'disease') {
+                document.querySelector('#global-icicle-disease').classList.remove('removed');
+                document.querySelector('#global-icicle-carriage').classList.add('removed');
+            } else {
+                document.querySelector('#global-icicle-disease').classList.add('removed');
+                document.querySelector('#global-icicle-carriage').classList.remove('removed');
+            }
         });
     });
     

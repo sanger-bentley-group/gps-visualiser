@@ -2,8 +2,7 @@
 
 async function icicle(countries){
     // Build icicle charts for both disease and carriage types
-    const types = ['disease', 'carriage']
-    for (const type of types) {
+    for (const type of ['disease', 'carriage']) {
         let typeDiv = document.querySelector(`#global-icicle-${type}`);
 
         // Build icicle charts for all countries with available data
@@ -11,6 +10,7 @@ async function icicle(countries){
             // Create the content of icicle chart if each individual country
             let countryContainer = document.createElement('div');
             countryContainer.classList.add('aside-country-container');
+            countryContainer.classList.add(`aside-${country}-container`);
 
             let flagElement = document.createElement('object');
             flagElement.id = `${country}-flag`;
