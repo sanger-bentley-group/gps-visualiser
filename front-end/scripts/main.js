@@ -6,10 +6,9 @@ const mapObject = document.querySelector('#world-map');
 mapObject.addEventListener("load", function() {
     main();
 });
-// addEventListener method not detecting SVG loading reliably in FireFox in some situations
-if (navigator.userAgent.indexOf("Chrome") == -1 ) {
-    mapObject.onload = main();
-}
+
+// addEventListener method not detecting SVG loading reliably
+mapObject.onload = main();
 
 
 async function main() {
@@ -65,7 +64,9 @@ async function main() {
         flagElement.type = 'image/svg+xml';
         flagElement.data = `images/flags/${country}.svg`;
 
-        let flagName = document.createTextNode(`${country}`);
+        let flagName = document.createElement('div');
+        flagName.innerHTML = `${country}`;
+        flagName.classList.add('flag-name');
 
         let flagDiv = document.createElement('div');
         flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom attribute for tooltip support
@@ -151,7 +152,7 @@ async function main() {
 
     // Draw the icicle charts for both disease and carriage type for all countires with available data 
     // function icicle in icicle.js
-    icicle(countries)
+    icicle(countries, summary)
 
     // Update global view charts based on current countrySelection
     function updateCountrySelection() {
@@ -167,9 +168,9 @@ async function main() {
             }
         }
         if (countrySelection.length === 0) {
-            document.querySelector('#global-icicles-warning').classList.remove('removed');    
+            document.querySelector('#global-icicles-warning').classList.remove('hidden');    
         } else {
-            document.querySelector('#global-icicles-warning').classList.add('removed');
+            document.querySelector('#global-icicles-warning').classList.add('hidden');
         }
     }
 

@@ -1,6 +1,6 @@
 // Convert from https://observablehq.com/@kerryrodden/sequences-icicle
 
-async function icicle(countries){
+async function icicle(countries, summary){
     // Build icicle charts for both disease and carriage types
     for (const type of ['disease', 'carriage']) {
         let typeDiv = document.querySelector(`#global-icicle-${type}`);
@@ -12,11 +12,21 @@ async function icicle(countries){
             countryContainer.classList.add('aside-country-container');
             countryContainer.classList.add(`aside-${country}-container`);
 
+            let flagDiv = document.createElement('div');
+            flagDiv.classList.add('flag-div')
+
             let flagElement = document.createElement('object');
             flagElement.id = `${country}-flag`;
             flagElement.classList.add('flag');
             flagElement.type = 'image/svg+xml';
             flagElement.data = `images/flags/${country}.svg`;
+
+            let latestVac = summary[country]['periods'].at(-1);
+            let latestVacDiv = document.createElement('div');
+            latestVacDiv.innerHTML = `${latestVac[0]} ${latestVac[1]}`
+
+            flagDiv.appendChild(flagElement);
+            flagDiv.appendChild(latestVacDiv);
 
             let icicleId = `global-${country}-${type}`;
 
@@ -37,10 +47,10 @@ async function icicle(countries){
             valuesContainer.appendChild(percentageDiv);
             valuesContainer.appendChild(absoluteDiv);
             
-            countryContainer.appendChild(flagElement);
+            countryContainer.appendChild(flagDiv);
             countryContainer.appendChild(icicleDiv);
             countryContainer.appendChild(valuesContainer);
-            
+
             typeDiv.appendChild(countryContainer);
 
             // Draw the icicle chart
@@ -62,7 +72,8 @@ async function icicle(countries){
         chart.addEventListener('mouseover', (e) => {
             if (e.target instanceof SVGRectElement) {
                 let dataPath = e.target.getAttribute('data-path');
-                path.innerHTML = dataPath.replaceAll('_', ' ').replaceAll('-', ' - ');
+                path.innerHTML = dataPath.replaceAll('_', ' ').replaceAll('-', ' > ');
+                path.classList.add('bold')
 
                 // Highlight same path in all charts, update absolute and percentage
                 charts.forEach(chart => {
@@ -99,6 +110,8 @@ async function icicle(countries){
         // Reset chart absolute, percentage and path output
         chart.addEventListener('mouseout', (e) => {
             let dataPath = e.target.getAttribute('data-path');
+            path.innerHTML = 'Select a Serotype or Lineage';
+            path.classList.remove('bold')
 
             // Reset same path in all charts, reset absolute and percentage
             charts.forEach(chart => {
@@ -111,7 +124,7 @@ async function icicle(countries){
                 
                 percentage.innerHTML = '--%';
                 absolute.innerHTML = `-- / ${rValue}`;
-                path.innerHTML = 'Select a Serotype or Lineage';
+                
 
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
                     if (selectedPath) {
@@ -136,7 +149,7 @@ async function drawIcicle(src, target) {
     const hierarchyData = buildHierarchy(csvParsed);
 
     let width = 640;
-    let height = 150;
+    let height = 100;
 
     let partition = data =>
     d3
@@ -168,9 +181,7 @@ async function drawIcicle(src, target) {
 
         svg
             .attr('viewBox', `0 0 ${width} ${height}`)
-            .style('max-width', `${width}px`)
-            .style('width', `100%`)
-            .style('font', '12px sans-serif')
+            .style('width', '400px')
             .attr('data-rValue', `${root.value}`);
 
         const segment = svg
