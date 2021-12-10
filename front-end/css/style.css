@@ -21,6 +21,17 @@ path, rect {
     transition: all 0.2s ease-out;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+  }
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
 
 /* || SITEWIDE */
 
@@ -65,19 +76,25 @@ main {
 
 .aside-content {
     width: 95%;
+    max-height: 95vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(155, 155, 155, 0.2) transparent; 
 }
 
 .aside-country-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    padding: 0px 20px;
 }
 
 aside .flag-name {
     font-size: 0.8em;
 }
 
-aside .flag-div {
+aside .icicle-flag-div {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -172,6 +189,10 @@ section .title-bg {
     pointer-events: none;
 }
 
+.flag-div {
+    margin: 10px;
+}
+
 .flag-cb {
     display: none;
 }
@@ -186,8 +207,18 @@ section .title-bg {
     filter: saturate(100%);
 }
 
-.warning {
-    color: red;
+.global-icicles {
+    min-width: 700px;
+}
+
+.global-icicle-content {
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    padding: 10px;
 }
 
 
@@ -199,18 +230,21 @@ section .title-bg {
     opacity : 0;
 
     transition: all 0.2s ease-out;
-    padding: 10px;
+    padding: 5px 10px;
     border-radius: 10px;
-    box-shadow: 10px 10px 8px #888888;
+    box-shadow: 0px 5px 8px #b9b9b9;
     pointer-events: none;
+
+    transform: translate(-50%); 
+
+    white-space: nowrap;
 }
 
 [tooltip]:hover:before {        
     opacity : 1;
 
     background: white;
-    margin-top: -20px;
-    margin-left: 10px;    
+    transform: translate(-50%, 150%);
 }
 
 
@@ -306,6 +340,10 @@ button:focus{
     visibility: hidden;
 }
 
+.warning {
+    color: red;
+}
+
 
 /* || MOBILE */
 
@@ -332,5 +370,9 @@ button:focus{
     .country-view .hor-selectors {
         flex-direction: column;
         align-items: center;
+    }
+
+    .global-icicle-content {
+        max-height: none;
     }
 }

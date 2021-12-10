@@ -13,7 +13,7 @@ async function icicle(countries, summary){
             countryContainer.classList.add(`aside-${country}-container`);
 
             let flagDiv = document.createElement('div');
-            flagDiv.classList.add('flag-div')
+            flagDiv.classList.add('icicle-flag-div')
 
             let flagElement = document.createElement('object');
             flagElement.id = `${country}-flag`;

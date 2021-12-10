@@ -13,5 +13,55 @@
     {
         "periods": [["2009 - 2017", "No Vaccination"]],
         "ageGroups": [true,true]
+    },
+    "CN":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "US":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "IE":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "JP":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "AU":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "ZA":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "RU":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "BE":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "CA":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
+    },
+    "FI":
+    {
+        "periods": [["2009 - 2017", "No Vaccination"]],
+        "ageGroups": [true,true]
     }
 }

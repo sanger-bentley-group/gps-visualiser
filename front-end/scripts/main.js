@@ -14,7 +14,7 @@ mapObject.onload = main();
 async function main() {
     const map = mapObject.contentDocument;
     const summary = await (await fetch('data/summary.json')).json();
-    const alpha2 = await (await fetch('data/alpha2.json')).json();
+    const alpha2 = await (await fetch('data/static/alpha2.json')).json();
 
     const overlay = document.querySelector('#country-view-overlay');
     const modal = document.querySelector('#country-view-wrapper');
@@ -70,6 +70,7 @@ async function main() {
 
         let flagDiv = document.createElement('div');
         flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom attribute for tooltip support
+        flagDiv.classList.add('flag-div');
         flagDiv.appendChild(flagElement);
         flagDiv.appendChild(flagName);
 
