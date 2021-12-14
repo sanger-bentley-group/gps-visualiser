@@ -21,6 +21,10 @@ async function main() {
     const closeBtn = document.querySelector('#close-btn');
     const countrySelector = document.querySelector('#country-selector');
 
+    const ageBothDiv = document.querySelector('#age-both-div');
+    const age0Div = document.querySelector('#age-0-div');
+    const age1Div = document.querySelector('#age-1-div');
+
     // Initialise array to save state of country selection 
     const countries = Object.keys(summary).sort();
     let countrySelection = countries;
@@ -205,6 +209,21 @@ async function main() {
             countryViewTitle.innerHTML = `<h1>${alpha2[selectedCountry]}</h1>`;
             overlay.classList.remove('removed');
             modal.classList.remove('removed');
+
+            let ageGroups = summary[selectedCountry]['ageGroups'];
+            if (ageGroups.filter(Boolean).length === 2) {
+                ageBothDiv.classList.remove('removed');
+                age0Div.classList.add('removed');
+                age1Div.classList.add('removed');
+            } else if (ageGroups[0] === true) {
+                ageBothDiv.classList.add('removed');
+                age0Div.classList.remove('removed');
+                age1Div.classList.add('removed');
+            } else {
+                ageBothDiv.classList.add('removed');
+                age0Div.classList.add('removed');
+                age1Div.classList.remove('removed');
+            }
         }
     }
 

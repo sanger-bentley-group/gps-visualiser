@@ -78,7 +78,7 @@
                     <!-- Placeholder Start: to be dynmically generated -->
                     <div style="height: 400px; line-height:40px; text-align:center; background: LightCyan;">
                         <span class="bold">Current Age Group:</span>
-                        <div class="tmp-modal-age">≤ 5 yo</div>
+                        <div class="tmp-modal-age">&lt; 5 yo</div>
                         <span class="bold">Current Type:</span> 
                         <div class="tmp-modal-type">disease</div>
                         [Linesages by Serotypes chart to be rendered by D3.js]
@@ -89,7 +89,7 @@
                     <!-- Placeholder Start: to be dynmically generated -->
                     <div style="height: 400px; line-height:40px; text-align:center; background: LightCyan;">
                         <span class="bold">Current Age Group:</span>
-                        <div class="tmp-modal-age">≤ 5 yo</div>
+                        <div class="tmp-modal-age">&lt; 5 yo</div>
                         <span class="bold">Current Type:</span> 
                         <div class="tmp-modal-type">disease</div>
                         [Antibiotic Resistance by Lineages chart to be rendered by D3.js]
@@ -99,30 +99,34 @@
                 <div class="hor-selectors"> 
                     <div>
                         <h2>Age Group</h2>
-                        <!-- Placeholder Start: to be dynmically generated -->
-                        <div class="toggle">
-                            <input type="radio" name="country-view-age" value="≤ 5 yo" id="country-view-age-0" checked="checked"/>
-                            <label for="country-view-age-0">≤ 5 yo</label>
-                            <input type="radio" name="country-view-age" value="> 5 yo" id="country-view-age-1" />
-                            <label for="country-view-age-1">> 5 yo</label>
+                        <div id="age-both-div" class="toggle">
+                            <input type="radio" name="country-view-age" value="&lt; 5 yo" id="country-view-age-0" checked="checked" autocomplete="off"/>
+                            <label for="country-view-age-0">&lt; 5 yo</label>
+                            <input type="radio" name="country-view-age" value="≥ 5 yo" id="country-view-age-1" autocomplete="off"/>
+                            <label for="country-view-age-1">≥ 5 yo</label>
                         </div>
-                        <!-- Placeholder End -->
+                        <div id="age-0-div">
+                            &lt; 5 yo
+                        </div>
+                        <div id="age-1-div">
+                            ≥ 5 yo
+                        </div>
                     </div>
                     <div>
                         <h2>Data</h2>
                         <div class="toggle">
-                            <input type="radio" name="country-view-data" value="serotype" id="country-view-data-serotype" checked="checked"/>
+                            <input type="radio" name="country-view-data" value="serotype" id="country-view-data-serotype" checked="checked" autocomplete="off"/>
                             <label for="country-view-data-serotype">Lineages by Serotypes</label>
-                            <input type="radio" name="country-view-data" value="antibiotic" id="country-view-data-antibiotic" />
+                            <input type="radio" name="country-view-data" value="antibiotic" id="country-view-data-antibiotic" autocomplete="off"/>
                             <label for="country-view-data-antibiotic">Antibiotic Resistance by Lineages</label>
                         </div>
                     </div>
                     <div id="country-view-type-toggle">
                         <h2>Type</h2>
                         <div class="toggle">
-                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" checked="checked"/>
+                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" checked="checked" autocomplete="off"/>
                             <label for="country-view-type-disease">Disease</label>
-                            <input type="radio" name="country-view-type" value="carriage" id="country-view-type-carriage" />
+                            <input type="radio" name="country-view-type" value="carriage" id="country-view-type-carriage" autocomplete="off"/>
                             <label for="country-view-type-carriage">Carriage</label>
                         </div>
                     </div>
