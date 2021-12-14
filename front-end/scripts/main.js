@@ -210,6 +210,7 @@ async function main() {
             overlay.classList.remove('removed');
             modal.classList.remove('removed');
 
+            // Display suitable age group information based on summary.json
             let ageGroups = summary[selectedCountry]['ageGroups'];
             if (ageGroups.filter(Boolean).length === 2) {
                 ageBothDiv.classList.remove('removed');
