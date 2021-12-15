@@ -170,6 +170,11 @@ section .title-bg {
     text-align: center;
 }
 
+.country-view-serotype {
+    display: flex;
+    align-items: center;
+}
+
 .hor-selectors {
     margin: 1em;
     display: flex;

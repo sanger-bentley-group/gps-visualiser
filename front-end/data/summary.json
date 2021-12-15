@@ -7,12 +7,12 @@
     "BR": 
     {
         "periods": [["2008 - 2009", "Pre-PCV10"], ["2012 - 2013", "Post-PCV10"]],
-        "ageGroups": [true,true]
+        "ageGroups": [false,true]
     },
     "IN":
     {
         "periods": [["2009 - 2017", "No Vaccination"]],
-        "ageGroups": [true,true]
+        "ageGroups": [true,false]
     },
     "CN":
     {
@@ -27,7 +27,7 @@
     "IE":
     {
         "periods": [["1998 - 1999", "Pre-PCV7"], ["2010 - 2011", "Post-PCV7"], ["2012 - 2013", "Post-PCV13"]],
-        "ageGroups": [true,true]
+        "ageGroups": [false,true]
     },
     "JP":
     {
@@ -37,17 +37,17 @@
     "AU":
     {
         "periods": [["2009 - 2017", "No Vaccination"]],
-        "ageGroups": [true,true]
+        "ageGroups": [false,true]
     },
     "ZA":
     {
         "periods": [["1998 - 1999", "Pre-PCV7"], ["2010 - 2011", "Post-PCV7"], ["2012 - 2013", "Post-PCV13"]],
-        "ageGroups": [true,true]
+        "ageGroups": [true,false]
     },
     "RU":
     {
         "periods": [["1998 - 1999", "Pre-PCV7"], ["2010 - 2011", "Post-PCV7"], ["2012 - 2013", "Post-PCV13"]],
-        "ageGroups": [true,true]
+        "ageGroups": [true,false]
     },
     "BE":
     {
@@ -57,7 +57,7 @@
     "CA":
     {
         "periods": [["2009 - 2017", "No Vaccination"]],
-        "ageGroups": [true,true]
+        "ageGroups": [false,true]
     },
     "FI":
     {

@@ -212,6 +212,9 @@ async function main() {
 
             // Display suitable age group information based on summary.json
             let ageGroups = summary[selectedCountry]['ageGroups'];
+            let selectedAgeGroup = 0;
+            let selectedType = 'disease';
+
             if (ageGroups.filter(Boolean).length === 2) {
                 ageBothDiv.classList.remove('removed');
                 age0Div.classList.add('removed');
@@ -224,34 +227,50 @@ async function main() {
                 ageBothDiv.classList.add('removed');
                 age0Div.classList.add('removed');
                 age1Div.classList.remove('removed');
+                selectedAgeGroup = 1;
             }
+
+            // Draw the sunburst charts with default parameters
+            let periods = summary[selectedCountry]['periods'];
+            sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+
+            // addEventListener to country view age and type selectors
+            // Update country view charts based on current selectors
+            document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    selectedAgeGroup = e.target.value;
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+                });
+            });
+
+            document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    selectedType = e.target.value;
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+                });
+            });
         }
     }
 
     function closeModal() { 
         overlay.classList.add('removed');
         modal.classList.add('removed');
+
+        // Clone node to remove all EventListeners
+        document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
+            input.parentNode.replaceChild(input.cloneNode(true), input);
+        });
+
+        document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
+            input.parentNode.replaceChild(input.cloneNode(true), input);
+        });
+
+        // Reset selectors
+        document.querySelector('#country-view-age-0').checked = true;
+        document.querySelector('#country-view-age-1').checked = false;
+        document.querySelector('#country-view-type-disease').checked = true;
+        document.querySelector('#country-view-type-carriage').checked = false;
     }
-
-
-    // addEventListener to country view age and type selectors
-    // Update country view charts based on current selectors
-    // TMP code only, WIP
-    document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-            document.querySelectorAll('.tmp-modal-age').forEach(output => {
-                output.innerHTML = e.target.value;
-            });
-        });
-    });
-
-    document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-            document.querySelectorAll('.tmp-modal-type').forEach(output => {
-                output.innerHTML = e.target.value;
-            });
-        });
-    });
 
 
     // addEventListener to country view data selector

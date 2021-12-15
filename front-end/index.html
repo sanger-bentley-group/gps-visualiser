@@ -74,16 +74,7 @@
             <div class="country-view">
                 <div id="country-view-title"></div>
                 <div id="country-view-readout"><h2 class="unbold">Select a Serotype or Lineage</h2></div>
-                <div id="country-view-serotype">
-                    <!-- Placeholder Start: to be dynmically generated -->
-                    <div style="height: 400px; line-height:40px; text-align:center; background: LightCyan;">
-                        <span class="bold">Current Age Group:</span>
-                        <div class="tmp-modal-age">&lt; 5 yo</div>
-                        <span class="bold">Current Type:</span> 
-                        <div class="tmp-modal-type">disease</div>
-                        [Linesages by Serotypes chart to be rendered by D3.js]
-                    </div>
-                    <!-- Placeholder End -->
+                <div id="country-view-serotype" class="country-view-serotype">
                 </div>
                 <div id="country-view-antibiotic" class="removed">
                     <!-- Placeholder Start: to be dynmically generated -->
@@ -99,10 +90,11 @@
                 <div class="hor-selectors"> 
                     <div>
                         <h2>Age Group</h2>
+                        <!-- Suitable div will be selected based on country summary data-->
                         <div id="age-both-div" class="toggle">
-                            <input type="radio" name="country-view-age" value="&lt; 5 yo" id="country-view-age-0" checked="checked" autocomplete="off"/>
+                            <input type="radio" name="country-view-age" value="0" id="country-view-age-0" checked="checked" autocomplete="off"/>
                             <label for="country-view-age-0">&lt; 5 yo</label>
-                            <input type="radio" name="country-view-age" value="≥ 5 yo" id="country-view-age-1" autocomplete="off"/>
+                            <input type="radio" name="country-view-age" value="1" id="country-view-age-1" autocomplete="off"/>
                             <label for="country-view-age-1">≥ 5 yo</label>
                         </div>
                         <div id="age-0-div">
@@ -136,6 +128,7 @@
     </div>
     <script src="https://d3js.org/d3.v7.min.js" defer></script>
     <script src="scripts/icicle.js" defer></script>
+    <script src="scripts/sunburst.js" defer></script>
     <script src="scripts/main.js" defer></script>
 </body>
 </html>
