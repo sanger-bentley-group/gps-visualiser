@@ -16,16 +16,35 @@ async function sunburst(country, type, ageGroup, periods){
         let sunburstDiv = document.createElement('div');
         sunburstDiv.classList.add('sunburst');
         sunburstDiv.id = sunburstId;
+        periodContainer.append(sunburstDiv);
 
-        serotypeDiv.append(sunburstDiv)
+        let periodDiv = document.createElement('div');
+        periodDiv.innerHTML = `<h2 style="margin: 5px;">${period[1]}</h2>`;
+        periodContainer.append(periodDiv);
+
+        let yearDiv = document.createElement('div');
+        yearDiv.innerHTML = `<h3 class="unbold" style="margin: 5px;">(${period[0]})</h3>`;
+        periodContainer.append(yearDiv);
+
+        serotypeDiv.append(periodContainer);
 
         await drawSunburst(`data/${sunburstId}.csv`, `#${sunburstId}`);
 
         
         // Add the separator if this is not the last period
         if (index < periods.length - 1) {
-            serotypeDiv.innerHTML += 'separator';
+            let separatorContainer = document.createElement('div');
+            separatorContainer.classList.add('separator-container')
 
+            let arrowDiv = document.createElement('div');
+            arrowDiv.innerHTML = `<p style="font-size: 3em; margin: 5px;">🠖</p>`;
+            separatorContainer.append(arrowDiv);
+
+            let vaccineDiv = document.createElement('div');
+            vaccineDiv.innerHTML = `<p style="margin: 0px 0px 50px 0px;">${periods[index + 1][1].slice(5)}</p>`;
+            separatorContainer.append(vaccineDiv);
+
+            serotypeDiv.append(separatorContainer);
         }
     }
 }
@@ -85,7 +104,7 @@ async function drawSunburst(src, target) {
             .attr("x", 0)
             .attr("y", 0)
             .attr("dy", "-0.1em")
-            .attr("font-size", "3em")
+            .attr("font-size", "4em")
             .text("0%");
     
         label
@@ -94,7 +113,7 @@ async function drawSunburst(src, target) {
             .attr("x", 0)
             .attr("y", 0)
             .attr("dy", "1.5em")
-            .attr("font-size", "1.5em")
+            .attr("font-size", "2em")
             .text(`0 of ${root.value}`);
     
         svg
