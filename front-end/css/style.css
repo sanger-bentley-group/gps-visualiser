@@ -170,6 +170,10 @@ section .title-bg {
 }
 
 .country-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     text-align: center;
 }
 
@@ -178,6 +182,7 @@ section .title-bg {
     align-items: center;
     justify-content: space-around;
     padding: 30px;
+    max-height: 80vh;
 }
 
 .modal-period-container {
@@ -199,6 +204,10 @@ section .title-bg {
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+}
+
+.country-view .hor-selectors {
+    width: 85vw;
 }
 
 .flex-wrap {
@@ -321,6 +330,10 @@ button:focus{
     font-size: 1rem;
     line-height: 100%;
     transition: all 0.15s ease-out;
+
+    /* Keep text vertically aligned within label */
+    display: flex;
+    align-items: center;
 }
 
 .toggle label:first-of-type {

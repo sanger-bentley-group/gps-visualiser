@@ -3,8 +3,8 @@
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
-mapObject.addEventListener("load", function() {
-    main();
+mapObject.addEventListener("load", async function() {
+    await main();
 });
 
 // addEventListener method not detecting SVG loading reliably
@@ -265,7 +265,13 @@ async function main() {
             input.parentNode.replaceChild(input.cloneNode(true), input);
         });
 
-        // Reset selectors
+        // Reset view and selectors
+        document.querySelector('#country-view-serotype').classList.remove('removed');
+        document.querySelector('#country-view-antibiotic').classList.add('removed');
+        document.querySelector('#country-view-type-toggle').classList.remove('removed');
+
+        document.querySelector('#country-view-data-serotype').checked = true;
+        document.querySelector('#country-view-data-antibiotic').checked = false;
         document.querySelector('#country-view-age-0').checked = true;
         document.querySelector('#country-view-age-1').checked = false;
         document.querySelector('#country-view-type-disease').checked = true;
@@ -279,13 +285,13 @@ async function main() {
     document.querySelectorAll('input[name="country-view-data"]').forEach(input => {
         input.addEventListener('change', (e) => {
             if (e.target.value === 'serotype') {
-                document.querySelector('#country-view-serotype').classList.remove('removed')
-                document.querySelector('#country-view-antibiotic').classList.add('removed')
-                document.querySelector('#country-view-type-toggle').classList.remove('hidden')
+                document.querySelector('#country-view-serotype').classList.remove('removed');
+                document.querySelector('#country-view-antibiotic').classList.add('removed');
+                document.querySelector('#country-view-type-toggle').classList.remove('removed');
             } else if (e.target.value === 'antibiotic') {
-                document.querySelector('#country-view-serotype').classList.add('removed')
-                document.querySelector('#country-view-antibiotic').classList.remove('removed')
-                document.querySelector('#country-view-type-toggle').classList.add('hidden')
+                document.querySelector('#country-view-serotype').classList.add('removed');
+                document.querySelector('#country-view-antibiotic').classList.remove('removed');
+                document.querySelector('#country-view-type-toggle').classList.add('removed');
             }
         });
     });
