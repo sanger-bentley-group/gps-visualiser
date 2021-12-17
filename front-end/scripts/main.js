@@ -3,8 +3,8 @@
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
-mapObject.addEventListener("load", async function() {
-    await main();
+mapObject.addEventListener("load", function() {
+    main();
 });
 
 // addEventListener method not detecting SVG loading reliably
@@ -117,17 +117,21 @@ async function main() {
 
     // Functions for hovering flag to highlight country in map
     function hoverFlag(e) {
-        let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
-        map.querySelector(`#${selectedCountry}`).classList.add('country-label-active')
-        map.querySelector(`#${selectedCountry}-label-group`).classList.add('country-label-active');
-        map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.add('country-label-bg-active');
+        if (e.target.classList.contains('flag-div')) {
+            let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
+            map.querySelector(`#${selectedCountry}`).classList.add('country-label-active')
+            map.querySelector(`#${selectedCountry}-label-group`).classList.add('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.add('country-label-bg-active');
+        }
     }
 
     function unhoverFlag(e) {
-        let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
-        map.querySelector(`#${selectedCountry}`).classList.remove('country-label-active')
-        map.querySelector(`#${selectedCountry}-label-group`).classList.remove('country-label-active');
-        map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.remove('country-label-bg-active');
+        if (e.target.classList.contains('flag-div')) {
+            let selectedCountry = e.target.childNodes[0].id.slice(0, 2).toUpperCase();
+            map.querySelector(`#${selectedCountry}`).classList.remove('country-label-active')
+            map.querySelector(`#${selectedCountry}-label-group`).classList.remove('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.remove('country-label-bg-active');
+        }
     }
 
 
