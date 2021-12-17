@@ -3,8 +3,10 @@
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
-mapObject.addEventListener("load", function() {
-    main();
+window.addEventListener('DOMContentLoaded', function() {
+    mapObject.addEventListener('load', function(){
+        main();
+    });
 });
 
 // addEventListener method not detecting SVG loading reliably
