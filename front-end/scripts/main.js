@@ -16,6 +16,7 @@ mapObject.onload = main();
 async function main() {
     const map = mapObject.contentDocument;
     const summary = await (await fetch('data/summary.json')).json();
+    const data = await (await fetch('data/data.json')).json();
     const alpha2 = await (await fetch('data/static/alpha2.json')).json();
 
     const overlay = document.querySelector('#country-view-overlay');
@@ -163,7 +164,7 @@ async function main() {
 
     // Draw the icicle charts for both disease and carriage type for all countires with available data 
     // function icicle in icicle.js
-    icicle(countries, summary)
+    icicle(summary, data['global'])
 
     // Update global view charts based on current countrySelection
     function updateCountrySelection() {
@@ -238,21 +239,21 @@ async function main() {
 
             // Draw the sunburst charts with default parameters
             let periods = summary[selectedCountry]['periods'];
-            sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+            sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
 
             // addEventListener to country view age and type selectors
             // Update country view charts based on current selectors
             document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     selectedAgeGroup = e.target.value;
-                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
                 });
             });
 
             document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     selectedType = e.target.value;
-                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods);
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
                 });
             });
         }
