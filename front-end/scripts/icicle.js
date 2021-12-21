@@ -1,7 +1,8 @@
 // Convert from https://observablehq.com/@kerryrodden/sequences-icicle
 
-async function icicle(countries, summary){
+async function icicle(summary, data){
     const domainRange = await (await fetch('data/domain-range.json')).json();
+    const countries = Object.keys(summary).sort();
 
     // Build icicle charts for both disease and carriage types
     for (const type of ['disease', 'carriage']) {
@@ -56,7 +57,7 @@ async function icicle(countries, summary){
             typeDiv.appendChild(countryContainer);
 
             // Draw the icicle chart
-            await drawIcicle(`data/${icicleId}.csv`, `#${icicleId}`, domainRange);
+            await drawIcicle(data[country][type], `#${icicleId}`, domainRange);
         }
     }
 
@@ -144,10 +145,8 @@ async function icicle(countries, summary){
 }
 
 
-async function drawIcicle(src, target, domainRange) {
-    const csv = await d3.text(src);
-    const csvParsed = d3.csvParseRows(csv);
-    const hierarchyData = buildHierarchy(csvParsed);
+async function drawIcicle(data, target, domainRange) {
+    const hierarchyData = buildHierarchy(data);
 
     let width = 640;
     let height = 100;
@@ -221,12 +220,12 @@ async function drawIcicle(src, target, domainRange) {
 }
 
 
-// Helper function that transforms the given CSV into a hierarchical format.
-function buildHierarchy(csv) {
+// Helper function that transforms the given data into a hierarchical format.
+function buildHierarchy(data) {
     const root = { name: 'root', children: [] };
-    for (let i = 0; i < csv.length; i++) {
-        const sequence = csv[i][0];
-        const size = +csv[i][1];
+    for (let i = 0; i < data.length; i++) {
+        const sequence = data[i][0];
+        const size = +data[i][1];
         if (isNaN(size)) {
             // e.g. if this is a header row
             continue;

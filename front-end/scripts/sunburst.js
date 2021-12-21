@@ -1,7 +1,7 @@
 // Convert from https://observablehq.com/@kerryrodden/sequences-sunburst
 
 
-async function sunburst(country, type, ageGroup, periods){
+async function sunburst(country, type, ageGroup, periods, data){
     const domainRange = await (await fetch('data/domain-range.json')).json();
 
     let serotypeDiv = document.querySelector('#country-view-serotype');
@@ -30,7 +30,7 @@ async function sunburst(country, type, ageGroup, periods){
 
         serotypeDiv.append(periodContainer);
 
-        await drawSunburst(`data/${sunburstId}.csv`, `#${sunburstId}`, domainRange);
+        await drawSunburst(data[`period${index}`], `#${sunburstId}`, domainRange);
 
         
         // Add the separator if this is not the last period
@@ -126,10 +126,8 @@ async function sunburst(country, type, ageGroup, periods){
     });
 }
 
-async function drawSunburst(src, target, domainRange) {
-    const csv = await d3.text(src);
-    const csvParsed = d3.csvParseRows(csv);
-    const hierarchyData = buildHierarchy(csvParsed);
+async function drawSunburst(data, target, domainRange) {
+    const hierarchyData = buildHierarchy(data);
 
     let width = 640;
     let radius = width / 2;
@@ -233,11 +231,11 @@ async function drawSunburst(src, target, domainRange) {
 
 
 // Helper function that transforms the given CSV into a hierarchical format.
-function buildHierarchy(csv) {
+function buildHierarchy(data) {
     const root = { name: "root", children: [] };
-    for (let i = 0; i < csv.length; i++) {
-        const sequence = csv[i][0];
-        const size = +csv[i][1];
+    for (let i = 0; i < data.length; i++) {
+        const sequence = data[i][0];
+        const size = +data[i][1];
         if (isNaN(size)) {
             // e.g. if this is a header row
             continue;
