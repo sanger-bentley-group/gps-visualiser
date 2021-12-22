@@ -76,7 +76,6 @@ async function main() {
         flagName.classList.add('flag-name');
 
         let flagDiv = document.createElement('div');
-        flagDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom attribute for tooltip support
         flagDiv.classList.add('flag-div');
         flagDiv.appendChild(flagElement);
         flagDiv.appendChild(flagName);
@@ -97,6 +96,7 @@ async function main() {
         let cbDiv = document.createElement('div');
         cbDiv.appendChild(flagInput);
         cbDiv.appendChild(flagLabel);
+        cbDiv.setAttribute('tooltip', `${alpha2[country]}`); // Custom attribute for tooltip support
 
         countrySelector.appendChild(cbDiv);
 
