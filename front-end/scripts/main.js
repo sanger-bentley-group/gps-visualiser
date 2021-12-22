@@ -180,9 +180,9 @@ async function main() {
             }
         }
         if (countrySelection.length === 0) {
-            document.querySelector('#global-icicles-warning').classList.remove('hidden');    
+            document.querySelector('#global-icicles-warning').classList.remove('removed');    
         } else {
-            document.querySelector('#global-icicles-warning').classList.add('hidden');
+            document.querySelector('#global-icicles-warning').classList.add('removed');
         }
     }
 

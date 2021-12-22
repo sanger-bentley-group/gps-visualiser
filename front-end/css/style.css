@@ -79,7 +79,7 @@ main {
 
 .aside-content {
     width: 95%;
-    max-height: 95vh;
+    height: 95vh;
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -95,6 +95,7 @@ main {
 
 aside .flag-name {
     font-size: 0.8em;
+    pointer-events: none;
 }
 
 aside .icicle-flag-div {
@@ -216,7 +217,7 @@ section .title-bg {
 
 .flag {
     margin: 0px 0px 5px 0px;
-    width: 50px;
+    width: 30px;
     display: block;
     pointer-events: none;
 }
@@ -244,7 +245,7 @@ section .title-bg {
 }
 
 .global-icicle-content {
-    max-height: 300px;
+    max-height: 50vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -276,7 +277,7 @@ section .title-bg {
     opacity : 1;
 
     background: white;
-    transform: translate(-50%, 150%);
+    transform: translate(-50%, 85%);
 }
 
 
@@ -378,6 +379,7 @@ button:focus{
 
 .warning {
     color: red;
+    padding: 30px;
 }
 
 
