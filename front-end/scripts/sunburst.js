@@ -4,9 +4,16 @@
 async function sunburst(country, type, ageGroup, periods, data){
     const domainRange = await (await fetch('data/domain-range.json')).json();
 
-    // Prepare clean slate, in case another country was selected before
+    // Prepare clean slate for charts
     let serotypeDiv = document.querySelector('#country-view-serotype');
     serotypeDiv.innerHTML = '';
+
+    // Reset selectors
+    let serotypeSelect = document.querySelector('#serotype-select');
+    serotypeSelect.innerHTML = '<option value="all">All</option>';
+
+    let lineageSelect = document.querySelector('#lineage-select');
+    lineageSelect.innerHTML = '<option value="all">All</option>';
 
     // Record paths in all charts
     let paths = new Set();
@@ -69,7 +76,6 @@ async function sunburst(country, type, ageGroup, periods, data){
     serotypes = Array.from(serotypes).sort();
     lineages = Array.from(lineages).sort();
 
-    let serotypeSelect = document.querySelector('#serotype-select');
     serotypes.forEach(serotype => {
         let option = document.createElement('option');
         option.setAttribute('value', serotype);
@@ -77,12 +83,47 @@ async function sunburst(country, type, ageGroup, periods, data){
         serotypeSelect.appendChild(option);
     });
 
-    let lineageSelect = document.querySelector('#lineage-select');
     lineages.forEach(lineage => {
         let option = document.createElement('option');
         option.setAttribute('value', lineage);
         option.innerHTML = lineage;
         lineageSelect.appendChild(option);
+    });
+
+    serotypeSelect.addEventListener('change', function() {
+        let paths = serotypeDiv.querySelectorAll('path');
+        paths.forEach(path => {
+            pathData = path.getAttribute('data-path').split('-');
+            if (pathData.length === 1) {
+                if (this.value === 'all') {
+                    path.classList.remove('hidden');
+                } else {
+                    if (pathData[0].split('_')[1] === this.value) {
+                        path.classList.remove('hidden');
+                    } else {
+                        path.classList.add('hidden');
+                    }
+                }            
+            }
+        });
+    });
+
+    lineageSelect.addEventListener('change', function() {
+        let paths = serotypeDiv.querySelectorAll('path');
+        paths.forEach(path => {
+            pathData = path.getAttribute('data-path').split('-');
+            if (pathData.length === 2) {
+                if (this.value === 'all') {
+                    path.classList.remove('hidden');
+                } else {
+                    if (pathData[1].split('_')[1] === this.value) {
+                        path.classList.remove('hidden');
+                    } else {
+                        path.classList.add('hidden');
+                    }
+                }            
+            }
+        });
     });
 
 

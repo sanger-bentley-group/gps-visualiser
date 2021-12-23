@@ -272,12 +272,16 @@ async function main() {
             input.parentNode.replaceChild(input.cloneNode(true), input);
         });
 
-        // Reset view and selectors
+        // Reset selectors
         let serotypeSelect = document.querySelector('#serotype-select');
         serotypeSelect.innerHTML = '<option value="all">All</option>';
 
         let lineageSelect = document.querySelector('#lineage-select');
         lineageSelect.innerHTML = '<option value="all">All</option>';
+
+        // Prepare clean slate for charts
+        let serotypeDiv = document.querySelector('#country-view-serotype');
+        serotypeDiv.innerHTML = '';
 
         document.querySelector('#country-view-serotype').classList.remove('removed');
         document.querySelector('#country-view-antibiotic').classList.add('removed');
