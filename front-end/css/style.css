@@ -255,6 +255,11 @@ section .title-bg {
     padding: 10px;
 }
 
+.serotype-lineage-select {
+    justify-content: center;
+    gap: 10px 30px;
+    margin-top: 30px;
+}
 
 /* || TOOLTIP */
 

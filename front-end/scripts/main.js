@@ -273,6 +273,12 @@ async function main() {
         });
 
         // Reset view and selectors
+        let serotypeSelect = document.querySelector('#serotype-select');
+        serotypeSelect.innerHTML = '<option value="all">All</option>';
+
+        let lineageSelect = document.querySelector('#lineage-select');
+        lineageSelect.innerHTML = '<option value="all">All</option>';
+
         document.querySelector('#country-view-serotype').classList.remove('removed');
         document.querySelector('#country-view-antibiotic').classList.add('removed');
         document.querySelector('#country-view-type-toggle').classList.remove('removed');
