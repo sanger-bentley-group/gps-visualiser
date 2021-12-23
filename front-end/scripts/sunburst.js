@@ -4,9 +4,21 @@
 async function sunburst(country, type, ageGroup, periods, data){
     const domainRange = await (await fetch('data/domain-range.json')).json();
 
+    // Prepare clean slate for charts
     let serotypeDiv = document.querySelector('#country-view-serotype');
     serotypeDiv.innerHTML = '';
 
+    // Reset selectors
+    let serotypeSelect = document.querySelector('#serotype-select');
+    serotypeSelect.innerHTML = '<option value="all">All</option>';
+
+    let lineageSelect = document.querySelector('#lineage-select');
+    lineageSelect.innerHTML = '<option value="all">All</option>';
+
+    // Record paths in all charts
+    let paths = new Set();
+
+    // Draw sunburst charts for all periods
     for (let index = 0; index < periods.length; index++) {
         const period = periods[index];
 
@@ -30,7 +42,7 @@ async function sunburst(country, type, ageGroup, periods, data){
 
         serotypeDiv.append(periodContainer);
 
-        await drawSunburst(data[`period${index}`], `#${sunburstId}`, domainRange);
+        await drawSunburst(data[`period${index}`], `#${sunburstId}`, domainRange, paths);
 
         
         // Add the separator if this is not the last period
@@ -50,7 +62,72 @@ async function sunburst(country, type, ageGroup, periods, data){
         }
     }
 
+    // Add serotypes and lineages to selects' options based on recorded Paths
+    let serotypes = new Set();
+    let lineages = new Set();
+    paths.forEach(path => {
+        path = path.split('-');
+        if (path.length === 1) {
+            serotypes.add(path[0].split('_')[1]);
+        } else {
+            lineages.add(path[1].split('_')[1]);
+        }
+    });
+    serotypes = Array.from(serotypes).sort();
+    lineages = Array.from(lineages).sort();
 
+    serotypes.forEach(serotype => {
+        let option = document.createElement('option');
+        option.setAttribute('value', serotype);
+        option.innerHTML = serotype;
+        serotypeSelect.appendChild(option);
+    });
+
+    lineages.forEach(lineage => {
+        let option = document.createElement('option');
+        option.setAttribute('value', lineage);
+        option.innerHTML = lineage;
+        lineageSelect.appendChild(option);
+    });
+
+    serotypeSelect.addEventListener('change', function() {
+        let paths = serotypeDiv.querySelectorAll('path');
+        paths.forEach(path => {
+            pathData = path.getAttribute('data-path').split('-');
+            if (pathData.length === 1) {
+                if (this.value === 'all') {
+                    path.classList.remove('hidden');
+                } else {
+                    if (pathData[0].split('_')[1] === this.value) {
+                        path.classList.remove('hidden');
+                    } else {
+                        path.classList.add('hidden');
+                    }
+                }            
+            }
+        });
+    });
+
+    lineageSelect.addEventListener('change', function() {
+        let paths = serotypeDiv.querySelectorAll('path');
+        paths.forEach(path => {
+            pathData = path.getAttribute('data-path').split('-');
+            if (pathData.length === 2) {
+                if (this.value === 'all') {
+                    path.classList.remove('hidden');
+                } else {
+                    if (pathData[1].split('_')[1] === this.value) {
+                        path.classList.remove('hidden');
+                    } else {
+                        path.classList.add('hidden');
+                    }
+                }            
+            }
+        });
+    });
+
+
+    // Add mouse over and mouse out events to charts
     let charts = document.querySelectorAll('.sunburst');
 
     charts.forEach(chart => {
@@ -126,7 +203,8 @@ async function sunburst(country, type, ageGroup, periods, data){
     });
 }
 
-async function drawSunburst(data, target, domainRange) {
+
+async function drawSunburst(data, target, domainRange, paths) {
     const hierarchyData = buildHierarchy(data);
 
     let width = 640;
@@ -221,7 +299,12 @@ async function drawSunburst(data, target, domainRange) {
                     sequence.forEach(node => {
                         output.push(node.data.name)
                     });
-                return `${output.join('-').replaceAll(' ','_')}`;
+                
+                const path = output.join('-').replaceAll(' ','_');
+                // Record path to paths set
+                paths.add(path);
+
+                return `${path}`;
             })
             .attr('data-dValue', d => `${d.value}`);
         return element;
