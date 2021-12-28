@@ -10,6 +10,16 @@
 <body>
     <div>
         <div>
+            Barchart Output:
+            <span id="barchart-output">None</span>
+        </div>
+        <div class="barchart-container">
+            <div class="barchart" id="chart5"></div>
+            <div class="barchart" id="chart6"></div>
+        </div>
+    </div>
+    <div>
+        <div>
             Sunburst Output:
             <span id="sunburst-output">None</span>
         </div>
@@ -42,6 +52,7 @@
         </div>
     </div>
     <script src="https://d3js.org/d3.v7.min.js" defer></script>
+    <script type="module" src="barchart.js" defer></script>
     <script type="module" src="sunburst.js" defer></script>
     <script type="module" src="icicle.js" defer></script>
 </body>
