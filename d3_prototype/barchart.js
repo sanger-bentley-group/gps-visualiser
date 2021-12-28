@@ -7,5 +7,8 @@ async function go(){
 }
 
 async function drawBarChart(data, target) {
-    console.log(data)
+    const lineages = Object.keys(data).sort(function (a, b) {return a - b;});
+    for (const lineage of lineages) {
+        console.log(`${lineage}: ${data[lineage]}`)
+    }
 }
