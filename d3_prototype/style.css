@@ -25,3 +25,10 @@ path, rect {
     transition: all 0.2s ease-out;
 }
 
+.barchart rect, .barchart line {
+    pointer-events: none;
+}
+
+#barchart-output {
+    text-transform: capitalize;
+}
