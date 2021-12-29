@@ -4,8 +4,46 @@ go();
 async function go(){
     const data = await (await fetch('data.json')).json();
     const antibiotics = data['country']['AR']['resistance']['antibiotics']
-    await drawBarChart(data['country']['AR']['resistance']['age0'], antibiotics, '#chart5');
+    const color = d3.schemeSpectral[antibiotics.length];
 
+    // Draw legend to show color key for each antibiotic
+    const legend = d3.create('svg');
+    const element = legend.node(); 
+
+    legend
+        .attr('width', 1000)
+        .attr('height', 80)
+        .style('font', '12px sans-serif')
+
+    legend.selectAll("squares")
+        .data(antibiotics)
+        .enter()
+        .append("rect")
+        .attr("x", function(d,i){ return i * (150)})
+        .attr("y", 25)
+        .attr("width", 150)
+        .attr("height", 20)
+        .style("fill", function(d, i){ return color[i]})
+    
+    legend.selectAll("labels")
+        .data(antibiotics)
+        .enter()
+        .append("text")
+        .attr("x", function(d,i){ return i * (150) + 75})
+        .attr("y", 60)
+        .text(function(d){ return d})
+        .attr("text-anchor", "middle")
+        .style("alignment-baseline", "middle")
+        .style("text-transform", "capitalize")
+
+    document.querySelector('#barchart-legend').appendChild(element);
+    
+
+    // Draw bar charts of all lineages under that age group
+    await drawBarChart(data['country']['AR']['resistance']['age0'], antibiotics, color, '#chart5');
+
+
+    // addEventListener to all bar charts to react to cursor
     let charts = document.querySelectorAll('.barchart');
 
     charts.forEach(chart => {
@@ -42,15 +80,13 @@ async function go(){
 }
 
 
-async function drawBarChart(data, antibiotics, target) {
+async function drawBarChart(data, antibiotics, color, target) {
     const lineages = Object.keys(data).sort(function (a, b) {return a - b;});
     for (const lineage of lineages) {
         const curData = data[lineage]
         const width = 100;
         const height = 100;
         const margin = 10;
-
-        const color = d3.schemeSpectral[curData.length];
 
         const xScale = d3
             .scaleBand()
@@ -102,17 +138,9 @@ async function drawBarChart(data, antibiotics, target) {
                 .classed('bar', true)
                 .attr('width', 15)
                 .attr('height', (data) => data)
-                .attr("x", function (d, i) {
-                    for (i > 0; i < curData.length; i++) {
-                        return xScale(antibiotics[i]);
-                    }
-                })
+                .attr("x", function (d, i) { return xScale(antibiotics[i]) })
                 .attr('y', (data) => height- yScale(data))
-                .attr('fill', function (d, i) {
-                    for (i > 0; i < curData.length; i++) {
-                        return color[i];
-                    }
-                })
+                .attr('fill', function (d, i) { return color[i] })
                 .attr('fill-opacity', 0.3);
             
             return element;
