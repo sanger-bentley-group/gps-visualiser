@@ -288,6 +288,8 @@ async function main() {
         document.querySelector('#country-view-type-toggle').classList.remove('removed');
         document.querySelector('#serotype-lineage-select').classList.remove('removed');
 
+        document.querySelector('#country-view-readout').innerHTML = 'Select a Serotype or Lineage';
+
         document.querySelector('#country-view-data-serotype').checked = true;
         document.querySelector('#country-view-data-antibiotic').checked = false;
         document.querySelector('#country-view-age-0').checked = true;
@@ -307,11 +309,15 @@ async function main() {
                 document.querySelector('#country-view-antibiotic').classList.add('removed');
                 document.querySelector('#country-view-type-toggle').classList.remove('removed');
                 document.querySelector('#serotype-lineage-select').classList.remove('removed');
+
+                document.querySelector('#country-view-readout').innerHTML = 'Select a Serotype or Lineage';
             } else if (e.target.value === 'antibiotic') {
                 document.querySelector('#country-view-serotype').classList.add('removed');
                 document.querySelector('#country-view-antibiotic').classList.remove('removed');
                 document.querySelector('#country-view-type-toggle').classList.add('removed');
                 document.querySelector('#serotype-lineage-select').classList.add('removed');
+
+                document.querySelector('#country-view-readout').innerHTML = 'Select a Lineage';
             }
         });
     });
