@@ -3,7 +3,7 @@ go();
 
 async function go(){
     const data = await (await fetch('data.json')).json();
-    const antibiotics = data['country']['AR']['resistance']['antibiotics']
+    const antibiotics = data['antibiotics']
     const color = d3.schemeSpectral[antibiotics.length];
 
     // Draw legend to show color key for each antibiotic

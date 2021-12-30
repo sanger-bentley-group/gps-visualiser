@@ -84,5 +84,10 @@
                 "age1": []
             }
         }
-    }
+    },
+    "domainRange": {
+        "domain": ["Serotype 1", "Serotype 2", "Serotype 3", "Serotype 4", "GPSC 1", "GPSC 2", "GPSC 3", "GPSC 4", "GPSC 5"],   
+        "range":["#ff0000", "#ffac00", "#f8ff00", "#5bff00", "#43d871", "#43b6d8", "#5443d8", "#b043d8", "#793865"]
+    },
+    "antibiotics": ["penicillin", "chloramphenicol", "erythromycin", "co-trimoxazole", "tetracycline"]
 }

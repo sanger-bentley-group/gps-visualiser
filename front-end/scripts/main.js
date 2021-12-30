@@ -164,7 +164,7 @@ async function main() {
 
     // Draw the icicle charts for both disease and carriage type for all countires with available data 
     // function icicle in icicle.js
-    icicle(summary, data['global'])
+    icicle(summary, data['global'], data["domainRange"])
 
     // Update global view charts based on current countrySelection
     function updateCountrySelection() {
@@ -239,21 +239,21 @@ async function main() {
 
             // Draw the sunburst charts with default parameters
             let periods = summary[selectedCountry]['periods'];
-            sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
+            sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
 
             // addEventListener to country view age and type selectors
             // Update country view charts based on current selectors
             document.querySelectorAll('input[name="country-view-age"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     selectedAgeGroup = e.target.value;
-                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
                 });
             });
 
             document.querySelectorAll('input[name="country-view-type"]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     selectedType = e.target.value;
-                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`]);
+                    sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
                 });
             });
         }
@@ -286,6 +286,7 @@ async function main() {
         document.querySelector('#country-view-serotype').classList.remove('removed');
         document.querySelector('#country-view-antibiotic').classList.add('removed');
         document.querySelector('#country-view-type-toggle').classList.remove('removed');
+        document.querySelector('#serotype-lineage-select').classList.remove('removed');
 
         document.querySelector('#country-view-data-serotype').checked = true;
         document.querySelector('#country-view-data-antibiotic').checked = false;
@@ -305,10 +306,12 @@ async function main() {
                 document.querySelector('#country-view-serotype').classList.remove('removed');
                 document.querySelector('#country-view-antibiotic').classList.add('removed');
                 document.querySelector('#country-view-type-toggle').classList.remove('removed');
+                document.querySelector('#serotype-lineage-select').classList.remove('removed');
             } else if (e.target.value === 'antibiotic') {
                 document.querySelector('#country-view-serotype').classList.add('removed');
                 document.querySelector('#country-view-antibiotic').classList.remove('removed');
                 document.querySelector('#country-view-type-toggle').classList.add('removed');
+                document.querySelector('#serotype-lineage-select').classList.add('removed');
             }
         });
     });
