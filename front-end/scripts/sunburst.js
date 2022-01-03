@@ -136,7 +136,7 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
             if (e.target instanceof SVGPathElement) {
                 let dataPath = e.target.getAttribute('data-path');
                 path.innerHTML = dataPath.replaceAll('_', ' ').replaceAll('-', ' > ');
-                path.classList.add('bold')
+                path.classList.add('bold');
 
                 // Highlight same path in all charts, update absolute and percentage
                 charts.forEach(chart => {
@@ -173,7 +173,7 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
         chart.addEventListener('mouseout', (e) => {
             let dataPath = e.target.getAttribute('data-path');
             path.innerHTML = 'Select a Serotype or Lineage';
-            path.classList.remove('bold')
+            path.classList.remove('bold');
 
             // Reset same path in all charts, reset absolute and percentage
             charts.forEach(chart => {

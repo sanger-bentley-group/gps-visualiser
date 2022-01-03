@@ -1,5 +1,6 @@
 // 'summary.json' is exported by backend, provide summary for all countries with available data
-// 'alpha2.json' provides conversion from alpha-2 code to country name
+// 'data.json' is exported by backend, provide data for all countries
+// 'alpha2.json' is static and provides conversion from alpha-2 code to country name
 
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
@@ -63,7 +64,7 @@ async function main() {
         labelBG.classList.add('country-label-bg');
         countryLabel.before(labelBG);
 
-        // Fill country-selector with flags based on countries.js
+        // Fill country-selector with flags based on summary.json
         // Flags from https://flagicons.lipis.dev/
         let flagElement = document.createElement('object');
         flagElement.id = `${country}-flag`;
@@ -237,9 +238,10 @@ async function main() {
                 selectedAgeGroup = 1;
             }
 
-            // Draw the sunburst charts with default parameters
+            // Draw the sunburst charts and (removed) bar charts with default parameters
             let periods = summary[selectedCountry]['periods'];
             sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
+            barchart(data['country'][selectedCountry]['resistance'][`age${selectedAgeGroup}`], data['antibiotics']);
 
             // addEventListener to country view age and type selectors
             // Update country view charts based on current selectors
@@ -247,6 +249,7 @@ async function main() {
                 input.addEventListener('change', (e) => {
                     selectedAgeGroup = e.target.value;
                     sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
+                    barchart(data['country'][selectedCountry]['resistance'][`age${selectedAgeGroup}`], data['antibiotics']);
                 });
             });
 
@@ -283,6 +286,11 @@ async function main() {
         let serotypeDiv = document.querySelector('#country-view-serotype');
         serotypeDiv.innerHTML = '';
 
+        let legendDiv = document.querySelector('#barchart-legend');
+        legendDiv.innerHTML = '';
+        let barchartsDiv = document.querySelector('#antibiotic-barcharts');
+        barchartsDiv.innerHTML = '';
+
         document.querySelector('#country-view-serotype').classList.remove('removed');
         document.querySelector('#country-view-antibiotic').classList.add('removed');
         document.querySelector('#country-view-type-toggle').classList.remove('removed');
@@ -301,7 +309,6 @@ async function main() {
 
     // addEventListener to country view data selector
     // Change div visibility charts based on current selector
-    // TMP code only, WIP
     document.querySelectorAll('input[name="country-view-data"]').forEach(input => {
         input.addEventListener('change', (e) => {
             if (e.target.value === 'serotype') {

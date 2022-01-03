@@ -260,6 +260,30 @@ section .title-bg {
     gap: 10px 30px;
 }
 
+.country-view-antibiotic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.antibiotic-barcharts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.barchart rect, .barchart line {
+    pointer-events: none;
+}
+
+.barchart-legend {
+    max-width: 750px;
+}
+
 /* || TOOLTIP */
 
 [tooltip]:before {            
@@ -422,6 +446,10 @@ select {
 .warning {
     color: red;
     padding: 30px;
+}
+
+.cap {
+    text-transform: capitalize;
 }
 
 
