@@ -16,9 +16,9 @@ mapObject.onload = main();
 
 async function main() {
     const map = mapObject.contentDocument;
-    const summary = await (await fetch('data/summary.json')).json();
-    const data = await (await fetch('data/data.json')).json();
     const alpha2 = await (await fetch('data/static/alpha2.json')).json();
+    const data = await (await fetch('data/data.json')).json();
+    const summary = data['summary']
 
     const overlay = document.querySelector('#country-view-overlay');
     const modal = document.querySelector('#country-view-wrapper');
