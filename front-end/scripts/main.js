@@ -324,7 +324,7 @@ async function main() {
                 document.querySelector('#country-view-type-toggle').classList.add('removed');
                 document.querySelector('#serotype-lineage-select').classList.add('removed');
 
-                document.querySelector('#country-view-readout').innerHTML = 'Select a Lineage';
+                document.querySelector('#country-view-readout').innerHTML = '<b>Current Selection: </b>Select a Lineage';
             }
         });
     });

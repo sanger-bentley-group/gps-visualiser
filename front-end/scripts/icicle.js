@@ -74,7 +74,7 @@ async function icicle(summary, data, domainRange){
         chart.addEventListener('mouseover', (e) => {
             if (e.target instanceof SVGRectElement) {
                 let dataPath = e.target.getAttribute('data-path');
-                path.innerHTML = dataPath.replaceAll('-', ' > ');
+                path.innerHTML = `Current Selection: ${dataPath.replaceAll('-', ' - ')}`;
                 path.classList.add('bold')
 
                 // Highlight same path in all charts, update absolute and percentage
@@ -112,7 +112,7 @@ async function icicle(summary, data, domainRange){
         // Reset chart absolute, percentage and path output
         chart.addEventListener('mouseout', (e) => {
             let dataPath = e.target.getAttribute('data-path');
-            path.innerHTML = 'Select a Serotype or Lineage';
+            path.innerHTML = '<b>Current Selection: </b>Select a Serotype or Lineage';
             path.classList.remove('bold')
 
             // Reset same path in all charts, reset absolute and percentage

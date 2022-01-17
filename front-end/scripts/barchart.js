@@ -57,13 +57,14 @@ async function barchart(data, antibiotics){
 
                 let lineageNum = e.target.getAttribute('lineage');
 
-                let output = `GPSC${lineageNum}: `;
+                let output = `Current Selection: GPSC${lineageNum} [ `;
                 for (let i = 0; i < antibiotics.length; i++) {
                     output += `${antibiotics[i]} - ${data[i]}%`
                     if (i < antibiotics.length - 1) {
                         output += ' | ';
                     }
                 }
+                output += ']'
                 path.innerHTML = output;
                 path.classList.add('bold', 'cap');
 
@@ -76,7 +77,7 @@ async function barchart(data, antibiotics){
 
         chart.addEventListener('mouseout', (e) => {
             if (e.target.classList.contains('barchart')) {
-                path.innerHTML = 'Select a Lineage';
+                path.innerHTML = '<b>Current Selection: </b>Select a Lineage';
                 path.classList.remove('bold', 'cap');
 
                 let rects = e.target.querySelectorAll('rect');
