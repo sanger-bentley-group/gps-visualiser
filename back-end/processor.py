@@ -7,7 +7,7 @@ import json
 # Enter target antibiotics in full name in list
 ANTIBIOTICS = ["penicillin", "chloramphenicol", "erythromycin", "co-trimoxazole", "tetracycline"]
 
-# As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 code", "value in 'Country' columns of the database")' in list
+# As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")' in list
 COUNTRIES = [('AR', 'ARGENTINA'), ('BR', 'BRAZIL'), ('IN','INDIA')]
 
 
@@ -42,7 +42,7 @@ def main():
 
 
     # Export result to data.json that can be uploaded to the web server
-    outfile_path = dp_path = os.path.join(base, 'data.json')
+    outfile_path = os.path.join(base, 'data.json')
     with open(outfile_path, 'w') as outfile:
         json.dump(output, outfile)
 
