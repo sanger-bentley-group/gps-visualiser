@@ -40,20 +40,6 @@ def main():
         df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v2', con)
         df_ana = pd.read_sql_query('SELECT * FROM table3_Analysis_v3', con)
 
-    # Only preserving necessary columns in df_meta
-    # Convert all values to string
-    meta_cols = ['Public_name', 'Country', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
-    df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
-    df_meta = df_meta.astype(str)
-    
-    # Only preserving necessary columns in df_qc
-    # Update the column name Public_Name to Public_name following df_meta
-    # Convert all values to string
-    qc_cols = ['qc', 'Public_Name']
-    df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
-    df_qc.rename(columns={"Public_Name": "Public_name"}, inplace=True)
-    df_qc = df_qc.astype(str)
-
     # Getting column names of target antibiotics for df_ana processing
     ana_cols_list = df_ana.columns.tolist()
     antibiotics_cols = []
@@ -66,13 +52,22 @@ def main():
         else:
             raise ValueError('One or more of the antibiotics is not found in the database.')
     
-    # Only preserving necessary columns in df_ana
-    # Update the column name public_name to Public_name following df_meta
-    # Convert all values to string
+    # Only preserving necessary columns in DFs
+    meta_cols = ['Public_name', 'Country', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
+    df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
+    qc_cols = ['qc', 'Public_Name']
+    df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
     ana_cols = (['public_name', 'duplicate', 'Manifest_type', 'children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour'] 
                 + antibiotics_cols)
     df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
+    
+    # Unifying the letter-casing of 'Public_name' columns in DFs for merge
+    df_qc.rename(columns={"Public_Name": "Public_name"}, inplace=True)
     df_ana.rename(columns={"public_name": "Public_name"}, inplace=True)
+    
+    # Convert all values to string to ensure good merge
+    df_meta = df_meta.astype(str)
+    df_qc = df_qc.astype(str)
     df_ana = df_ana.astype(str)
 
     # Merge all DFs into df, discard data points that are not on all 3 tables
