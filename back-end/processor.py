@@ -5,7 +5,7 @@ import json
 
 
 # Enter target antibiotics in full name in list
-ANTIBIOTICS = ["penicillin", "chloramphenicol", "erythromycin", "co-trimoxazole", "tetracycline"]
+ANTIBIOTICS = ['penicillin', 'chloramphenicol', 'erythromycin', 'co-trimoxazole', 'tetracycline']
 
 # As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")' in list
 COUNTRIES = [('AR', 'ARGENTINA'), ('BR', 'BRAZIL'), ('IN','INDIA')]
@@ -14,20 +14,20 @@ COUNTRIES = [('AR', 'ARGENTINA'), ('BR', 'BRAZIL'), ('IN','INDIA')]
 def main():
     # Template of the data.json
     output = {
-        "summary": {},
-        "global": {},
-        "country": {},
-        "domainRange": {
-            "serotype": {
-                "domain": [],   
-                "range": []
+        'summary': {},
+        'global': {},
+        'country': {},
+        'domainRange': {
+            'serotype': {
+                'domain': [],   
+                'range': []
             },
-            "lineage": {
-                "domain": [],   
-                "range": []
+            'lineage': {
+                'domain': [],   
+                'range': []
             }
         },
-        "antibiotics": ANTIBIOTICS
+        'antibiotics': ANTIBIOTICS
     }
 
     # Ensure the script will read and write to the same dir it locates at
@@ -62,8 +62,8 @@ def main():
     df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
     
     # Unifying the letter-casing of 'Public_name' columns in DFs for merge
-    df_qc.rename(columns={"Public_Name": "Public_name"}, inplace=True)
-    df_ana.rename(columns={"public_name": "Public_name"}, inplace=True)
+    df_qc.rename(columns={'Public_Name': 'Public_name'}, inplace=True)
+    df_ana.rename(columns={'public_name': 'Public_name'}, inplace=True)
     
     # Convert all values to string to ensure good merge
     df_meta = df_meta.astype(str)
@@ -74,6 +74,27 @@ def main():
     df = pd.merge(df_meta, df_qc, on=['Public_name'])
     df = pd.merge(df, df_ana, on=['Public_name'])
 
+    # Only preserving rows with selected countries
+    df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
+    # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
+    df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
+    # Only preserving rows with QC that is Pass or PassPlus
+    df = df[df['qc'].isin(['Pass', 'PassPlus'])]
+    # Only preserving rows with Serotype and GPSC assigned
+    df = df[df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())]
+    df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
+
+    # Add designated colors for Serotype and GPSC to the output
+    serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
+    for serotype, color in serotype_Colours:
+        output['domainRange']['serotype']['domain'].append(serotype)
+        output['domainRange']['serotype']['range'].append(color)
+
+    GPSC_Colours = set(zip(df['GPSC_PoPUNK2'], df['GPSC_PoPUNK2__colour']))
+    for gpsc, color in GPSC_Colours:
+        output['domainRange']['lineage']['domain'].append(gpsc)
+        output['domainRange']['lineage']['range'].append(color)
+    
     # WIP - Extract and prcoess data from DF into the output
 
     # Export result to data.json that can be uploaded to the web server
@@ -82,5 +103,5 @@ def main():
         json.dump(output, outfile)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
