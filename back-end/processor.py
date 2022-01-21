@@ -78,6 +78,8 @@ def main():
     df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
     # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
     df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
+    # Only preserving rows with duplicate that is UNIQUE
+    df = df[df['duplicate'] == 'UNIQUE']
     # Only preserving rows with QC that is Pass or PassPlus
     df = df[df['qc'].isin(['Pass', 'PassPlus'])]
     # Only preserving rows with Serotype and GPSC assigned
@@ -86,12 +88,11 @@ def main():
 
     # Add designated colors for Serotype and GPSC to the output
     serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
-    for serotype, color in serotype_Colours:
+    for serotype, color in sorted(serotype_Colours):
         output['domainRange']['serotype']['domain'].append(serotype)
         output['domainRange']['serotype']['range'].append(color)
-
     GPSC_Colours = set(zip(df['GPSC_PoPUNK2'], df['GPSC_PoPUNK2__colour']))
-    for gpsc, color in GPSC_Colours:
+    for gpsc, color in sorted(GPSC_Colours):
         output['domainRange']['lineage']['domain'].append(gpsc)
         output['domainRange']['lineage']['range'].append(color)
     
@@ -100,7 +101,7 @@ def main():
     # Export result to data.json that can be uploaded to the web server
     outfile_path = os.path.join(base, 'data.json')
     with open(outfile_path, 'w') as outfile:
-        json.dump(output, outfile)
+        json.dump(output, outfile, indent=4)
 
 
 if __name__ == '__main__':
