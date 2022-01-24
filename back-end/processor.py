@@ -86,6 +86,9 @@ def main():
     df = df[df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())]
     df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
 
+    # Removing -?yr from postPCV in VaccinePeriod
+    df['VaccinePeriod'] = df['VaccinePeriod'].apply(lambda x: x.split('-')[0])
+
     # Add designated colors for Serotype and GPSC to the output
     serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
     for serotype, color in sorted(serotype_Colours):
@@ -96,6 +99,38 @@ def main():
         output['domainRange']['lineage']['domain'].append(gpsc)
         output['domainRange']['lineage']['range'].append(color)
     
+    # Add information of each country
+    for countryA2, countryDB in COUNTRIES:
+        # Create new DF holding information of this country only
+        dfCountry = df[df['Country'] == countryDB]
+        output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False]}
+
+        # Fill in periods in Country Summary
+        periods = dfCountry['VaccinePeriod'].unique()
+        if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination 
+            output['summary'][countryA2]['periods'].append([f'{dfCountry["Year_collection"].min()} - {dfCountry["Year_collection"].max()}', 'No Vaccination'])
+        else: # Otherwise mark all vaccination periods
+            periodsOutput = []
+            for p in periods:
+                yearMin = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].min()
+                yearMax = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].max()
+                pText = p.split('PCV')
+                pText = f'{pText[0].capitalize()}-PCV{pText[1]}'
+                # State the year range if it is > 1 year, otherwise just the single year
+                if yearMin == yearMax: # 
+                    periodsOutput.append([yearMin, pText])
+                else:
+                    periodsOutput.append([f'{yearMin} - {yearMax}', pText])
+            periodsOutput.sort(key=lambda x: int(x[0][:4])) # Sort the periods by their starting year
+            output['summary'][countryA2]['periods'] = periodsOutput
+
+        # Fill in ageGroups in Country Summary
+        ages = periods = dfCountry['children<5yrs'].unique()
+        if 'Y' in ages:
+            output['summary'][countryA2]['ageGroups'][0] = True
+        if 'N' in ages: 
+            output['summary'][countryA2]['ageGroups'][1] = True
+
     # WIP - Extract and prcoess data from DF into the output
 
     # Export result to data.json that can be uploaded to the web server
