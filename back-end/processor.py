@@ -82,6 +82,8 @@ def main():
     df = df[df['duplicate'] == 'UNIQUE']
     # Only preserving rows with QC that is Pass or PassPlus
     df = df[df['qc'].isin(['Pass', 'PassPlus'])]
+    # Only preserving rows with Manifest_type that is IPD or Carriage
+    df = df[df['Manifest_type'].isin(['IPD', 'Carriage'])]
     # Only preserving rows with Serotype and GPSC assigned
     df = df[df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())]
     df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
@@ -104,7 +106,9 @@ def main():
         # Create new DF holding information of this country only
         dfCountry = df[df['Country'] == countryDB]
         output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False]}
-
+        output['global'][countryA2] = {'carriage': [], 'disease': []}
+        output['country'][countryA2] = {'carriage': {}, 'disease': {}, 'resistance': {}}
+ 
         # Fill in periods in Country Summary
         periods = dfCountry['VaccinePeriod'].unique()
         if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination 
@@ -130,6 +134,13 @@ def main():
             output['summary'][countryA2]['ageGroups'][0] = True
         if 'N' in ages: 
             output['summary'][countryA2]['ageGroups'][1] = True
+
+        # Fill in carriage and disease of the country in Global View
+        for Manifesttype, JSONtype in (('IPD', 'disease'), ('Carriage', 'carriage')):
+            dfCountryType = dfCountry[dfCountry['Manifest_type'] == Manifesttype].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+            dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + ' - ' + dfCountryType['GPSC_PoPUNK2']
+            dfCountryType = dfCountryType[['group', 'size']]
+            output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
 
     # WIP - Extract and prcoess data from DF into the output
 
