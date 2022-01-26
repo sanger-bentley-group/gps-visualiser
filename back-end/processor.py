@@ -129,20 +129,36 @@ def main():
             output['summary'][countryA2]['periods'] = periodsOutput
 
         # Fill in ageGroups in Country Summary
-        ages = periods = dfCountry['children<5yrs'].unique()
+        ages = dfCountry['children<5yrs'].unique()
+        ageGroups = []
         if 'Y' in ages:
             output['summary'][countryA2]['ageGroups'][0] = True
+            ageGroups.append((0, 'Y'))
         if 'N' in ages: 
             output['summary'][countryA2]['ageGroups'][1] = True
+            ageGroups.append((1, 'N'))
 
-        # Fill in carriage and disease of the country in Global View
+        # Go thru both disease and carriage for all views
         for Manifesttype, JSONtype in (('IPD', 'disease'), ('Carriage', 'carriage')):
+            # Fill in data for Global View
             dfCountryType = dfCountry[dfCountry['Manifest_type'] == Manifesttype].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
-            dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + ' - ' + dfCountryType['GPSC_PoPUNK2']
+            dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
             dfCountryType = dfCountryType[['group', 'size']]
             output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
 
-    # WIP - Extract and prcoess data from DF into the output
+            # Go thru all age groups and periods for Country View:
+            for ageGroup, lessThanFive in ageGroups:
+                output['country'][countryA2][JSONtype][f'age{ageGroup}'] = {}
+
+                # Fill in data for Lineage by Serotype in Country View
+                for i, p in enumerate(periods):
+                    dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == p) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+                    dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
+                    dfCountryType = dfCountryType[['group', 'size']]
+                    output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
+
+                # Fill in data for Antibiotic Resistance in Country View
+                # WIP
 
     # Export result to data.json that can be uploaded to the web server
     outfile_path = os.path.join(base, 'data.json')
