@@ -91,6 +91,10 @@ def main():
     # Removing -?yr from postPCV in VaccinePeriod
     df['VaccinePeriod'] = df['VaccinePeriod'].apply(lambda x: x.split('-')[0])
 
+    # For antibiotics resistance, consider I - Intermediate resistant / R - resistant as positive; S - susceptible / FLAG - considered as susceptible as negative
+    df[antibiotics_cols] = df[antibiotics_cols].replace(['I', 'R'], 1)
+    df[antibiotics_cols] = df[antibiotics_cols].replace(['S', 'FLAG'], 0)
+
     # Add designated colors for Serotype and GPSC to the output
     serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
     for serotype, color in sorted(serotype_Colours):
@@ -157,8 +161,22 @@ def main():
                     dfCountryType = dfCountryType[['group', 'size']]
                     output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
 
-                # Fill in data for Antibiotic Resistance in Country View
-                # WIP
+        # Process Antibiotic Resistance data
+        dfCountryAntibiotics = dfCountry[antibiotics_cols + ['children<5yrs', 'GPSC_PoPUNK2']]
+        for ageGroup, lessThanFive in ageGroups:
+            output['country'][countryA2]['resistance'][f'age{ageGroup}'] = {}
+
+            # Get resistance sample sum and count of all samples in each lineage
+            dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
+            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[antibiotics_cols]
+
+            # Calculate the percentage and correct the order of columns
+            dfCountryResistPer = dfCountryResist.div(dfCountryTotal, fill_value=0).mul(100).round(2)
+            dfCountryResistPer = dfCountryResistPer[antibiotics_cols]
+
+            # Fill in data for Antibiotic Resistance in Country View
+            for i, values in zip(dfCountryResistPer.index.values.tolist(), dfCountryResistPer.values.tolist()):
+                output['country'][countryA2]['resistance'][f'age{ageGroup}'][i] = values
 
     # Export result to data.json that can be uploaded to the web server
     outfile_path = os.path.join(base, 'data.json')
