@@ -145,6 +145,20 @@ async function icicle(summary, data, domainRange){
 
 
 async function drawIcicle(data, target, domainRange) {
+    // If no data available: display 'No Data', remove .icicle and empty .values-container, escape function
+    if (data.length === 0){
+        let targetDiv = document.querySelector(target)
+
+        let noData = document.createElement('div');
+        noData.innerHTML = 'No Data';
+        noData.classList.add('no-data-icicle');
+        targetDiv.appendChild(noData);
+
+        targetDiv.classList.remove('icicle');
+        targetDiv.parentNode.querySelector('.values-container').innerHTML = '';
+        return;
+    }
+
     const hierarchyData = buildHierarchy(data);
 
     let width = 640;

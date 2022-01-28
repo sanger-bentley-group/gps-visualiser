@@ -280,6 +280,14 @@ section .title-bg {
     pointer-events: none;
 }
 
+.no-data-icicle {
+    width: 400px;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
 .barchart-legend {
     max-width: 750px;
 }
