@@ -72,8 +72,11 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
             lineages.add(path[1].split(' ')[1]);
         }
     });
-    serotypes = Array.from(serotypes).sort();
-    lineages = Array.from(lineages).sort();
+
+    // Sort serotypes by ints at the beginning of the string and ignore the rest
+    serotypes = Array.from(serotypes).sort((a, b) => (parseInt(a, 10) - parseInt(b, 10)));
+    // Sort lineages by ints
+    lineages = Array.from(lineages).sort((a, b) => (a - b));
 
     serotypes.forEach(serotype => {
         let option = document.createElement('option');
