@@ -288,6 +288,16 @@ section .title-bg {
     justify-content: center; 
 }
 
+.no-data-sunburst {
+    width: 20vw;
+    max-width: 50vh;
+    height: 20vw;
+    max-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
 .barchart-legend {
     max-width: 750px;
 }

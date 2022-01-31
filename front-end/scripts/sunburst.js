@@ -204,6 +204,19 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
 
 
 async function drawSunburst(data, target, domainRange, paths) {
+    // If no data available: display 'No Data', remove .sunburst, escape function
+    if (data.length === 0){
+        let targetDiv = document.querySelector(target)
+
+        let noData = document.createElement('div');
+        noData.innerHTML = 'No Data';
+        noData.classList.add('no-data-sunburst');
+        targetDiv.appendChild(noData);
+
+        targetDiv.classList.remove('sunburst');
+        return;
+    }
+
     const hierarchyData = buildHierarchy(data);
 
     let width = 640;
