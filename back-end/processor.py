@@ -2,9 +2,10 @@ import sqlite3
 import pandas as pd
 import os
 import json
+import sys
 
 
-# Enter target antibiotics in full name in list
+# Enter five target antibiotics in full name in list
 ANTIBIOTICS = ['penicillin', 'chloramphenicol', 'erythromycin', 'co-trimoxazole', 'tetracycline']
 
 # As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")' in list
@@ -33,12 +34,22 @@ def main():
     # Ensure the script will read and write to the same dir it locates at
     base = os.path.dirname(os.path.abspath(__file__))
 
-    # Read all tables of the database into dataframes
-    dp_path = os.path.join(base, 'GPS1_database_v3.db')
-    with sqlite3.connect(dp_path) as con:
-        df_meta = pd.read_sql_query('SELECT * FROM table1_Metadata_v3', con)
-        df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v2', con)
-        df_ana = pd.read_sql_query('SELECT * FROM table3_Analysis_v3', con)
+    # Check file name is provided and the file exists
+    sys.tracebacklimit = 0
+    if len(sys.argv) != 2:
+        raise Exception('Invalid command. Use the following format: python processor.py database.db')
+    dp_path = os.path.join(base, sys.argv[1])
+    if not os.path.isfile(dp_path):
+        raise OSError('File does not exist.')
+
+    # Read all tables of the database into dataframes, throw excpetion if any of the tables is not found
+    try:
+        with sqlite3.connect(dp_path) as con:
+            df_meta = pd.read_sql_query('SELECT * FROM table1_Metadata_v3', con)
+            df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v2', con)
+            df_ana = pd.read_sql_query('SELECT * FROM table3_Analysis_v3', con)
+    except pd.io.sql.DatabaseError:
+        raise Exception('Incorrect or incompatible database is used.') from None
 
     # Getting column names of target antibiotics for df_ana processing
     ana_cols_list = df_ana.columns.tolist()
