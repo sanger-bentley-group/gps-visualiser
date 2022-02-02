@@ -6,7 +6,6 @@ This summarisation effort is composed of a back-end Python script and a front-en
 
 &nbsp;
 ## Back-end Python Script
----
 The Python script `processor.py` extracts and processes data from the GPS database (not publicised) and export a JSON file `data.json` to be taken up by the front-end website.
 
 The script has two global lists that can be modified.
@@ -21,12 +20,10 @@ python processor.py database.db
 
 &nbsp;
 ## Front-end Website
----
 The website takes the JSON file `data.json` and renders the charts in both global and pre-country views on the fly. The website utilises HTML5, JavaScript (vanilla JavaScript with D3.js for chart rendering) to run fully on the client-side. This website has a responsive web design using a mixture of CSS Flexbox and Media Query, but is not yet optimised for mobile devices.
 
 &nbsp;
 ## Requirements & Compatibility
----
 Back-end Python script requirements:
 - Python 3.10
 - Pandas 1.4.0
