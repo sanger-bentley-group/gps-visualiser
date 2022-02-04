@@ -23,7 +23,8 @@ async function icicle(summary, data, domainRange){
             flagElement.type = 'image/svg+xml';
             flagElement.data = `images/flags/${country}.svg`;
 
-            let latestVac = summary[country]['periods'].at(-1);
+            let allVac = summary[country]['periods'];
+            let latestVac = allVac[allVac.length - 1];
             let latestVacDiv = document.createElement('div');
             latestVacDiv.innerHTML = `${latestVac[0]} ${latestVac[1]}`
 

@@ -219,6 +219,7 @@ section .title-bg {
 .flag {
     margin: 0px 0px 5px 0px;
     width: 30px;
+    height: 22.5px;
     display: block;
     pointer-events: none;
 }
