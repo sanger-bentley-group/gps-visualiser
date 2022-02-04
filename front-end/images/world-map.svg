@@ -28,12 +28,12 @@
         }
 
         .country-label-bg {
-            fill-opacity: 0.7;
+            fill-opacity: 0.5;
             transition: all 0.2s ease-out;
         }
 
         .country-label-bg:hover, .country-label-bg-active {
-            fill-opacity: 1;
+            fill-opacity: 0.9;
         }
 
 
@@ -2957,7 +2957,7 @@
     <text x="784" y="239" id="BN-label">Brunei</text>
     <text x="291" y="304" id="BO-label">Bolivia</text>
     <text x="278" y="216" id="BQ-label">Bonaire, Sint Eustatius and Saba</text>
-    <text x="315" y="298" id="BR-label">Brazil</text>
+    <text x="335" y="298" id="BR-label">Brazil</text>
     <text x="261" y="178" id="BS-label">Bahamas</text>
     <text x="710" y="167" id="BT-label">Bhutan</text>
     <text x="534" y="325" id="BW-label">Botswana</text>
@@ -3026,7 +3026,7 @@
     <text x="450" y="86" id="IE-label">Ireland</text>
     <text x="560" y="154" id="IL-label">Israel</text>
     <text x="459" y="84" id="IM-label">Isle of Man</text>
-    <text x="679" y="180" id="IN-label">India</text>
+    <text x="679" y="200" id="IN-label">India</text>
     <text x="583" y="149" id="IQ-label">Iraq</text>
     <text x="609" y="151" id="IR-label">Iran</text>
     <text x="432" y="53" id="IS-label">Iceland</text>
@@ -3078,16 +3078,16 @@
     <text x="560" y="295" id="MW-label">Malawi</text>
     <text x="190" y="179" id="MX-label">Mexico</text>
     <text x="769" y="240" id="MY-label">Malaysia</text>
-    <text x="564" y="305" id="MZ-label">Mozambique</text>
+    <text x="564" y="319" id="MZ-label">Mozambique</text>
     <text x="517" y="325" id="NA-label">Namibia</text>
     <text x="913" y="319" id="NC-label">New Caledonia</text>
     <text x="488" y="198" id="NE-label">Niger</text>
     <text x="919" y="338" id="NF-label">Norfolk Island</text>
-    <text x="490" y="224" id="NG-label">Nigeria</text>
+    <text x="490" y="230" id="NG-label">Nigeria</text>
     <text x="231" y="213" id="NI-label">Nicaragua</text>
     <text x="482" y="90" id="NL-label">Netherlands</text>
     <text x="496" y="43" id="NO-label">Norway</text>
-    <text x="692" y="164" id="NP-label">Nepal</text>
+    <text x="692" y="170" id="NP-label">Nepal</text>
     <text x="924" y="246" id="NR-label">Nauru</text>
     <text x="975" y="310" id="NU-label">Niue</text>
     <text x="898" y="387" id="NZ-label">New Zealand</text>
@@ -3110,7 +3110,7 @@
     <text x="617" y="319" id="RE-label">Réunion</text>
     <text x="531" y="109" id="RO-label">Romania</text>
     <text x="521" y="115" id="RS-label">Serbia</text>
-    <text x="594" y="70" id="RU-label">Russia</text>
+    <text x="700" y="70" id="RU-label">Russia</text>
     <text x="549" y="259" id="RW-label">Rwanda</text>
     <text x="574" y="170" id="SA-label">Saudi Arabia</text>
     <text x="913" y="282" id="SB-label">Solomon Islands</text>
