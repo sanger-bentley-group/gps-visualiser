@@ -137,9 +137,9 @@ def main():
                 pText = f'{pText[0].capitalize()}-PCV{pText[1]}'
                 # State the year range if it is > 1 year, otherwise just the single year
                 if yearMin == yearMax: # 
-                    periodsOutput.append([yearMin, pText])
+                    periodsOutput.append([yearMin, pText, p])
                 else:
-                    periodsOutput.append([f'{yearMin} - {yearMax}', pText])
+                    periodsOutput.append([f'{yearMin} - {yearMax}', pText, p])
             periodsOutput.sort(key=lambda x: int(x[0][:4])) # Sort the periods by their starting year
             output['summary'][countryA2]['periods'] = periodsOutput
 
@@ -156,7 +156,7 @@ def main():
         # Go thru both disease and carriage for all views
         for Manifesttype, JSONtype in (('IPD', 'disease'), ('Carriage', 'carriage')):
             # Fill in data for Global View
-            dfCountryType = dfCountry[dfCountry['Manifest_type'] == Manifesttype].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+            dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == periodsOutput[-1][2])].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
             dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
             dfCountryType = dfCountryType[['group', 'size']]
             output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
@@ -166,8 +166,8 @@ def main():
                 output['country'][countryA2][JSONtype][f'age{ageGroup}'] = {}
 
                 # Fill in data for Lineage by Serotype in Country View
-                for i, p in enumerate(periods):
-                    dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == p) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+                for i, p in enumerate(periodsOutput):
+                    dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
                     dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
                     dfCountryType = dfCountryType[['group', 'size']]
                     output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
