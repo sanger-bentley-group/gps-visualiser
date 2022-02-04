@@ -53,13 +53,14 @@ async function main() {
         // Add label background and move it into the label group
         textbbox = countryLabel.getBBox();
         let labelBG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        let padding = 20;
-        labelBG.setAttribute("x", textbbox.x - padding / 2);
-        labelBG.setAttribute("y", textbbox.y - padding / 2);
+        let xPadding = 20;
+        let yPadding = 5;
+        labelBG.setAttribute("x", textbbox.x - xPadding / 2);
+        labelBG.setAttribute("y", textbbox.y - yPadding / 2);
         labelBG.setAttribute("rx", 10);
         labelBG.setAttribute("ry", 10);
-        labelBG.setAttribute("width", textbbox.width + padding);
-        labelBG.setAttribute("height", textbbox.height + padding);
+        labelBG.setAttribute("width", textbbox.width + xPadding);
+        labelBG.setAttribute("height", textbbox.height + yPadding);
         labelBG.setAttribute("fill", "white");
         labelBG.classList.add('country-label-bg');
         countryLabel.before(labelBG);
