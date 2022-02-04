@@ -9,7 +9,22 @@ import sys
 ANTIBIOTICS = ['penicillin', 'chloramphenicol', 'erythromycin', 'co-trimoxazole', 'tetracycline']
 
 # As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")' in list
-COUNTRIES = [('AR', 'ARGENTINA'), ('BR', 'BRAZIL'), ('IN','INDIA')]
+COUNTRIES = [
+        ('AR', 'ARGENTINA'), 
+        ('BR', 'BRAZIL'), 
+        ('IN', 'INDIA'), 
+        ('KH', 'CAMBODIA'), 
+        ('NP', 'NEPAL'), 
+        ('RU', 'RUSSIAN FEDERATION'), 
+        ('ZA', 'SOUTH AFRICA'), 
+        ('PG', 'PAPUA NEW GUINEA'), 
+        ('MZ', 'MOZAMBIQUE'),
+        ('NG', 'NIGERIA'),
+        ('PK', 'PAKISTAN'),
+        ('IL', 'ISRAEL'),
+        ('MW', 'MALAWI'),
+        ('GM', 'THE GAMBIA')
+    ]
 
 
 def main():
@@ -34,8 +49,10 @@ def main():
     # Ensure the script will read and write to the same dir it locates at
     base = os.path.dirname(os.path.abspath(__file__))
 
-    # Check file name is provided and the file exists
+    # Comment out the below line for debugging
     sys.tracebacklimit = 0
+
+    # Check file name is provided and the file exists
     if len(sys.argv) != 2:
         raise Exception('Invalid command. Use the following format: python processor.py database.db')
     dp_path = os.path.join(base, sys.argv[1])
@@ -64,7 +81,7 @@ def main():
             raise ValueError('One or more of the antibiotics is not found in the database.')
     
     # Only preserving necessary columns in DFs
-    meta_cols = ['Public_name', 'Country', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
+    meta_cols = ['Public_name', 'Country', 'Region', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
     df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
     qc_cols = ['qc', 'Public_Name']
     df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
@@ -85,10 +102,11 @@ def main():
     df = pd.merge(df_meta, df_qc, on=['Public_name'])
     df = pd.merge(df, df_ana, on=['Public_name'])
 
+    # Special case for Hong Kong, moving Hong Kong from Region to Country for individual processing
+    df.loc[df['Region'] == 'HONG KONG', 'Country'] = 'HONG KONG'
+
     # Only preserving rows with selected countries
     df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
-    # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
-    df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
     # Only preserving rows with duplicate that is UNIQUE
     df = df[df['duplicate'] == 'UNIQUE']
     # Only preserving rows with QC that is Pass or PassPlus
@@ -98,6 +116,13 @@ def main():
     # Only preserving rows with Serotype and GPSC assigned
     df = df[df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())]
     df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
+    # Only preserving rows with a valid VaccinePeriod
+    df.drop(df[df['VaccinePeriod'] == '_'].index, inplace=True)
+    # Only preserving rows with a valid children<5yrs value
+    df.drop(df[df['children<5yrs'] == 'UKWN'].index, inplace=True)
+
+    # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
+    df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
 
     # Removing -?yr from postPCV in VaccinePeriod
     df['VaccinePeriod'] = df['VaccinePeriod'].apply(lambda x: x.split('-')[0])
@@ -120,28 +145,30 @@ def main():
     for countryA2, countryDB in COUNTRIES:
         # Create new DF holding information of this country only
         dfCountry = df[df['Country'] == countryDB]
+        if dfCountry.empty:
+            raise Exception(f'Country name "{countryDB}" is not found in the database or has no valid data. Check spelling and casing of your input, and the completeness of data of that country.')
         output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False]}
         output['global'][countryA2] = {'carriage': [], 'disease': []}
         output['country'][countryA2] = {'carriage': {}, 'disease': {}, 'resistance': {}}
  
         # Fill in periods in Country Summary
         periods = dfCountry['VaccinePeriod'].unique()
-        if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination 
-            output['summary'][countryA2]['periods'].append([f'{dfCountry["Year_collection"].min()} - {dfCountry["Year_collection"].max()}', 'No Vaccination'])
+        periodsOutput = []
+        if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination
+            yearMin = dfCountry["Year_collection"].min()
+            yearMax = dfCountry["Year_collection"].max()
+            yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
+            periodsOutput.append([yearRange, 'No Vaccination', 'PrePCV'])
         else: # Otherwise mark all vaccination periods
-            periodsOutput = []
             for p in periods:
                 yearMin = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].min()
                 yearMax = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].max()
+                yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
                 pText = p.split('PCV')
                 pText = f'{pText[0].capitalize()}-PCV{pText[1]}'
-                # State the year range if it is > 1 year, otherwise just the single year
-                if yearMin == yearMax: # 
-                    periodsOutput.append([yearMin, pText, p])
-                else:
-                    periodsOutput.append([f'{yearMin} - {yearMax}', pText, p])
+                periodsOutput.append([yearRange, pText, p])
             periodsOutput.sort(key=lambda x: int(x[0][:4])) # Sort the periods by their starting year
-            output['summary'][countryA2]['periods'] = periodsOutput
+        output['summary'][countryA2]['periods'] = periodsOutput
 
         # Fill in ageGroups in Country Summary
         ages = dfCountry['children<5yrs'].unique()
