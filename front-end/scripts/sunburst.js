@@ -49,7 +49,7 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
             separatorContainer.classList.add('separator-container')
 
             let arrowDiv = document.createElement('div');
-            arrowDiv.innerHTML = `<p style="font-size: 3em; margin: 5px;">🠖</p>`;
+            arrowDiv.innerHTML = `<p style="font-size: 2em; margin: 5px;">➔</p>`;
             separatorContainer.append(arrowDiv);
 
             let vaccineDiv = document.createElement('div');
@@ -65,7 +65,6 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
     let lineages = new Set();
     paths.forEach(path => {
         path = path.split(' - ');
-        console.log(path)
         if (path.length === 1) {
             serotypes.add(path[0].split(' ')[1]);
         } else {
