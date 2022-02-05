@@ -130,6 +130,10 @@ def main():
     # For antibiotics resistance, consider I - Intermediate resistant / R - resistant as positive; S - susceptible / FLAG - considered as susceptible as negative
     df[antibiotics_cols] = df[antibiotics_cols].replace(['I', 'R'], 1)
     df[antibiotics_cols] = df[antibiotics_cols].replace(['S', 'FLAG'], 0)
+    # Antibiotics resistance values sanity check
+    for col in antibiotics_cols:
+        df = df[df[col].isin([0, 1])]
+        df[col] = df[col].astype(int)
 
     # Add designated colors for Serotype and GPSC to the output
     serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
