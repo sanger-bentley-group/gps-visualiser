@@ -103,11 +103,11 @@ async function icicle(summary, data, domainRange){
         }
     }
 
+    // Reset path output, all charts, their absolute and percentage
     function reset() {
         path.innerHTML = '<b>Current Selection: </b>Select a Serotype or Lineage';
         path.classList.remove('bold')
 
-        // Reset same path in all charts, reset absolute and percentage
         charts.forEach(chart => {
             let chartId = chart.id;
 
@@ -125,6 +125,7 @@ async function icicle(summary, data, domainRange){
         });
     }
 
+    // Save state of having an active selection or not
     let SELECTED = false;
 
     charts.forEach(chart => {
@@ -134,12 +135,19 @@ async function icicle(summary, data, domainRange){
         let rValue = chart.childNodes[0].getAttribute('data-rValue');
         absolute.innerHTML = `-- / ${rValue}`;
 
+        // Hovering support, can be overridden by active selection
         chart.addEventListener('mouseover', (e) => {
             if (SELECTED === false) {
                 highlight(e);
             }
         });
+        chart.addEventListener('mouseout', () => {
+            if (SELECTED === false) {
+                reset();
+            }
+        });
 
+        // Click support. Reset if clicked on active selection, otherwise change active selection.
         chart.addEventListener('click', (e) => {
             if (e.target instanceof SVGRectElement && SELECTED && e.target.getAttribute('fill-opacity') === '1.0') {
                 reset();
@@ -148,13 +156,6 @@ async function icicle(summary, data, domainRange){
                 reset();
                 highlight(e);
                 SELECTED = true;
-            }
-        });
-
-        // Reset chart absolute, percentage and path output
-        chart.addEventListener('mouseout', () => {
-            if (SELECTED === false) {
-                reset();
             }
         });
     });
