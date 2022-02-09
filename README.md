@@ -17,17 +17,45 @@ To generate the `data.json`,  put the database in the same directory/folder as t
 python processor.py database.db
 ```
 
-
 &nbsp;
 ## Front-end Website
-The website takes the JSON file `data.json` and renders the charts in both global and pre-country views on the fly. The website utilises HTML5, JavaScript (vanilla JavaScript with D3.js for chart rendering) to run fully on the client-side. This website has a responsive web design using a mixture of CSS Flexbox and Media Query, but is not yet optimised for mobile devices.
+The website takes the JSON file `data.json` and renders the charts in both global and pre-country views on the fly. The website utilises HTML5, JavaScript (vanilla JavaScript with [D3.js](https://d3js.org/) for chart rendering) to run fully on the client-side. This website has a responsive web design using a mixture of CSS Flexbox and Media Query, but is not yet optimised for mobile devices.
 
 &nbsp;
 ## Requirements & Compatibility
 Back-end Python script requirements:
-- Python 3.10
-- Pandas 1.4.0
+- [Python](https://www.python.org/) 3.10
+- [Pandas](https://pandas.pydata.org/) 1.4.0
 
 Front-end website tested on:
 - Firefox 96
 - Chrome 97
+
+&nbsp;
+## Credits
+This project uses Open Source components. You can find the source code of their open source projects along with license information below. I acknowledge and am grateful to these developers for their contributions to open source.
+
+[**Country Flags in SVG**](https://flagicons.lipis.dev/)
+- Copyright (c) 2013 Panayiotis Lipiridis
+- License (MIT): https://github.com/lipis/flag-icons/blob/main/LICENSE
+
+[**D3.js**](https://d3js.org/)
+- Copyright 2010-2021 Mike Bostock
+- License (ISC): https://github.com/d3/d3/blob/main/LICENSE
+
+[**Pandas**](https://pandas.pydata.org/)
+- Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team. All rights reserved.
+- Copyright (c) 2011-2022, Open source contributors.
+- License (BSD-3-Clause): https://github.com/pandas-dev/pandas/blob/main/LICENSE
+
+[**Sequences Icicle**](https://observablehq.com/@kerryrodden/sequences-icicle)
+- Copyright 2020 Kerry Rodden
+- License (Apache 2.0): https://observablehq.com/@kerryrodden/sequences-icicle
+
+[**Sequences Sunburst**](https://observablehq.com/@kerryrodden/sequences-sunburst)
+- Copyright 2020 Kerry Rodden
+- License (Apache 2.0): https://observablehq.com/@kerryrodden/sequences-sunburst
+
+[**SVG World Map JS**](https://github.com/raphaellepuschitz/SVG-World-Map)
+- Copyright (c) Raphael Lepuschitz
+- License (MIT): https://github.com/raphaellepuschitz/SVG-World-Map/blob/master/LICENSE.md

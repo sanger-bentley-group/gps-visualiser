@@ -1,4 +1,4 @@
-// Convert from https://observablehq.com/@kerryrodden/sequences-icicle
+// Contain codes from Sequences Icicle (https://observablehq.com/@kerryrodden/sequences-icicle) by Kerry Rodden under Apache License 2.0. 
 
 async function icicle(summary, data, domainRange){
     const countries = Object.keys(summary).sort();

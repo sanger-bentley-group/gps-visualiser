@@ -1,5 +1,4 @@
-// Convert from https://observablehq.com/@kerryrodden/sequences-sunburst
-
+// Contain codes from Sequences Sunburst (https://observablehq.com/@kerryrodden/sequences-sunburst) by Kerry Rodden under Apache License 2.0. 
 
 async function sunburst(country, type, ageGroup, periods, data, domainRange){
     // Prepare clean slate for charts
