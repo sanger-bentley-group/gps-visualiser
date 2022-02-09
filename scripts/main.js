@@ -1,4 +1,3 @@
-// 'summary.json' is exported by backend, provide summary for all countries with available data
 // 'data.json' is exported by backend, provide data for all countries
 // 'alpha2.json' is static and provides conversion from alpha-2 code to country name
 
