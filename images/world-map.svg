@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Earth" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 450" xml:space="preserve">
-<!-- source for the svg: https://morioh.com/p/1ed2ddd34690 with further modifications -->
+
+<!-- Based on "world-states.svg" from SVG World Map JS (https://github.com/raphaellepuschitz/SVG-World-Map) with further modifications -->
+
 <defs>
     <style type="text/css">
         .land {
