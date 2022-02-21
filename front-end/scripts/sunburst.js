@@ -129,76 +129,93 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
 
     // Add mouse over and mouse out events to charts
     let charts = document.querySelectorAll('.sunburst');
+    let path = document.querySelector('#country-view-readout');
 
-    charts.forEach(chart => {
-        let path = document.querySelector('#country-view-readout');
-
-        // Update chart visual, absolute, percentage and path output
-        chart.addEventListener('mouseover', (e) => {
-            if (e.target instanceof SVGPathElement) {
-                let dataPath = e.target.getAttribute('data-path');
-                path.innerHTML = `Current Selection: ${dataPath.replaceAll('-', ' - ')}`;
-                path.classList.add('bold');
-
-                // Highlight same path in all charts, update absolute and percentage
-                charts.forEach(chart => {
-                    let percentage = chart.querySelector('.percentage');
-                    let absolute = chart.querySelector('.absolute');
-
-                    let rValue = chart.childNodes[0].getAttribute('data-rValue');
-                    
-                    let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
-                    if (selectedPath) {
-                        selectedPath.setAttribute('fill-opacity', '1.0');
-
-                        let dValue = selectedPath.getAttribute('data-dValue');
-                        percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`;
-                        absolute.innerHTML = `${dValue} / ${rValue}`;
-
-                        // If path is child, highlight parent as well
-                        let pathArray = dataPath.split(' - ');
-                        if (pathArray.length === 2) {
-                            let selectedParent = chart.querySelector(`[data-path='${pathArray[0]}']`);
-                            selectedParent.setAttribute('fill-opacity', '1.0');
-                        }
-                    } else {
-                        percentage.innerHTML = '0%';
-                        absolute.innerHTML = `0 / ${rValue}`;
-                    }
-                    
-                });
-            }
-        });
-
-
-        // Reset chart absolute, percentage and path output
-        chart.addEventListener('mouseout', (e) => {
+    // Update chart visual, absolute, percentage and path output
+    function highlight(e){
+        if (e.target instanceof SVGPathElement) {
             let dataPath = e.target.getAttribute('data-path');
-            path.innerHTML = '<b>Current Selection: </b>Select a Serotype or Lineage';
-            path.classList.remove('bold');
+            path.innerHTML = `Current Selection: ${dataPath.replaceAll('-', ' - ')}`;
+            path.classList.add('bold');
 
-            // Reset same path in all charts, reset absolute and percentage
+            // Highlight same path in all charts, update absolute and percentage
             charts.forEach(chart => {
                 let percentage = chart.querySelector('.percentage');
                 let absolute = chart.querySelector('.absolute');
 
                 let rValue = chart.childNodes[0].getAttribute('data-rValue');
                 
-                percentage.innerHTML = '--%';
-                absolute.innerHTML = `-- / ${rValue}`;
-                
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
                 if (selectedPath) {
-                    selectedPath.setAttribute('fill-opacity', '0.3');
+                    selectedPath.setAttribute('fill-opacity', '1.0');
 
-                    // If path is child, reset parent as well
+                    let dValue = selectedPath.getAttribute('data-dValue');
+                    percentage.innerHTML = `${((100 * dValue) / rValue).toPrecision(3)}%`;
+                    absolute.innerHTML = `${dValue} / ${rValue}`;
+
+                    // If path is child, highlight parent as well
                     let pathArray = dataPath.split(' - ');
                     if (pathArray.length === 2) {
                         let selectedParent = chart.querySelector(`[data-path='${pathArray[0]}']`);
-                        selectedParent.setAttribute('fill-opacity', '0.3');
+                        selectedParent.setAttribute('fill-opacity', '1.0');
                     }
+                } else {
+                    percentage.innerHTML = '0%';
+                    absolute.innerHTML = `0 / ${rValue}`;
                 }
             });
+        }
+    }
+
+    function reset(){
+        path.innerHTML = '<b>Current Selection: </b>Select a Serotype or Lineage';
+        path.classList.remove('bold');
+
+        charts.forEach(chart => {
+            let percentage = chart.querySelector('.percentage');
+            let absolute = chart.querySelector('.absolute');
+
+            let rValue = chart.childNodes[0].getAttribute('data-rValue');
+            
+            percentage.innerHTML = '--%';
+            absolute.innerHTML = `-- / ${rValue}`;
+            
+            chart.querySelectorAll('path').forEach(path => {
+                path.setAttribute('fill-opacity', '0.3');
+            });
+        });
+    }
+
+    // Save state of having an active selection or not
+    let SELECTED = false;
+
+    charts.forEach(chart => {
+        // Hovering support, can be overridden by active selection
+        chart.addEventListener('mouseover', (e) => {
+            if (SELECTED === false) {
+                highlight(e);
+            }
+        });
+        chart.addEventListener('mouseout', (e) => {
+            if (SELECTED === false) {
+                reset(e);
+            }
+        });
+
+        // Click support. Reset if clicked on active selection, otherwise change active selection.
+        chart.addEventListener('click', (e) => {
+            if (e.target instanceof SVGPathElement && SELECTED && e.target.getAttribute('fill-opacity') === '1.0') {
+                reset();
+                SELECTED = false;
+            } else {
+                reset();
+                if (e.target instanceof SVGPathElement) {
+                    highlight(e);
+                    SELECTED = true;
+                } else {
+                    SELECTED = false;
+                }
+            }
         });
     });
 }
