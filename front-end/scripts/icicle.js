@@ -129,12 +129,6 @@ async function icicle(summary, data, domainRange){
     let SELECTED = false;
 
     charts.forEach(chart => {
-        let chartId = chart.id;
-        let absolute = document.querySelector(`#${chartId}-absolute`);
-
-        let rValue = chart.childNodes[0].getAttribute('data-rValue');
-        absolute.innerHTML = `-- / ${rValue}`;
-
         // Hovering support, can be overridden by active selection
         chart.addEventListener('mouseover', (e) => {
             if (SELECTED === false) {
@@ -154,8 +148,12 @@ async function icicle(summary, data, domainRange){
                 SELECTED = false;
             } else {
                 reset();
-                highlight(e);
-                SELECTED = true;
+                if (e.target instanceof SVGRectElement) {
+                    highlight(e);
+                    SELECTED = true;
+                } else {
+                    SELECTED = false;
+                }
             }
         });
     });
