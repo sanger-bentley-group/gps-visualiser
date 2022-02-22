@@ -10,7 +10,7 @@ The Python script `processor.py` extracts and processes data from the GPS databa
 
 The script has two global lists that can be modified.
 - `ANTIBIOTICS`: It should contain full names of **FIVE** target antibiotics.
-- `COUNTRIES`: It should contain tuples of `("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")` of the countries  that should be included in `data.json`. The tuple requirement is due to the country names not being standardised in the database.
+- `COUNTRIES`: It should contain tuples of `("Country Alpha-2 Code", "Value in 'Country' Columns of the Database", "Link to research article")` of the countries that should be included in `data.json`. The tuple requirement is due to the country names not being standardised in the database, and links to papers are not included in the database. If the paper is not yet available, put the "Link to research article" as an empty string `""`.
 
 To generate the `data.json`,  put the database in the same directory/folder as the script and run the following command (change `database.db` to the file name of the database):
 ```

@@ -8,22 +8,24 @@ import sys
 # Enter five target antibiotics in full name in list
 ANTIBIOTICS = ['penicillin', 'chloramphenicol', 'erythromycin', 'co-trimoxazole', 'tetracycline']
 
-# As the country names are not standardised in the database, enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database")' in list
+# As the country names are not standardised in the database and links to papers are not available in the database, 
+# Enter target countries in tuples of '("Country Alpha-2 Code", "Value in 'Country' Columns of the Database", "Link to research article")' in list
+# If the paper is not yet available, put the "Link to research article" as an empty string
 COUNTRIES = [
-        ('AR', 'ARGENTINA'), 
-        ('BR', 'BRAZIL'), 
-        ('IN', 'INDIA'), 
-        ('KH', 'CAMBODIA'), 
-        ('NP', 'NEPAL'), 
-        ('RU', 'RUSSIAN FEDERATION'), 
-        ('ZA', 'SOUTH AFRICA'), 
-        ('PG', 'PAPUA NEW GUINEA'), 
-        ('MZ', 'MOZAMBIQUE'),
-        ('NG', 'NIGERIA'),
-        ('PK', 'PAKISTAN'),
-        ('IL', 'ISRAEL'),
-        ('MW', 'MALAWI'),
-        ('GM', 'THE GAMBIA')
+        ('AR', 'ARGENTINA', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000636'), 
+        ('BR', 'BRAZIL', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000635'), 
+        ('IN', 'INDIA', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000645'), 
+        ('KH', 'CAMBODIA', ''), 
+        ('NP', 'NEPAL', ''), 
+        ('RU', 'RUSSIAN FEDERATION', ''), 
+        ('ZA', 'SOUTH AFRICA', ''), 
+        ('PG', 'PAPUA NEW GUINEA', ''), 
+        ('MZ', 'MOZAMBIQUE', ''),
+        ('NG', 'NIGERIA', ''),
+        ('PK', 'PAKISTAN', ''),
+        ('IL', 'ISRAEL', ''),
+        ('MW', 'MALAWI', ''),
+        ('GM', 'THE GAMBIA', '')
     ]
 
 
@@ -146,12 +148,12 @@ def main():
         output['domainRange']['lineage']['range'].append(color)
     
     # Add information of each country
-    for countryA2, countryDB in COUNTRIES:
+    for countryA2, countryDB, countryLink in COUNTRIES:
         # Create new DF holding information of this country only
         dfCountry = df[df['Country'] == countryDB]
         if dfCountry.empty:
             raise Exception(f'Country name "{countryDB}" is not found in the database or has no valid data. Check spelling and casing of your input, and the completeness of data of that country.')
-        output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False]}
+        output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False], 'link': countryLink}
         output['global'][countryA2] = {'carriage': [], 'disease': []}
         output['country'][countryA2] = {'carriage': {}, 'disease': {}, 'resistance': {}}
  

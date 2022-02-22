@@ -259,6 +259,15 @@ async function main() {
                     sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
                 });
             });
+
+            // Add country paper link
+            let paperLinkDiv = document.querySelector('#paper-link')
+            let paperLink = summary[selectedCountry]['link']
+            if (paperLink.length > 0){
+                paperLinkDiv.innerHTML = `<a href="${paperLink}" target="_blank">For more details, click here to see the relevant research article</a>`;
+            } else {
+                paperLinkDiv.innerHTML = ''
+            }
         }
     }
 
