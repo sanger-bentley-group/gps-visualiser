@@ -242,6 +242,16 @@ section .title-bg {
     filter: saturate(100%);
 }
 
+.flag-and-code {
+    display: flex;
+    align-items: center;
+}
+
+.country-code {
+    width: 30px;
+    pointer-events: none;
+}
+
 .global-icicles {
     min-width: 700px;
 }
