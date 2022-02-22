@@ -257,7 +257,7 @@ section .title-bg {
 }
 
 .global-icicle-content {
-    max-height: 50vh;
+    max-height: 55vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
