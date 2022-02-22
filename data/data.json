@@ -16,7 +16,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": "https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000636"
         },
         "BR": {
             "periods": [
@@ -34,7 +35,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": "https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000635"
         },
         "IN": {
             "periods": [
@@ -52,7 +54,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": "https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000645"
         },
         "KH": {
             "periods": [
@@ -70,7 +73,8 @@
             "ageGroups": [
                 true,
                 false
-            ]
+            ],
+            "link": ""
         },
         "NP": {
             "periods": [
@@ -88,7 +92,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "RU": {
             "periods": [
@@ -106,7 +111,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "ZA": {
             "periods": [
@@ -129,7 +135,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "PG": {
             "periods": [
@@ -147,7 +154,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "MZ": {
             "periods": [
@@ -160,7 +168,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "NG": {
             "periods": [
@@ -178,7 +187,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "PK": {
             "periods": [
@@ -191,7 +201,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "IL": {
             "periods": [
@@ -209,7 +220,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "MW": {
             "periods": [
@@ -227,7 +239,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         },
         "GM": {
             "periods": [
@@ -250,7 +263,8 @@
             "ageGroups": [
                 true,
                 true
-            ]
+            ],
+            "link": ""
         }
     },
     "global": {
