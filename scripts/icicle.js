@@ -3,8 +3,8 @@
 async function icicle(summary, data, domainRange){
     const countries = Object.keys(summary).sort();
 
-    // Build icicle charts for both disease and carriage types
-    for (const type of ['disease', 'carriage']) {
+    // Build icicle charts for all, disease and carriage types
+    for (const type of ['all', 'disease', 'carriage']) {
         let typeDiv = document.querySelector(`#global-icicle-${type}`);
 
         // Build icicle charts for all countries with available data
