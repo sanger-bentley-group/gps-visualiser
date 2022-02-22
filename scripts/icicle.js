@@ -17,18 +17,32 @@ async function icicle(summary, data, domainRange){
             let flagDiv = document.createElement('div');
             flagDiv.classList.add('icicle-flag-div')
 
+            let flagAndCode = document.createElement('div');
+            flagAndCode.classList.add(`flag-and-code`);
+
             let flagElement = document.createElement('object');
             flagElement.id = `${country}-flag`;
             flagElement.classList.add('flag');
             flagElement.type = 'image/svg+xml';
             flagElement.data = `images/flags/${country}.svg`;
 
+            let countryCode = document.createElement('div');
+            countryCode.classList.add('country-code');
+            countryCode.innerHTML = country;
+
+            flagAndCode.appendChild(countryCode);
+            flagAndCode.appendChild(flagElement);
+
+            // addEventListener to highlight country in map when hovering its flag
+            flagAndCode.addEventListener('mouseover', hoverFlag);
+            flagAndCode.addEventListener('mouseout', unhoverFlag);
+
             let allVac = summary[country]['periods'];
             let latestVac = allVac[allVac.length - 1];
             let latestVacDiv = document.createElement('div');
             latestVacDiv.innerHTML = `${latestVac[0]} ${latestVac[1]}`
 
-            flagDiv.appendChild(flagElement);
+            flagDiv.appendChild(flagAndCode);
             flagDiv.appendChild(latestVacDiv);
 
             let icicleId = `global-${country}-${type}`;
@@ -157,6 +171,27 @@ async function icicle(summary, data, domainRange){
             }
         });
     });
+
+    // Functions for hovering flag to highlight country in map
+    const map = document.querySelector('#world-map').contentDocument;
+
+    function hoverFlag(e) {
+        if (e.target.classList.contains('flag-and-code')) {
+            let selectedCountry = e.target.childNodes[0].innerHTML;
+            map.querySelector(`#${selectedCountry}`).classList.add('country-label-active')
+            map.querySelector(`#${selectedCountry}-label-group`).classList.add('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.add('country-label-bg-active');
+        }
+    }
+
+    function unhoverFlag(e) {
+        if (e.target.classList.contains('flag-and-code')) {
+            let selectedCountry = e.target.childNodes[0].innerHTML;
+            map.querySelector(`#${selectedCountry}`).classList.remove('country-label-active')
+            map.querySelector(`#${selectedCountry}-label-group`).classList.remove('country-label-active');
+            map.querySelector(`#${selectedCountry}-label-group`).firstChild.classList.remove('country-label-bg-active');
+        }
+    }
 }
 
 
@@ -264,6 +299,7 @@ async function drawIcicle(data, target, domainRange) {
     })();
     document.querySelector(target).appendChild(chart);
 }
+
 
 
 // Helper function that transforms the given data into a hierarchical format.
