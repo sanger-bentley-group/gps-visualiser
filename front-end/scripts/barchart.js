@@ -12,6 +12,8 @@ async function barchart(data, antibiotics){
 
     legend
         .attr("viewBox", `0 0 ${150 * antibiotics.length} 80`)
+        .attr("height", '80')
+        .attr("width", `${150 * antibiotics.length}`)
         .style('font', '12px sans-serif');
 
     legend.selectAll("squares")
