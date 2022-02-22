@@ -154,8 +154,8 @@ def main():
         if dfCountry.empty:
             raise Exception(f'Country name "{countryDB}" is not found in the database or has no valid data. Check spelling and casing of your input, and the completeness of data of that country.')
         output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False], 'link': countryLink}
-        output['global'][countryA2] = {'carriage': [], 'disease': []}
-        output['country'][countryA2] = {'carriage': {}, 'disease': {}, 'resistance': {}}
+        output['global'][countryA2] = {'all': [], 'carriage': [], 'disease': []}
+        output['country'][countryA2] = {'all': {}, 'carriage': {}, 'disease': {}, 'resistance': {}}
  
         # Fill in periods in Country Summary
         periods = dfCountry['VaccinePeriod'].unique()
@@ -187,9 +187,9 @@ def main():
             ageGroups.append((1, 'N'))
 
         # Go thru both disease and carriage for all views
-        for Manifesttype, JSONtype in (('IPD', 'disease'), ('Carriage', 'carriage')):
+        for Manifesttype, JSONtype in ((['IPD', 'Carriage'], 'all'), (['IPD'], 'disease'), (['Carriage'], 'carriage')):
             # Fill in data for Global View
-            dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == periodsOutput[-1][2])].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+            dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == periodsOutput[-1][2])].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
             dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
             dfCountryType = dfCountryType[['group', 'size']]
             output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
@@ -200,7 +200,7 @@ def main():
 
                 # Fill in data for Lineage by Serotype in Country View
                 for i, p in enumerate(periodsOutput):
-                    dfCountryType = dfCountry[(dfCountry['Manifest_type'] == Manifesttype) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+                    dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
                     dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
                     dfCountryType = dfCountryType[['group', 'size']]
                     output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()

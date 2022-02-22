@@ -200,10 +200,16 @@ async function main() {
     // Update global view charts based on current type selector
     document.querySelectorAll('input[name="aside-type"]').forEach(input => {
         input.addEventListener('change', (e) => {
-            if (e.target.value === 'disease') {
+            if (e.target.value === 'all') {
+                document.querySelector('#global-icicle-all').classList.remove('removed');
+                document.querySelector('#global-icicle-disease').classList.add('removed');
+                document.querySelector('#global-icicle-carriage').classList.add('removed');
+            } else if (e.target.value === 'disease') {
+                document.querySelector('#global-icicle-all').classList.add('removed');
                 document.querySelector('#global-icicle-disease').classList.remove('removed');
                 document.querySelector('#global-icicle-carriage').classList.add('removed');
             } else {
+                document.querySelector('#global-icicle-all').classList.add('removed');
                 document.querySelector('#global-icicle-disease').classList.add('removed');
                 document.querySelector('#global-icicle-carriage').classList.remove('removed');
             }

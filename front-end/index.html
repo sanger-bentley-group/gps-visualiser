@@ -35,18 +35,21 @@
                     <div class="global-icicles">
                         <div id="icicle-output"><b>Current Selection: </b>Select a Serotype or Lineage</div>
                         <div id="global-icicles-warning" class="removed warning bold">Please select one or more countries.</div>
-                        <div id="global-icicle-disease" class="global-icicle-content"></div>
+                        <div id="global-icicle-all" class="global-icicle-content"></div>
+                        <div id="global-icicle-disease" class="global-icicle-content removed"></div>
                         <div id="global-icicle-carriage" class="global-icicle-content removed"></div>
                     </div>
                     <div class="hor-selectors">
                         <div>
                             <h2>Type</h2>
-                            <div class="toggle">
-                                <input type="radio" name="aside-type" value="disease" id="aside-type-disease" checked="checked" autocomplete="off"/>
-                                <label for="aside-type-disease">Disease</label>
-                                <input type="radio" name="aside-type" value="carriage" id="aside-type-carriage" autocomplete="off"/>
-                                <label for="aside-type-carriage">Carriage</label>
-                            </div>
+                        </div>
+                        <div class="toggle">
+                            <input type="radio" name="aside-type" value="all" id="aside-type-all" checked="checked" autocomplete="off"/>
+                            <label for="aside-type-all">All</label>
+                            <input type="radio" name="aside-type" value="disease" id="aside-type-disease" autocomplete="off"/>
+                            <label for="aside-type-disease">Disease</label>
+                            <input type="radio" name="aside-type" value="carriage" id="aside-type-carriage" autocomplete="off"/>
+                            <label for="aside-type-carriage">Carriage</label>
                         </div>
                     </div>
                 </div>
