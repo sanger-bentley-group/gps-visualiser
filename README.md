@@ -21,6 +21,8 @@ python processor.py database.db
 ## Front-end Website
 The website takes the JSON file `data.json` and renders the charts in both global and pre-country views on the fly. The website utilises HTML5, JavaScript (vanilla JavaScript with [D3.js](https://d3js.org/) for chart rendering) to run fully on the client-side. This website has a responsive web design using a mixture of CSS Flexbox and Media Query, but is not yet optimised for mobile devices.
 
+The `data.json` file on this repo is only a dummy file that showcases the data structure.
+
 &nbsp;
 ## Requirements & Compatibility
 Back-end Python script requirements:
@@ -30,6 +32,10 @@ Back-end Python script requirements:
 Front-end website tested on:
 - Firefox 96
 - Chrome 97
+
+&nbsp;
+## Live Demo
+A live demo is available at https://www.harryhung.com/gps-visualiser/. It might not be running on the latest code at all time. 
 
 &nbsp;
 ## Credits
