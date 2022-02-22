@@ -72,7 +72,7 @@ async function main() {
         labelBG.classList.add('country-label-bg');
         countryLabel.before(labelBG);
 
-        // Fill country-selector with flags based on summary.json
+        // Fill country-selector with flags based on data.json
         // Flags from https://flagicons.lipis.dev/
         let flagElement = document.createElement('object');
         flagElement.id = `${country}-flag`;
@@ -226,7 +226,7 @@ async function main() {
             overlay.classList.remove('removed');
             modal.classList.remove('removed');
 
-            // Display suitable age group information based on summary.json
+            // Display suitable age group information based on data.json
             let ageGroups = summary[selectedCountry]['ageGroups'];
             let selectedAgeGroup = 0;
             let selectedType = 'disease';
