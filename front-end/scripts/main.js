@@ -1,6 +1,9 @@
 // 'data.json' is exported by backend, provide data for all countries
 // 'alpha2.json' is static and provides conversion from alpha-2 code to country name
 
+// Global variable for load state
+let LOADED = false;
+
 // Delay main function until the world-map.svg is loaded
 const mapObject = document.querySelector('#world-map');
 window.addEventListener('DOMContentLoaded', function() {
@@ -9,11 +12,16 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// addEventListener method not detecting SVG loading reliably
-mapObject.onload = main();
+// addEventListener method not detecting SVG loading reliably on all browsers, check whether backup method is needed after 1000ms
+mapObject.onload = setTimeout(() => {
+    if (LOADED === false) {
+        main();
+    }
+}, 1000);
 
 
 async function main() {
+    LOADED = true;
     const map = mapObject.contentDocument;
     const alpha2 = await (await fetch('data/static/alpha2.json')).json();
     const data = await (await fetch('data/data.json')).json();
