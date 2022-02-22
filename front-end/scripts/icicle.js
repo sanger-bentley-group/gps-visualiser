@@ -176,7 +176,6 @@ async function icicle(summary, data, domainRange){
     const map = document.querySelector('#world-map').contentDocument;
 
     function hoverFlag(e) {
-        console.log(e.target);
         if (e.target.classList.contains('flag-and-code')) {
             let selectedCountry = e.target.childNodes[0].innerHTML;
             map.querySelector(`#${selectedCountry}`).classList.add('country-label-active')
