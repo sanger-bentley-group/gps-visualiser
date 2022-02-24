@@ -2,6 +2,7 @@
 
 * {
     font-family: Arial, Helvetica, sans-serif;
+    cursor: default;
 }
 
 h1 {
@@ -34,6 +35,21 @@ path, rect {
     background-color: rgba(155, 155, 155, 0.5);
     border-radius: 20px;
     border: transparent;
+}
+
+a {
+    color: #1a4594; 
+    text-decoration: none;
+}
+
+a:hover {
+    color: #4B9DEA;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+a:active{
+    color: #2bdfe6;
 }
 
 /* || SITEWIDE */
@@ -77,8 +93,18 @@ main {
     text-align: center;
 }
 
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+    background-color: whitesmoke;
+    border-radius:0px 5px 0px 0px;
+    box-shadow: 10px 10px 8px #888888;
+    font-size: 0.8em;
+}
+
 .aside-content {
-    width: 95%;
     height: 95vh;
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -158,6 +184,17 @@ section .title-bg {
     pointer-events: auto;
 }
 
+.credit-modal-content {
+    position: relative;
+    width: 50%;
+    max-height: 90vh;
+    overflow: auto;
+    border-radius: 5px;
+    padding: 5%;
+    background-color: whitesmoke;
+    pointer-events: auto;
+}
+
 .modal-close {
     position: absolute;
     top: 5px;
@@ -170,6 +207,8 @@ section .title-bg {
 
 .modal-close:hover {
     color: DimGray;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .country-view {
@@ -497,6 +536,7 @@ select {
 
     main {
       flex-direction: column-reverse;
+      margin-bottom: 20px;
     }
 
     main section {
@@ -508,6 +548,11 @@ select {
         margin: 1%;
         width: 100%;
         border-radius: 15px;
+    }
+
+    footer {
+        width: 100%;
+        border-radius:5px 5px 0px 0px;
     }
 
     .aside-content {
