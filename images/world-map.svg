@@ -3095,7 +3095,7 @@
     <text x="898" y="387" id="NZ-label">New Zealand</text>
     <text x="618" y="185" id="OM-label">Oman</text>
     <text x="244" y="227" id="PA-label">Panama</text>
-    <text x="258" y="282" id="PE-label">Peru</text>
+    <text x="258" y="290" id="PE-label">Peru</text>
     <text x="66" y="295" id="PF-label">French Polynesia</text>
     <text x="877" y="274" id="PG-label">Papua New Guinea</text>
     <text x="803" y="214" id="PH-label">Philippines</text>
@@ -3151,7 +3151,7 @@
     <text x="563" y="273" id="TZ-label">Tanzania</text>
     <text x="545" y="101" id="UA-label">Ukraine</text>
     <text x="555" y="249" id="UG-label">Uganda</text>
-    <text x="184" y="130" id="US-label">United States</text>
+    <text x="215" y="135" id="US-label">United States</text>
     <text x="320" y="355" id="UY-label">Uruguay</text>
     <text x="631" y="123" id="UZ-label">Uzbekistan</text>
     <text x="500" y="122" id="VA-label">Holy See</text>
