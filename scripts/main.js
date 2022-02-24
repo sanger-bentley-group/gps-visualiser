@@ -325,7 +325,8 @@ async function main() {
         document.querySelector('#country-view-data-antibiotic').checked = false;
         document.querySelector('#country-view-age-0').checked = true;
         document.querySelector('#country-view-age-1').checked = false;
-        document.querySelector('#country-view-type-disease').checked = true;
+        document.querySelector('#country-view-type-all').checked = true;
+        document.querySelector('#country-view-type-disease').checked = false;
         document.querySelector('#country-view-type-carriage').checked = false;
     }
 
