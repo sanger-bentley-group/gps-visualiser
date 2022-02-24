@@ -235,7 +235,7 @@ async function main() {
             // Display suitable age group information based on data.json
             let ageGroups = summary[selectedCountry]['ageGroups'];
             let selectedAgeGroup = 0;
-            let selectedType = 'disease';
+            let selectedType = 'all';
 
             if (ageGroups.filter(Boolean).length === 2) {
                 ageBothDiv.classList.remove('removed');

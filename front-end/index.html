@@ -25,7 +25,7 @@
                         <h3 class="unbold">(After the Latest Vaccination)</h3>
                     </div>
                     <br>
-                    <div class="hor-selectors">
+                    <div class="hor-selectors gap30">
                         <button type="button" id="sidebar-select-all">Select All</button>
                         <div>Select Countries to Display</div>
                         <button type="button" id="sidebar-deselect-all">Deselect All</button>
@@ -39,7 +39,7 @@
                         <div id="global-icicle-disease" class="global-icicle-content removed"></div>
                         <div id="global-icicle-carriage" class="global-icicle-content removed"></div>
                     </div>
-                    <div class="hor-selectors">
+                    <div class="hor-selectors gap30">
                         <div>
                             <h2>Type</h2>
                         </div>
@@ -85,7 +85,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="hor-selectors"> 
+                <div class="hor-selectors gap30"> 
                     <div>
                         <h2>Data</h2>
                         <div class="toggle">
@@ -114,7 +114,9 @@
                     <div id="country-view-type-toggle">
                         <h2>Type</h2>
                         <div class="toggle">
-                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" checked="checked" autocomplete="off"/>
+                            <input type="radio" name="country-view-type" value="all" id="country-view-type-all" checked="checked" autocomplete="off"/>
+                            <label for="country-view-type-all">All</label>
+                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" autocomplete="off"/>
                             <label for="country-view-type-disease">Disease</label>
                             <input type="radio" name="country-view-type" value="carriage" id="country-view-type-carriage" autocomplete="off"/>
                             <label for="country-view-type-carriage">Carriage</label>

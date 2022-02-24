@@ -80,10 +80,11 @@ main {
 .aside-content {
     width: 95%;
     height: 95vh;
-    overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(155, 155, 155, 0.2) transparent; 
+    display: flex;
+    flex-direction: column;
 }
 
 .aside-country-container {
@@ -204,8 +205,12 @@ section .title-bg {
     margin: 1em;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+}
+
+.gap30 {
+    gap: 30px;
 }
 
 .country-view .hor-selectors {
@@ -254,10 +259,11 @@ section .title-bg {
 
 .global-icicles {
     min-width: 700px;
+    overflow: auto;
+    flex: 1;
 }
 
 .global-icicle-content {
-    max-height: 55vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -502,6 +508,10 @@ select {
         margin: 1%;
         width: 100%;
         border-radius: 15px;
+    }
+
+    .aside-content {
+        height: 80vh;
     }
 
     .country-view .hor-selectors {
