@@ -381,6 +381,26 @@ async function main() {
     }
 
 
+    // Show and close credit modal 
+    const creditOverlay = document.querySelector('#credit-overlay');
+    const creditModal = document.querySelector('#credit-wrapper');
+    const creditLink = document.querySelector('#credit-link');
+    const creditCloseBtn = document.querySelector('#credit-close-btn');
+
+    creditLink.addEventListener('click', () => {
+        creditOverlay.classList.remove('removed');
+        creditModal.classList.remove('removed');
+    });
+
+    creditCloseBtn.addEventListener('click', closeCreditModal);
+    creditOverlay.addEventListener('click', closeCreditModal);
+
+    function closeCreditModal() {
+        creditOverlay.classList.add('removed');
+        creditModal.classList.add('removed');
+    }
+
+
     // Helper function, get country from event target
     function getCountry(target) {
         if (target.tagName.toLowerCase() === 'svg') {
