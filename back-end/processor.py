@@ -64,7 +64,7 @@ def main():
         with sqlite3.connect(dp_path) as con:
             df_meta = pd.read_sql_query('SELECT * FROM table1_Metadata_v3', con)
             df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v2', con)
-            df_ana = pd.read_sql_query('SELECT * FROM table3_Analysis_v3', con)
+            df_ana = pd.read_sql_query('SELECT * FROM table3_analysis_pubCol', con)
     except pd.io.sql.DatabaseError:
         raise Exception('Incorrect or incompatible database is used.') from None
 
@@ -85,7 +85,7 @@ def main():
     df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
     qc_cols = ['qc', 'Public_Name']
     df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
-    ana_cols = (['public_name', 'duplicate', 'Manifest_type', 'children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour'] 
+    ana_cols = (['public_name', 'duplicate', 'Manifest_type', 'children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
                 + antibiotics_cols)
     df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
     
@@ -120,6 +120,8 @@ def main():
     df.drop(df[df['VaccinePeriod'] == '_'].index, inplace=True)
     # Only preserving rows with a valid children<5yrs value
     df.drop(df[df['children<5yrs'] == 'UKWN'].index, inplace=True)
+    # Only preserving rows with published data
+    df.drop(df[df['Published(Y/N)'] != 'Y'].index, inplace=True)
 
     # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
     df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)

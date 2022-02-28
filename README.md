@@ -33,6 +33,9 @@ Front-end website tested on:
 - Firefox 96
 - Chrome 97
 
+GPS Database requirement:
+- v3.2+
+
 &nbsp;
 ## Live Demo
 A live demo is available at https://www.harryhung.com/gps-visualiser/. It might not be running on the latest code at all time. 
