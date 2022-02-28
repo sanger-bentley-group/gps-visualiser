@@ -56,7 +56,6 @@ async function icicle(summary, data, domainRange){
             
             let percentageDiv = document.createElement('div');
             percentageDiv.id = `${icicleId}-percentage`;
-            percentageDiv.innerHTML = '--%'
 
             let absoluteDiv = document.createElement('div');
             absoluteDiv.id = `${icicleId}-absolute`;
@@ -138,6 +137,9 @@ async function icicle(summary, data, domainRange){
             });
         });
     }
+
+    // Initialise value display
+    reset();
 
     // Save state of having an active selection or not
     let SELECTED = false;
