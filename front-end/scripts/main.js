@@ -381,6 +381,29 @@ async function main() {
     }
 
 
+    // Test capture function
+    let captureTarget = document.querySelector('#country-view-serotype');
+    document.querySelector('#capture-test-png').addEventListener('click', () => {
+        html2canvas(captureTarget, {scale: 5, backgroundColor: null}).then(canvas => {
+            let dl = document.createElement("a");
+            dl.setAttribute("href", canvas.toDataURL());
+            dl.setAttribute("download", "test.png");
+            dl.click();
+            document.body.removeChild(dl);
+        });
+    });
+
+    document.querySelector('#capture-test-svg').addEventListener('click', () => {
+        domtoimage.toSvg(captureTarget).then(function(dataUrl){
+            let dl = document.createElement("a");
+            dl.setAttribute("href", dataUrl);
+            dl.setAttribute("download", "test.svg");
+            dl.click();
+            document.body.removeChild(dl);
+        });
+    });
+
+
     // Show and close credit modal 
     const creditOverlay = document.querySelector('#credit-overlay');
     const creditModal = document.querySelector('#credit-wrapper');
