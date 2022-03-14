@@ -380,26 +380,37 @@ async function main() {
             
     }
 
-
-    // Test capture function
+    // Capture functions variables
     let captureTarget = document.querySelector('#country-view-serotype');
-    document.querySelector('#capture-test-png').addEventListener('click', () => {
+    let captureBtn = document.querySelector('#download-button');
+    let captureDropDown = document.querySelector('#download-dropdown-content')
+
+    // Capture as PNG function
+    document.querySelector('#capture-png').addEventListener('click', () => {
+        captureBtn.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div><div></div></div> Preparing...'
+        captureDropDown.style.display = 'none';
         html2canvas(captureTarget, {scale: 5, backgroundColor: null}).then(canvas => {
             let dl = document.createElement("a");
             dl.setAttribute("href", canvas.toDataURL());
-            dl.setAttribute("download", "test.png");
+            dl.setAttribute("download", "sunburst.png");
             dl.click();
-            document.body.removeChild(dl);
+            captureBtn.innerHTML = '⭳ Download';
+            captureDropDown.style.display = '';
         });
     });
 
-    document.querySelector('#capture-test-svg').addEventListener('click', () => {
+
+    // Capture as SVG function
+    document.querySelector('#capture-svg').addEventListener('click', () => {
+        captureBtn.innerHTML = '<div class="lds-ring"><div></div><div></div><div></div><div></div></div> Preparing...'
+        captureDropDown.style.display = 'none';
         domtoimage.toSvg(captureTarget).then(function(dataUrl){
             let dl = document.createElement("a");
             dl.setAttribute("href", dataUrl);
-            dl.setAttribute("download", "test.svg");
+            dl.setAttribute("download", "sunburst.svg");
             dl.click();
-            document.body.removeChild(dl);
+            captureBtn.innerHTML = '⭳ Download';
+            captureDropDown.style.display = '';
         });
     });
 

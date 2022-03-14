@@ -48,9 +48,21 @@ This project uses Open Source components. You can find the source code of their 
 - Copyright (c) 2013 Panayiotis Lipiridis
 - License (MIT): https://github.com/lipis/flag-icons/blob/main/LICENSE
 
+[**css-spinner**](https://loading.io/css/)
+- CC0 License
+
 [**D3.js**](https://d3js.org/)
 - Copyright 2010-2021 Mike Bostock
 - License (ISC): https://github.com/d3/d3/blob/main/LICENSE
+
+[**DOM to Image**](https://github.com/tsayen/dom-to-image)
+- Copyright 2015 Anatolii Saienko
+- Copyright 2012 Paul Bakaus
+- License (MIT): https://github.com/tsayen/dom-to-image/blob/master/LICENSE
+
+[**html2canvas**](https://html2canvas.hertzen.com/)
+- Copyright (c) 2012 Niklas von Hertzen
+- License (MIT): https://github.com/niklasvh/html2canvas/blob/master/LICENSE
 
 [**Pandas**](https://pandas.pydata.org/)
 - Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team. All rights reserved.
