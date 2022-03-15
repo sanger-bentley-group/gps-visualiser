@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Visualiser</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="gps.ico"/>
+</head>
+<body>
+    <div class="container"> 
+        <main>
+            <section>
+                <!-- source for the world-map svg: https://morioh.com/p/1ed2ddd34690 with further modifications -->
+                <object id="world-map" type="image/svg+xml" data="images/world-map.svg"></object>
+                <div class="title-bg">
+                    <h2>Select a Country for Historical Data, Antibiotic Resistance and more...</h2>
+                </div>
+            </section>
+            <aside>
+                <div class="aside-content">
+                    <div id="sidebar-title">
+                        <h2>Global Serotypes and Lineages</h2>
+                        <h3 class="unbold">(After the Latest Vaccination)</h3>
+                    </div>
+                    <br>
+                    <div class="hor-selectors gap30">
+                        <button type="button" id="sidebar-select-all">Select All</button>
+                        <div>Select Countries to Display</div>
+                        <button type="button" id="sidebar-deselect-all">Deselect All</button>
+                    </div>
+                    <div id="country-selector" class="hor-selectors flex-wrap">
+                    </div>
+                    <div class="global-icicles">
+                        <div id="icicle-output"><b>Current Selection: </b>Select a Serotype or Lineage</div>
+                        <div id="global-icicles-warning" class="removed warning bold">Please select one or more countries.</div>
+                        <div id="global-icicle-all" class="global-icicle-content"></div>
+                        <div id="global-icicle-disease" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-carriage" class="global-icicle-content removed"></div>
+                    </div>
+                    <div class="hor-selectors gap30">
+                        <div>
+                            <h2>Type</h2>
+                        </div>
+                        <div class="toggle">
+                            <input type="radio" name="aside-type" value="all" id="aside-type-all" checked="checked" autocomplete="off"/>
+                            <label for="aside-type-all">All</label>
+                            <input type="radio" name="aside-type" value="disease" id="aside-type-disease" autocomplete="off"/>
+                            <label for="aside-type-disease">Disease</label>
+                            <input type="radio" name="aside-type" value="carriage" id="aside-type-carriage" autocomplete="off"/>
+                            <label for="aside-type-carriage">Carriage</label>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div class="modal-overlay removed" id="country-view-overlay"></div>
+    <div class="modal-wrapper removed" id="country-view-wrapper">
+        <div class="modal-content">
+            <a id="close-btn" class="modal-close">&times;</a>
+            <div class="country-view">
+                <div id="country-view-title"></div>
+                <div id="country-view-readout"><b>Current Selection: </b>Select a Serotype or Lineage</div>
+                <div class="download-dropdown">
+                    <button id="download-button" disabled>⭳ Download</button>
+                    <div id="download-dropdown-content" class="download-dropdown-content">
+                        <a id="capture-png">As PNG (Raster)</a>
+                        <a id="capture-svg">As SVG (Vector)</a>
+                    </div>
+                </div>
+                <div id="country-view-serotype" class="country-view-serotype"></div>
+                <div id="country-view-antibiotic" class="country-view-antibiotic removed">
+                    <div id="barchart-legend" class="barchart-legend"></div>
+                    <div id="antibiotic-barcharts" class="antibiotic-barcharts"></div>
+                </div>
+                <div id='capture-test-output'></div>
+                <div class="hor-selectors serotype-lineage-select" id="serotype-lineage-select">
+                    <h2>Show</h2>
+                    <div class="select-group">
+                        <label for="serotype-select">Serotype</label>
+                        <select name="serotype-select" id="serotype-select">
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <h2>and</h2>
+                    <div class="select-group">
+                        <label for="lineage-select">GPSC</label>
+                        <select name="lineage-select" id="lineage-select">
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="hor-selectors gap30"> 
+                    <div>
+                        <h2>Data</h2>
+                        <div class="toggle">
+                            <input type="radio" name="country-view-data" value="serotype" id="country-view-data-serotype" checked="checked" autocomplete="off"/>
+                            <label for="country-view-data-serotype">Lineages by Serotypes</label>
+                            <input type="radio" name="country-view-data" value="antibiotic" id="country-view-data-antibiotic" autocomplete="off"/>
+                            <label for="country-view-data-antibiotic">Antibiotic Resistance by Lineages</label>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Age Group</h2>
+                        <!-- Suitable div will be selected based on country summary data by JS-->
+                        <div id="age-both-div" class="toggle">
+                            <input type="radio" name="country-view-age" value="0" id="country-view-age-0" checked="checked" autocomplete="off"/>
+                            <label for="country-view-age-0">&lt; 5 yo</label>
+                            <input type="radio" name="country-view-age" value="1" id="country-view-age-1" autocomplete="off"/>
+                            <label for="country-view-age-1">≥ 5 yo</label>
+                        </div>
+                        <div id="age-0-div">
+                            &lt; 5 yo
+                        </div>
+                        <div id="age-1-div">
+                            ≥ 5 yo
+                        </div>
+                    </div>
+                    <div id="country-view-type-toggle">
+                        <h2>Type</h2>
+                        <div class="toggle">
+                            <input type="radio" name="country-view-type" value="all" id="country-view-type-all" checked="checked" autocomplete="off"/>
+                            <label for="country-view-type-all">All</label>
+                            <input type="radio" name="country-view-type" value="disease" id="country-view-type-disease" autocomplete="off"/>
+                            <label for="country-view-type-disease">Disease</label>
+                            <input type="radio" name="country-view-type" value="carriage" id="country-view-type-carriage" autocomplete="off"/>
+                            <label for="country-view-type-carriage">Carriage</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="paper-link"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div><a href="https://www.pneumogen.net/gps/" target="_blank">The Global Pneumococcal Sequencing Project</a> | <a id='credit-link'>Open Source Components Credits</a></div>
+    </footer>
+
+    <div class="modal-overlay removed" id="credit-overlay"></div>
+    <div class="modal-wrapper removed" id="credit-wrapper">
+        <div class="credit-modal-content">
+            <a id="credit-close-btn" class="modal-close">&times;</a>
+            <div>This site uses Open Source components. You can find the source code of their open source projects along with license information below. I acknowledge and am grateful to these developers for their contributions to open source.</div>
+            <div>
+                <ul class="credit-list">
+                    <li><a href="https://flagicons.lipis.dev/">Country Flags in SVG</a> | <a href="https://github.com/lipis/flag-icons/blob/main/LICENSE">License (MIT)</a> | Copyright (c) 2013 Panayiotis Lipiridis</li>
+                    <li><a href="https://loading.io/css/">css-spinner</a> | CC0 License</li>
+                    <li><a href="https://d3js.org/">D3.js</a> | <a href="https://github.com/d3/d3/blob/main/LICENSE">License (ISC)</a> | Copyright 2010-2021 Mike Bostock</li>
+                    <li><a href="https://observablehq.com/@kerryrodden/sequences-icicle">DOM to Image</a> | <a href="https://github.com/tsayen/dom-to-image/blob/master/LICENSE">License (MIT)</a> | Copyright 2015 Anatolii Saienko; Copyright 2012 Paul Bakaus</li>
+                    <li><a href="https://html2canvas.hertzen.com/">html2canvas</a> | <a href="https://github.com/niklasvh/html2canvas/blob/master/LICENSE">License (MIT)</a> | Copyright (c) 2012 Niklas von Hertzen</li>
+                    <li><a href="https://observablehq.com/@kerryrodden/sequences-icicle">Sequences Icicle</a> | <a href="https://observablehq.com/@kerryrodden/sequences-icicle">License (Apache 2.0)</a> | Copyright 2020 Kerry Rodden</li>
+                    <li><a href="https://observablehq.com/@kerryrodden/sequences-sunburst">Sequences Sunburst</a> | <a href="https://observablehq.com/@kerryrodden/sequences-sunburst">License (Apache 2.0)</a> | Copyright 2020 Kerry Rodden</li>
+                    <li><a href="https://github.com/raphaellepuschitz/SVG-World-Map">SVG World Map JS</a> | <a href="https://github.com/raphaellepuschitz/SVG-World-Map/blob/master/LICENSE.md">License (MIT)</a> | Copyright (c) Raphael Lepuschitz</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" defer></script>
+    <script src="https://d3js.org/d3.v7.min.js" defer></script>
+    <script src="scripts/icicle.js" defer></script>
+    <script src="scripts/sunburst.js" defer></script>
+    <script src="scripts/barchart.js" defer></script>
+    <script src="scripts/main.js" defer></script>
+</body>
+</html>
