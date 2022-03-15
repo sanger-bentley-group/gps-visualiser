@@ -98,6 +98,11 @@ def main():
     df_qc = df_qc.astype(str)
     df_ana = df_ana.astype(str)
 
+    # Fix casing inconsistency of Public_name values
+    df_meta['Public_name'] = df_meta['Public_name'].apply(lambda s: s.upper())
+    df_qc['Public_name'] = df_qc['Public_name'].apply(lambda s: s.upper())
+    df_ana['Public_name'] = df_ana['Public_name'].apply(lambda s: s.upper())
+
     # Merge all DFs into df, discard data points that are not on all 3 tables
     df = pd.merge(df_meta, df_qc, on=['Public_name'])
     df = pd.merge(df, df_ana, on=['Public_name'])
