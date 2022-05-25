@@ -34,7 +34,7 @@ Front-end website tested on:
 - Chrome 97
 
 GPS Database requirement:
-- v3.2+
+- v3.3
 
 &nbsp;
 ## Live Demo

@@ -1,4 +1,3 @@
-back-end/GPS1_database_v3.db
 back-end/data.json
-back-end/GPS1_database_v3.1.db
-back-end/GPS1_database_v3.2.db
+back-end/GPS1_database_v*.db
+**/.DS_Store

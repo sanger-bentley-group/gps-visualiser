@@ -63,8 +63,8 @@ def main():
     try:
         with sqlite3.connect(dp_path) as con:
             df_meta = pd.read_sql_query('SELECT * FROM table1_Metadata_v3', con)
-            df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v2', con)
-            df_ana = pd.read_sql_query('SELECT * FROM table3_analysis_pubCol', con)
+            df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v3', con)
+            df_ana = pd.read_sql_query('SELECT * FROM table3_analysis_v3', con)
     except pd.io.sql.DatabaseError:
         raise Exception('Incorrect or incompatible database is used.') from None
 
@@ -83,15 +83,11 @@ def main():
     # Only preserving necessary columns in DFs
     meta_cols = ['Public_name', 'Country', 'Region', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
     df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
-    qc_cols = ['qc', 'Public_Name']
+    qc_cols = ['QC', 'Public_name']
     df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
-    ana_cols = (['public_name', 'duplicate', 'Manifest_type', 'children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
+    ana_cols = (['Public_name', 'Duplicate', 'Manifest_type', 'Children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
                 + antibiotics_cols)
     df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
-    
-    # Unifying the letter-casing of 'Public_name' columns in DFs for merge
-    df_qc.rename(columns={'Public_Name': 'Public_name'}, inplace=True)
-    df_ana.rename(columns={'public_name': 'Public_name'}, inplace=True)
     
     # Convert all values to string to ensure good merge
     df_meta = df_meta.astype(str)
@@ -112,10 +108,10 @@ def main():
 
     # Only preserving rows with selected countries
     df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
-    # Only preserving rows with duplicate that is UNIQUE
-    df = df[df['duplicate'] == 'UNIQUE']
+    # Only preserving rows with Duplicate that is UNIQUE
+    df = df[df['Duplicate'] == 'UNIQUE']
     # Only preserving rows with QC that is Pass or PassPlus
-    df = df[df['qc'].isin(['Pass', 'PassPlus'])]
+    df = df[df['QC'].isin(['Pass', 'PassPlus'])]
     # Only preserving rows with Manifest_type that is IPD or Carriage
     df = df[df['Manifest_type'].isin(['IPD', 'Carriage'])]
     # Only preserving rows with Serotype and GPSC assigned
@@ -123,8 +119,8 @@ def main():
     df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
     # Only preserving rows with a valid VaccinePeriod
     df.drop(df[df['VaccinePeriod'] == '_'].index, inplace=True)
-    # Only preserving rows with a valid children<5yrs value
-    df.drop(df[df['children<5yrs'] == 'UKWN'].index, inplace=True)
+    # Only preserving rows with a valid Children<5yrs value
+    df.drop(df[df['Children<5yrs'] == 'UKWN'].index, inplace=True)
     # Only preserving rows with published data
     df.drop(df[df['Published(Y/N)'] != 'Y'].index, inplace=True)
 
@@ -182,7 +178,7 @@ def main():
         output['summary'][countryA2]['periods'] = periodsOutput
 
         # Fill in ageGroups in Country Summary
-        ages = dfCountry['children<5yrs'].unique()
+        ages = dfCountry['Children<5yrs'].unique()
         ageGroups = []
         if 'Y' in ages:
             output['summary'][countryA2]['ageGroups'][0] = True
@@ -205,19 +201,19 @@ def main():
 
                 # Fill in data for Lineage by Serotype in Country View
                 for i, p in enumerate(periodsOutput):
-                    dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+                    dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['Children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
                     dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
                     dfCountryType = dfCountryType[['group', 'size']]
                     output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
 
         # Process Antibiotic Resistance data
-        dfCountryAntibiotics = dfCountry[antibiotics_cols + ['children<5yrs', 'GPSC_PoPUNK2']]
+        dfCountryAntibiotics = dfCountry[antibiotics_cols + ['Children<5yrs', 'GPSC_PoPUNK2']]
         for ageGroup, lessThanFive in ageGroups:
             output['country'][countryA2]['resistance'][f'age{ageGroup}'] = {}
 
             # Get resistance sample sum and count of all samples in each lineage
-            dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
-            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[antibiotics_cols]
+            dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
+            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[antibiotics_cols]
 
             # Calculate the percentage and correct the order of columns
             dfCountryResistPer = dfCountryResist.div(dfCountryTotal, fill_value=0).mul(100).round(2)
