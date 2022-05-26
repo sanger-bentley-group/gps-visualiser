@@ -83,9 +83,9 @@ def main():
     # Only preserving necessary columns in DFs
     meta_cols = ['Public_name', 'Country', 'Region', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
     df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
-    qc_cols = ['QC', 'Public_name']
+    qc_cols = ['Lane_id', 'QC']
     df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
-    ana_cols = (['Public_name', 'Duplicate', 'Manifest_type', 'Children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
+    ana_cols = (['Lane_id', 'Public_name', 'Duplicate', 'Manifest_type', 'Children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
                 + antibiotics_cols)
     df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
     
@@ -94,24 +94,24 @@ def main():
     df_qc = df_qc.astype(str)
     df_ana = df_ana.astype(str)
 
+    # Only preserving rows with Duplicate that is UNIQUE
+    df_ana = df_ana[df_ana['Duplicate'] == 'UNIQUE']
+    # Only preserving rows with QC that is Pass or PassPlus
+    df_qc = df_qc[df_qc['QC'].isin(['Pass', 'PassPlus'])]
+
     # Fix casing inconsistency of Public_name values
     df_meta['Public_name'] = df_meta['Public_name'].apply(lambda s: s.upper())
-    df_qc['Public_name'] = df_qc['Public_name'].apply(lambda s: s.upper())
     df_ana['Public_name'] = df_ana['Public_name'].apply(lambda s: s.upper())
 
     # Merge all DFs into df, discard data points that are not on all 3 tables
-    df = pd.merge(df_meta, df_qc, on=['Public_name'])
-    df = pd.merge(df, df_ana, on=['Public_name'])
+    df = pd.merge(df_qc, df_ana, on=['Lane_id'])
+    df = pd.merge(df_meta, df, on=['Public_name'])
 
     # Special case for Hong Kong, moving Hong Kong from Region to Country for individual processing
     df.loc[df['Region'] == 'HONG KONG', 'Country'] = 'HONG KONG'
 
     # Only preserving rows with selected countries
     df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
-    # Only preserving rows with Duplicate that is UNIQUE
-    df = df[df['Duplicate'] == 'UNIQUE']
-    # Only preserving rows with QC that is Pass or PassPlus
-    df = df[df['QC'].isin(['Pass', 'PassPlus'])]
     # Only preserving rows with Manifest_type that is IPD or Carriage
     df = df[df['Manifest_type'].isin(['IPD', 'Carriage'])]
     # Only preserving rows with Serotype and GPSC assigned
