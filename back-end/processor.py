@@ -15,15 +15,17 @@ COUNTRIES = [
         ('AR', 'ARGENTINA', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000636'), 
         ('BR', 'BRAZIL', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000635'), 
         ('IN', 'INDIA', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000645'), 
-        ('ZA', 'SOUTH AFRICA', ''),
-        ('NP', 'NEPAL', ''),
+        ('ZA', 'SOUTH AFRICA', 'https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000746'),
+        ('NP', 'NEPAL', 'https://www.sciencedirect.com/science/article/pii/S2666524722000660'),
         ('GM', 'THE GAMBIA', ''),
         ('US', 'USA', ''),
         ('MW', 'MALAWI', ''),
         ('IL', 'ISRAEL', ''),
         ('PE', 'PERU', ''),
         ('PL', 'POLAND', ''),
-        ('MZ', 'MOZAMBIQUE', '')
+        ('MZ', 'MOZAMBIQUE', ''),
+        ('KH', 'CAMBODIA', ''),
+        ('PG', 'PAPUA NEW GUINEA', '')
     ]
 
 
