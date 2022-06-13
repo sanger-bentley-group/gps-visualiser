@@ -1,9 +1,19 @@
+# This script takes the GPS1 database and process the data into data.json for the use of gps-visualiser front-end. 
+# The global variables 'TABLE_NAMES', 'ANTIBIOTICS', 'COUNTRIES' can be changed.
+
 import sqlite3
 import pandas as pd
 import os
 import json
 import sys
 
+
+# Enter the current table names in the database as value under the relevant key
+TABLE_NAMES = {
+    'meta': 'table1_Metadata_v3',
+    'qc': 'table2_QC_v3', 
+    'analysis': 'table3_analysis_v3'
+    }
 
 # Enter five target antibiotics in full name in list
 ANTIBIOTICS = ['penicillin', 'chloramphenicol', 'erythromycin', 'co-trimoxazole', 'tetracycline']
@@ -28,6 +38,8 @@ COUNTRIES = [
         ('PG', 'PAPUA NEW GUINEA', '')
     ]
 
+# Comment out the below line for debugging
+sys.tracebacklimit = 0
 
 def main():
     # Template of the data.json
@@ -51,9 +63,6 @@ def main():
     # Ensure the script will read and write to the same dir it locates at
     base = os.path.dirname(os.path.abspath(__file__))
 
-    # Comment out the below line for debugging
-    sys.tracebacklimit = 0
-
     # Check file name is provided and the file exists
     if len(sys.argv) != 2:
         raise Exception('Invalid command. Use the following format: python processor.py database.db')
@@ -61,84 +70,7 @@ def main():
     if not os.path.isfile(dp_path):
         raise OSError('File does not exist.')
 
-    # Read all tables of the database into dataframes, throw excpetion if any of the tables is not found
-    try:
-        with sqlite3.connect(dp_path) as con:
-            df_meta = pd.read_sql_query('SELECT * FROM table1_Metadata_v3', con)
-            df_qc = pd.read_sql_query('SELECT * FROM table2_QC_v3', con)
-            df_ana = pd.read_sql_query('SELECT * FROM table3_analysis_v3', con)
-    except pd.io.sql.DatabaseError:
-        raise Exception('Incorrect or incompatible database is used.') from None
-
-    # Getting column names of target antibiotics for df_ana processing
-    ana_cols_list = df_ana.columns.tolist()
-    antibiotics_cols = []
-    for x in ANTIBIOTICS:
-        abbr = ''.join(filter(str.isalpha, x))[:3].upper()
-        if (col := f'WGS_{abbr}_SIR') in ana_cols_list:
-            antibiotics_cols.append(col)
-        elif (col := f'WGS_{abbr}_SIR_Meningitis') in ana_cols_list:
-            antibiotics_cols.append(col)
-        else:
-            raise ValueError('One or more of the antibiotics is not found in the database.')
-    
-    # Only preserving necessary columns in DFs
-    meta_cols = ['Public_name', 'Country', 'Region', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
-    df_meta.drop(columns=df_meta.columns.difference(meta_cols), inplace=True) 
-    qc_cols = ['Lane_id', 'QC']
-    df_qc.drop(columns=df_qc.columns.difference(qc_cols), inplace=True)
-    ana_cols = (['Lane_id', 'Public_name', 'Duplicate', 'Manifest_type', 'Children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
-                + antibiotics_cols)
-    df_ana.drop(columns=df_ana.columns.difference(ana_cols), inplace=True)
-    
-    # Convert all values to string to ensure good merge
-    df_meta = df_meta.astype(str)
-    df_qc = df_qc.astype(str)
-    df_ana = df_ana.astype(str)
-
-    # Only preserving rows with Duplicate that is UNIQUE
-    df_ana = df_ana[df_ana['Duplicate'] == 'UNIQUE']
-    # Only preserving rows with QC that is Pass or PassPlus
-    df_qc = df_qc[df_qc['QC'].isin(['Pass', 'PassPlus'])]
-
-    # Fix casing inconsistency of Public_name values
-    df_meta['Public_name'] = df_meta['Public_name'].apply(lambda s: s.upper())
-    df_ana['Public_name'] = df_ana['Public_name'].apply(lambda s: s.upper())
-
-    # Merge all DFs into df, discard data points that are not on all 3 tables
-    df = pd.merge(df_qc, df_ana, on=['Lane_id'])
-    df = pd.merge(df_meta, df, on=['Public_name'])
-
-    # Special case for Hong Kong, moving Hong Kong from Region to Country for individual processing
-    df.loc[df['Region'] == 'HONG KONG', 'Country'] = 'HONG KONG'
-
-    # Only preserving rows with selected countries
-    df = df[df['Country'].isin(c[1] for c in COUNTRIES)]
-    # Only preserving rows with Manifest_type that is IPD or Carriage
-    df = df[df['Manifest_type'].isin(['IPD', 'Carriage'])]
-    # Only preserving rows with Serotype and GPSC assigned
-    df = df[df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())]
-    df = df[df['GPSC_PoPUNK2'].apply(lambda x: x.isnumeric())]
-    # Only preserving rows with a valid VaccinePeriod
-    df.drop(df[df['VaccinePeriod'] == '_'].index, inplace=True)
-    # Only preserving rows with a valid Children<5yrs value
-    df.drop(df[df['Children<5yrs'] == 'UKWN'].index, inplace=True)
-    # Only preserving rows with published data
-    df.drop(df[df['Published(Y/N)'] != 'Y'].index, inplace=True)
-
-    # Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
-    df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
-
-    # Removing -?yr from postPCV in VaccinePeriod
-    df['VaccinePeriod'] = df['VaccinePeriod'].apply(lambda x: x.split('-')[0])
-
-    # For antibiotics resistance, consider I - Intermediate resistant / R - resistant as positive; S - susceptible / FLAG - considered as susceptible as negative
-    df[antibiotics_cols] = df[antibiotics_cols].replace(['I', 'R'], 1)
-    df[antibiotics_cols] = df[antibiotics_cols].replace(['S', 'FLAG'], 0)
-    # Antibiotics resistance values sanity check
-    for col in antibiotics_cols:
-        df = df[df[col].isin([0, 1])]
-        df[col] = df[col].astype(int)
+    df = get_df(dp_path)
 
     # Add designated colors for Serotype and GPSC to the output
     serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
@@ -209,17 +141,17 @@ def main():
                     output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
 
         # Process Antibiotic Resistance data
-        dfCountryAntibiotics = dfCountry[antibiotics_cols + ['Children<5yrs', 'GPSC_PoPUNK2']]
+        dfCountryAntibiotics = dfCountry[ANTIBIOTICS + ['Children<5yrs', 'GPSC_PoPUNK2']]
         for ageGroup, lessThanFive in ageGroups:
             output['country'][countryA2]['resistance'][f'age{ageGroup}'] = {}
 
             # Get resistance sample sum and count of all samples in each lineage
             dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
-            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[antibiotics_cols]
+            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[ANTIBIOTICS]
 
             # Calculate the percentage and correct the order of columns
             dfCountryResistPer = dfCountryResist.div(dfCountryTotal, fill_value=0).mul(100).round(2)
-            dfCountryResistPer = dfCountryResistPer[antibiotics_cols]
+            dfCountryResistPer = dfCountryResistPer[ANTIBIOTICS]
 
             # Fill in data for Antibiotic Resistance in Country View
             for i, values in zip(dfCountryResistPer.index.values.tolist(), dfCountryResistPer.values.tolist()):
@@ -229,6 +161,121 @@ def main():
     outfile_path = os.path.join(base, 'data.json')
     with open(outfile_path, 'w') as outfile:
         json.dump(output, outfile, indent=4)
+
+
+# Get a single dataframe that is ready for data processing
+def get_df(dp_path):
+    dfs = read_db(dp_path)
+    update_antibiotic_columns(dfs)
+    columns_filter(dfs)
+    quality_filter(dfs)
+
+    df = dfs_merge(dfs)
+    region_as_country(df)
+    row_selection(df)
+    india_specific_filter(df)
+    VaccinePeriod_cleanup(df)
+    antibiotic_cleanup(df)
+    return df
+
+
+# Read all tables of the database into dataframes, throw excpetion if any of the tables is not found
+# Values are readed as string to ensure good processing and merge
+def read_db(dp_path):
+    try:
+        dfs = []
+        with sqlite3.connect(dp_path) as con:
+            for table_name in TABLE_NAMES.values():
+                dfs.append(pd.read_sql_query(f'SELECT * FROM {table_name}', con).astype(str))
+    except pd.io.sql.DatabaseError:
+        raise Exception('Incorrect or incompatible database is used.') from None
+    return dfs
+
+
+# Updating column names of target antibiotics for easier processing
+def update_antibiotic_columns(dfs):
+    df_ana = dfs[2]
+    ana_cols_list = df_ana.columns.tolist()
+    for antibiotic in ANTIBIOTICS:
+        abbr = ''.join(filter(str.isalpha, antibiotic))[:3].upper()
+        if (col := f'WGS_{abbr}_SIR') in ana_cols_list:
+            pass
+        elif (col := f'WGS_{abbr}_SIR_Meningitis') in ana_cols_list:
+            pass
+        else:
+            raise ValueError('One or more of the antibiotics is not found in the database.')
+        df_ana.rename(columns = {col: antibiotic}, inplace = True)
+
+
+# Only preserving necessary columns in DFs 
+def columns_filter(dfs):
+    meta_cols = ['Public_name', 'Country', 'Region', 'Submitting_Institution', 'Year_collection', 'VaccinePeriod']
+    qc_cols = ['Lane_id', 'QC']
+    ana_cols = (['Lane_id', 'Public_name', 'Duplicate', 'Manifest_type', 'Children<5yrs', 'GPSC_PoPUNK2', 'GPSC_PoPUNK2__colour', 'In_Silico_serotype', 'In_Silico_serotype__colour', 'Published(Y/N)'] 
+            + ANTIBIOTICS)
+
+    for df, cols in zip(dfs, (meta_cols, qc_cols, ana_cols)):
+        df.drop(columns=df.columns.difference(cols), inplace=True) 
+
+
+# Only preserving rows with QC that is Pass or PassPlus in qc
+# Only preserving rows with Duplicate that is UNIQUE in analysis
+def quality_filter(dfs):
+    df_qc, df_ana = dfs[1], dfs[2]
+    df_qc.drop(df_qc[~df_qc['QC'].isin(['Pass', 'PassPlus'])].index, inplace = True)
+    df_ana.drop(df_ana[df_ana['Duplicate'] != 'UNIQUE'].index, inplace = True)
+
+
+# Merge all DFs into df, discard data points that are not on all 3 tables
+def dfs_merge(dfs):
+    df_meta, df_qc, df_ana = dfs
+    df = pd.merge(df_qc, df_ana, on=['Lane_id'])
+    df = pd.merge(df_meta, df, on=['Public_name'])
+    return df
+
+
+# Special case for Hong Kong, moving Hong Kong from Region to Country for individual processing
+def region_as_country(df):
+    df.loc[df['Region'] == 'HONG KONG', 'Country'] = 'HONG KONG'
+
+
+# Only preserving rows with: 
+#   selected countries; Manifest_type that is IPD or Carriage; serotype assigned
+#   GPSC assigned; valid VaccinePeriod; valid Children<5yrs value; published data
+def row_selection(df):
+    df.drop(df[~df['Country'].isin(c[1] for c in COUNTRIES)].index, inplace = True)
+    df.drop(df[~df['Manifest_type'].isin(('IPD', 'Carriage'))].index, inplace = True)
+    df.drop(df[~df['In_Silico_serotype'].apply(lambda x: x[0].isnumeric())].index, inplace = True)
+    df.drop(df[~df['GPSC_PoPUNK2'].apply(lambda x: x[0].isnumeric())].index, inplace = True)
+    df.drop(df[df['VaccinePeriod'] == '_'].index, inplace=True)
+    df.drop(df[~df['Children<5yrs'].isin(('Y', 'N'))].index, inplace=True)
+    df.drop(df[df['Published(Y/N)'] != 'Y'].index, inplace=True)
+
+
+# Special case for India, only accept data submitted by KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES
+def india_specific_filter(df):
+    df.drop(df[(df['Country'] == 'INDIA') & (df['Submitting_Institution'] != 'KEMPEGOWDA INSTITUTE OF MEDICAL SCIENCES')].index, inplace=True)
+
+
+# Removing -?yr from postPCV in VaccinePeriod
+def VaccinePeriod_cleanup(df):
+    df['VaccinePeriod'] = df['VaccinePeriod'].apply(lambda x: x.split('-')[0])
+
+
+# For antibiotics resistance, consider:
+#   I - Intermediate resistant / R - resistant as positive, ie: 1;
+#   S - susceptible / FLAG - considered as susceptible as negative, ie: 0.
+# Sanity check to only keep 1 and 0
+def antibiotic_cleanup(df):
+    for antibiotic in ANTIBIOTICS:
+        df[antibiotic].replace({
+            'I': 1,
+            'R': 1,
+            'S': 0,
+            'FLAG': 0
+        }, inplace=True)
+        df.drop(df[~df[antibiotic].isin([0, 1])].index, inplace = True)
+        df[antibiotic] = df[antibiotic].astype(int)
 
 
 if __name__ == '__main__':
