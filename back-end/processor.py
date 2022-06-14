@@ -71,96 +71,14 @@ def main():
         raise OSError('File does not exist.')
 
     df = get_df(dp_path)
-
-    # Add designated colors for Serotype and GPSC to the output
-    serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
-    for serotype, color in sorted(serotype_Colours):
-        output['domainRange']['serotype']['domain'].append(serotype)
-        output['domainRange']['serotype']['range'].append(color)
-    GPSC_Colours = set(zip(df['GPSC_PoPUNK2'], df['GPSC_PoPUNK2__colour']))
-    for gpsc, color in sorted(GPSC_Colours):
-        output['domainRange']['lineage']['domain'].append(gpsc)
-        output['domainRange']['lineage']['range'].append(color)
-    
-    # Add information of each country
-    for countryA2, countryDB, countryLink in COUNTRIES:
-        # Create new DF holding information of this country only
-        dfCountry = df[df['Country'] == countryDB]
-        if dfCountry.empty:
-            raise Exception(f'Country name "{countryDB}" is not found in the database or has no valid data. Check spelling and casing of your input, and the completeness of data of that country.')
-        output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False], 'link': countryLink}
-        output['global'][countryA2] = {'all': [], 'carriage': [], 'disease': []}
-        output['country'][countryA2] = {'all': {}, 'carriage': {}, 'disease': {}, 'resistance': {}}
- 
-        # Fill in periods in Country Summary
-        periods = dfCountry['VaccinePeriod'].unique()
-        periodsOutput = []
-        if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination
-            yearMin = dfCountry["Year_collection"].min()
-            yearMax = dfCountry["Year_collection"].max()
-            yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
-            periodsOutput.append([yearRange, 'No Vaccination', 'PrePCV'])
-        else: # Otherwise mark all vaccination periods
-            for p in periods:
-                yearMin = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].min()
-                yearMax = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].max()
-                yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
-                pText = p.split('PCV')
-                pText = f'{pText[0].capitalize()}-PCV{pText[1]}'
-                periodsOutput.append([yearRange, pText, p])
-            periodsOutput.sort(key=lambda x: int(x[0][:4])) # Sort the periods by their starting year
-        output['summary'][countryA2]['periods'] = periodsOutput
-
-        # Fill in ageGroups in Country Summary
-        ages = dfCountry['Children<5yrs'].unique()
-        ageGroups = []
-        if 'Y' in ages:
-            output['summary'][countryA2]['ageGroups'][0] = True
-            ageGroups.append((0, 'Y'))
-        if 'N' in ages: 
-            output['summary'][countryA2]['ageGroups'][1] = True
-            ageGroups.append((1, 'N'))
-
-        # Go thru both disease and carriage for all views
-        for Manifesttype, JSONtype in ((['IPD', 'Carriage'], 'all'), (['IPD'], 'disease'), (['Carriage'], 'carriage')):
-            # Fill in data for Global View
-            dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == periodsOutput[-1][2])].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
-            dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
-            dfCountryType = dfCountryType[['group', 'size']]
-            output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
-
-            # Go thru all age groups and periods for Country View:
-            for ageGroup, lessThanFive in ageGroups:
-                output['country'][countryA2][JSONtype][f'age{ageGroup}'] = {}
-
-                # Fill in data for Lineage by Serotype in Country View
-                for i, p in enumerate(periodsOutput):
-                    dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['Children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
-                    dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
-                    dfCountryType = dfCountryType[['group', 'size']]
-                    output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
-
-        # Process Antibiotic Resistance data
-        dfCountryAntibiotics = dfCountry[ANTIBIOTICS + ['Children<5yrs', 'GPSC_PoPUNK2']]
-        for ageGroup, lessThanFive in ageGroups:
-            output['country'][countryA2]['resistance'][f'age{ageGroup}'] = {}
-
-            # Get resistance sample sum and count of all samples in each lineage
-            dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
-            dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[ANTIBIOTICS]
-
-            # Calculate the percentage and correct the order of columns
-            dfCountryResistPer = dfCountryResist.div(dfCountryTotal, fill_value=0).mul(100).round(2)
-            dfCountryResistPer = dfCountryResistPer[ANTIBIOTICS]
-
-            # Fill in data for Antibiotic Resistance in Country View
-            for i, values in zip(dfCountryResistPer.index.values.tolist(), dfCountryResistPer.values.tolist()):
-                output['country'][countryA2]['resistance'][f'age{ageGroup}'][i] = values
+    build_output(df, output)
 
     # Export result to data.json that can be uploaded to the web server
     outfile_path = os.path.join(base, 'data.json')
     with open(outfile_path, 'w') as outfile:
         json.dump(output, outfile, indent=4)
+
+    print(f'data.json has been created at {base}.')
 
 
 # Get a single dataframe that is ready for data processing
@@ -276,6 +194,122 @@ def antibiotic_cleanup(df):
         }, inplace=True)
         df.drop(df[~df[antibiotic].isin([0, 1])].index, inplace = True)
         df[antibiotic] = df[antibiotic].astype(int)
+
+
+# Build the output dict
+def build_output(df, output):
+    get_colors(df, output)
+   
+    # Add information of each country
+    for countryA2, countryDB, countryLink in COUNTRIES:
+        # Create new DF holding information of this country only
+        dfCountry = df[df['Country'] == countryDB]
+        if dfCountry.empty:
+            raise Exception(f'Country name "{countryDB}" is not found in the database or has no valid data. Check spelling and casing of your input, and the completeness of data of that country.')
+        
+        build_scaffold(output, countryA2, countryLink)
+        periodsOutput = get_periods(output, dfCountry, countryA2)
+        ageGroups = get_ageGroups(output, dfCountry, countryA2)
+
+        # Go thru both disease and carriage for all views
+        for Manifesttype, JSONtype in ((['IPD', 'Carriage'], 'all'), (['IPD'], 'disease'), (['Carriage'], 'carriage')): 
+            get_global_data(output, dfCountry, countryA2, Manifesttype, JSONtype, periodsOutput)
+            # Go thru all age groups and periods for Country View:
+            for ageGroup, lessThanFive in ageGroups:
+                get_country_data(output, dfCountry, countryA2, Manifesttype, JSONtype, ageGroup, lessThanFive, periodsOutput)
+
+        get_antibiotic_data(output, dfCountry, countryA2, ageGroups)
+
+# Add designated colors for Serotype and GPSC to the output
+def get_colors(df, output):
+    serotype_Colours = set(zip(df['In_Silico_serotype'], df['In_Silico_serotype__colour']))
+    for serotype, color in sorted(serotype_Colours):
+        output['domainRange']['serotype']['domain'].append(serotype)
+        output['domainRange']['serotype']['range'].append(color)
+    GPSC_Colours = set(zip(df['GPSC_PoPUNK2'], df['GPSC_PoPUNK2__colour']))
+    for gpsc, color in sorted(GPSC_Colours):
+        output['domainRange']['lineage']['domain'].append(gpsc)
+        output['domainRange']['lineage']['range'].append(color)
+
+
+# Build scaffold for a country to hold its data in the output
+def build_scaffold(output, countryA2, countryLink):
+    output['summary'][countryA2] = {'periods': [], 'ageGroups': [False, False], 'link': countryLink}
+    output['global'][countryA2] = {'all': [], 'carriage': [], 'disease': []}
+    output['country'][countryA2] = {'all': {}, 'carriage': {}, 'disease': {}, 'resistance': {}}
+
+
+# Fill in periods in Country Summary and return periodsOutput
+def get_periods(output, dfCountry, countryA2):
+    periods = dfCountry['VaccinePeriod'].unique()
+    periodsOutput = []
+    if len(periods) == 1 and periods[0] == 'PrePCV': # If only contains PrePCV period, mark as No Vaccination
+        yearMin = dfCountry["Year_collection"].min()
+        yearMax = dfCountry["Year_collection"].max()
+        yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
+        periodsOutput.append([yearRange, 'No Vaccination', 'PrePCV'])
+    else: # Otherwise mark all vaccination periods
+        for p in periods:
+            yearMin = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].min()
+            yearMax = dfCountry[dfCountry["VaccinePeriod"] == p]["Year_collection"].max()
+            yearRange = yearMin if yearMin == yearMax else f'{yearMin} - {yearMax}'
+            pText = p.split('PCV')
+            pText = f'{pText[0].capitalize()}-PCV{pText[1]}'
+            periodsOutput.append([yearRange, pText, p])
+        periodsOutput.sort(key=lambda x: int(x[0][:4])) # Sort the periods by their starting year
+    output['summary'][countryA2]['periods'] = periodsOutput
+    return periodsOutput
+
+
+# Fill in ageGroups in Country Summary and return ageGroups
+def get_ageGroups(output, dfCountry, countryA2):
+    ages = dfCountry['Children<5yrs'].unique()
+    ageGroups = []
+    if 'Y' in ages:
+        output['summary'][countryA2]['ageGroups'][0] = True
+        ageGroups.append((0, 'Y'))
+    if 'N' in ages: 
+        output['summary'][countryA2]['ageGroups'][1] = True
+        ageGroups.append((1, 'N'))
+    return ageGroups
+
+
+# Fill in data for Global View
+def get_global_data(output, dfCountry, countryA2, Manifesttype, JSONtype, periodsOutput):
+    dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == periodsOutput[-1][2])].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+    dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
+    dfCountryType = dfCountryType[['group', 'size']]
+    output['global'][countryA2][JSONtype] = dfCountryType.values.tolist()
+
+
+# Fill in data for Lineage by Serotype in Country View
+def get_country_data(output, dfCountry, countryA2, Manifesttype, JSONtype, ageGroup, lessThanFive, periodsOutput):
+    output['country'][countryA2][JSONtype][f'age{ageGroup}'] = {}
+    for i, p in enumerate(periodsOutput):
+        dfCountryType = dfCountry[(dfCountry['Manifest_type'].isin(Manifesttype)) & (dfCountry['VaccinePeriod'] == p[2]) & (dfCountry['Children<5yrs'] == lessThanFive)].groupby(['In_Silico_serotype', 'GPSC_PoPUNK2']).size().reset_index(name='size')
+        dfCountryType['group'] = dfCountryType['In_Silico_serotype'] + '-' + dfCountryType['GPSC_PoPUNK2']
+        dfCountryType = dfCountryType[['group', 'size']]
+        output['country'][countryA2][JSONtype][f'age{ageGroup}'][f'period{i}'] = dfCountryType.values.tolist()
+
+
+# Fill in Antibiotic Resistance data
+def get_antibiotic_data(output, dfCountry, countryA2, ageGroups):
+    dfCountryAntibiotics = dfCountry[ANTIBIOTICS + ['Children<5yrs', 'GPSC_PoPUNK2']]
+    for ageGroup, lessThanFive in ageGroups:
+        output['country'][countryA2]['resistance'][f'age{ageGroup}'] = {}
+
+        # Get resistance sample sum and count of all samples in each lineage
+        dfCountryResist = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).sum()
+        dfCountryTotal = dfCountryAntibiotics[(dfCountryAntibiotics['Children<5yrs'] == lessThanFive)].groupby(['GPSC_PoPUNK2']).count()[ANTIBIOTICS]
+
+        # Calculate the percentage and correct the order of columns
+        dfCountryResistPer = dfCountryResist.div(dfCountryTotal, fill_value=0).mul(100).round(2)
+        dfCountryResistPer = dfCountryResistPer[ANTIBIOTICS]
+
+        # Fill in data for Antibiotic Resistance in Country View
+        for i, values in zip(dfCountryResistPer.index.values.tolist(), dfCountryResistPer.values.tolist()):
+            output['country'][countryA2]['resistance'][f'age{ageGroup}'][i] = values
+
 
 
 if __name__ == '__main__':
