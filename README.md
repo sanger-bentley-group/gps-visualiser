@@ -8,7 +8,8 @@ This summarisation effort is composed of a back-end Python script and a front-en
 ## Back-end Python Script
 The Python script `processor.py` extracts and processes data from the GPS database (not publicised) and export a JSON file `data.json` to be taken up by the front-end website.
 
-The script has two global lists that can be modified.
+The script has one global dictionary and two global lists that can be modified.
+- `TABLE_NAMES`: The value of each key can be changed to match the tables in the GPS database.
 - `ANTIBIOTICS`: It should contain full names of **FIVE** target antibiotics.
 - `COUNTRIES`: It should contain tuples of `("Country Alpha-2 Code", "Value in 'Country' Columns of the Database", "Link to research article")` of the countries that should be included in `data.json`. The tuple requirement is due to the country names not being standardised in the database, and links to papers are not included in the database. If the paper is not yet available, put the "Link to research article" as an empty string `""`.
 
@@ -30,15 +31,16 @@ Back-end Python script requirements:
 - [Pandas](https://pandas.pydata.org/) 1.4.0
 
 Front-end website tested on:
-- Firefox 96
-- Chrome 97
+- Firefox 101
+- Chrome 102
+- Safari 15
 
 GPS Database requirement:
 - v3.3
 
 &nbsp;
-## Live Demo
-A live demo is available at https://www.harryhung.com/gps-visualiser/. It might not be running on the latest code at all time. 
+## Live Website
+The live website is available at https://www.pneumogen.net/gps/gps-visualiser/. It might not be based on the latest code at all time. 
 
 &nbsp;
 ## Credits
