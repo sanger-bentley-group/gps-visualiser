@@ -71,6 +71,11 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
         }
     });
 
+    // Highlight previous selection
+    if (SUNBURST_SELECTION !== null) {
+        highlight(SUNBURST_SELECTION)
+    } 
+
     // Sort serotypes by ints at the beginning of the string and ignore the rest
     serotypes = Array.from(serotypes).sort((a, b) => (parseInt(a, 10) - parseInt(b, 10)));
     // Sort lineages by ints
@@ -132,9 +137,9 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
     let path = document.querySelector('#country-view-readout');
 
     // Update chart visual, absolute, percentage and path output
-    function highlight(e){
+    async function highlight(e){
         if (e.target instanceof SVGPathElement) {
-            let dataPath = e.target.getAttribute('data-path');
+            let dataPath = await e.target.getAttribute('data-path');
             path.innerHTML = `Current Selection: ${dataPath.replaceAll('-', ' - ')}`;
             path.classList.add('bold');
 
@@ -186,34 +191,33 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
         });
     }
 
-    // Save state of having an active selection or not
-    let SELECTED = false;
 
     charts.forEach(chart => {
         // Hovering support, can be overridden by active selection
         chart.addEventListener('mouseover', (e) => {
-            if (SELECTED === false) {
+            if (SUNBURST_SELECTED === false) {
                 highlight(e);
             }
         });
         chart.addEventListener('mouseout', (e) => {
-            if (SELECTED === false) {
+            if (SUNBURST_SELECTED === false) {
                 reset(e);
             }
         });
 
         // Click support. Reset if clicked on active selection, otherwise change active selection.
         chart.addEventListener('click', (e) => {
-            if (e.target instanceof SVGPathElement && SELECTED && e.target.getAttribute('fill-opacity') === '1.0') {
+            if (e.target instanceof SVGPathElement && SUNBURST_SELECTED && e.target.getAttribute('fill-opacity') === '1.0') {
                 reset();
-                SELECTED = false;
+                SUNBURST_SELECTED = false;
             } else {
                 reset();
                 if (e.target instanceof SVGPathElement) {
                     highlight(e);
-                    SELECTED = true;
+                    SUNBURST_SELECTED = true;
+                    SUNBURST_SELECTION = e;
                 } else {
-                    SELECTED = false;
+                    SUNBURST_SELECTED = false;
                 }
             }
         });

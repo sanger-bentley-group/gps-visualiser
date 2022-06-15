@@ -19,6 +19,9 @@ mapObject.onload = setTimeout(() => {
     }
 }, 1000);
 
+// Global variable for sunburst selection
+let SUNBURST_SELECTED = false;
+let SUNBURST_SELECTION = null;
 
 async function main() {
     LOADED = true;
@@ -254,6 +257,7 @@ async function main() {
 
             // Draw the sunburst charts and (removed) bar charts with default parameters
             let periods = summary[selectedCountry]['periods'];
+            SUNBURST_SELECTION = null;
             sunburst(selectedCountry, selectedType, selectedAgeGroup, periods, data['country'][selectedCountry][selectedType][`age${selectedAgeGroup}`], data["domainRange"]);
             barchart(data['country'][selectedCountry]['resistance'][`age${selectedAgeGroup}`], data['antibiotics']);
 
