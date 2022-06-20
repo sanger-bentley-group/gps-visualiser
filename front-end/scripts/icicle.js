@@ -92,6 +92,10 @@ async function icicle(summary, data, domainRange){
                 let absolute = document.querySelector(`#${chartId}-absolute`);
 
                 let rValue = chart.childNodes[0].getAttribute('data-rValue');
+
+                chart.querySelectorAll('rect').forEach(rect => {
+                    rect.setAttribute('fill-opacity', '0.2');
+                });
                 
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
                 if (selectedPath) {
@@ -133,7 +137,7 @@ async function icicle(summary, data, domainRange){
             absolute.innerHTML = `-- / ${rValue}`;
 
             chart.querySelectorAll('rect').forEach(rect => {
-                rect.setAttribute('fill-opacity', '0.3');
+                rect.setAttribute('fill-opacity', '0.7');
             });
         });
     }
@@ -275,7 +279,7 @@ async function drawIcicle(data, target, domainRange) {
                     return colorLineage(d.data.name);
                 }
             })
-            .attr('fill-opacity', 0.3)
+            .attr('fill-opacity', 0.7)
             .attr('x', segmentX)
             .attr('y', segmentY)
             .attr('width', segmentWidth)

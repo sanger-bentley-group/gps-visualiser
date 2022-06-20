@@ -149,6 +149,10 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
                 let absolute = chart.querySelector('.absolute');
 
                 let rValue = chart.childNodes[0].getAttribute('data-rValue');
+
+                chart.querySelectorAll('path').forEach(path => {
+                    path.setAttribute('fill-opacity', '0.2');
+                });
                 
                 let selectedPath = chart.querySelector(`[data-path='${dataPath}']`);
                 if (selectedPath) {
@@ -186,7 +190,7 @@ async function sunburst(country, type, ageGroup, periods, data, domainRange){
             absolute.innerHTML = `-- / ${rValue}`;
             
             chart.querySelectorAll('path').forEach(path => {
-                path.setAttribute('fill-opacity', '0.3');
+                path.setAttribute('fill-opacity', '0.7');
             });
         });
     }
@@ -334,7 +338,7 @@ async function drawSunburst(data, target, domainRange, paths) {
                     return colorLineage(d.data.name);
                 }
             })
-            .attr("fill-opacity", 0.3)
+            .attr("fill-opacity", 0.7)
             .attr("d", arc)
             .attr('data-path', d => {
                 const sequence = d
