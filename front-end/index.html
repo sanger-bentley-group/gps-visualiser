@@ -35,11 +35,23 @@
                     <div class="global-icicles">
                         <div id="icicle-output"><b>Current Selection: </b>Select a Serotype or Lineage</div>
                         <div id="global-icicles-warning" class="removed warning bold">Please select one or more countries.</div>
-                        <div id="global-icicle-all" class="global-icicle-content"></div>
-                        <div id="global-icicle-disease" class="global-icicle-content removed"></div>
-                        <div id="global-icicle-carriage" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-serotype-all" class="global-icicle-content"></div>
+                        <div id="global-icicle-serotype-disease" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-serotype-carriage" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-lineage-all" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-lineage-disease" class="global-icicle-content removed"></div>
+                        <div id="global-icicle-lineage-carriage" class="global-icicle-content removed"></div>
                     </div>
                     <div class="hor-selectors gap30">
+                        <div>
+                            <h2>Group by</h2>
+                        </div>
+                        <div class="toggle">
+                            <input type="radio" name="aside-grouping" value="serotype" id="aside-grouping-serotype" checked="checked" autocomplete="off"/>
+                            <label for="aside-grouping-serotype">Serotype</label>
+                            <input type="radio" name="aside-grouping" value="lineage" id="aside-grouping-lineage" autocomplete="off"/>
+                            <label for="aside-grouping-lineage">Lineage</label>
+                        </div>
                         <div>
                             <h2>Type</h2>
                         </div>

@@ -1,76 +1,83 @@
 // Contain codes from Sequences Icicle (https://observablehq.com/@kerryrodden/sequences-icicle) by Kerry Rodden under Apache License 2.0. 
 
+
+// Save state of having an active selection or not as global variable for access from other .js
+let SELECTED_ICICLE = false;
+
+
 async function icicle(summary, data, domainRange){
     const countries = Object.keys(summary).sort();
 
     // Build icicle charts for all, disease and carriage types
-    for (const type of ['all', 'disease', 'carriage']) {
-        let typeDiv = document.querySelector(`#global-icicle-${type}`);
-
-        // Build icicle charts for all countries with available data
-        for (const country of countries) {
-            // Create the content of icicle chart if each individual country
-            let countryContainer = document.createElement('div');
-            countryContainer.classList.add('aside-country-container');
-            countryContainer.classList.add(`aside-${country}-container`);
-
-            let flagDiv = document.createElement('div');
-            flagDiv.classList.add('icicle-flag-div')
-
-            let flagAndCode = document.createElement('div');
-            flagAndCode.classList.add(`flag-and-code`);
-
-            let flagElement = document.createElement('object');
-            flagElement.id = `${country}-flag`;
-            flagElement.classList.add('flag');
-            flagElement.type = 'image/svg+xml';
-            flagElement.data = `images/flags/${country}.svg`;
-
-            let countryCode = document.createElement('div');
-            countryCode.classList.add('country-code');
-            countryCode.innerHTML = country;
-
-            flagAndCode.appendChild(countryCode);
-            flagAndCode.appendChild(flagElement);
-
-            // addEventListener to highlight country in map when hovering its flag
-            flagAndCode.addEventListener('mouseover', hoverFlag);
-            flagAndCode.addEventListener('mouseout', unhoverFlag);
-
-            let allVac = summary[country]['periods'];
-            let latestVac = allVac[allVac.length - 1];
-            let latestVacDiv = document.createElement('div');
-            latestVacDiv.innerHTML = `${latestVac[0]} ${latestVac[1]}`
-
-            flagDiv.appendChild(flagAndCode);
-            flagDiv.appendChild(latestVacDiv);
-
-            let icicleId = `global-${country}-${type}`;
-
-            let icicleDiv = document.createElement('div');
-            icicleDiv.classList.add('icicle');
-            icicleDiv.id = icicleId;
-
-            let valuesContainer = document.createElement('div');
-            valuesContainer.classList.add('values-container');
-            
-            let percentageDiv = document.createElement('div');
-            percentageDiv.id = `${icicleId}-percentage`;
-
-            let absoluteDiv = document.createElement('div');
-            absoluteDiv.id = `${icicleId}-absolute`;
-
-            valuesContainer.appendChild(percentageDiv);
-            valuesContainer.appendChild(absoluteDiv);
-            
-            countryContainer.appendChild(flagDiv);
-            countryContainer.appendChild(icicleDiv);
-            countryContainer.appendChild(valuesContainer);
-
-            typeDiv.appendChild(countryContainer);
-
-            // Draw the icicle chart
-            await drawIcicle(data[country][type], `#${icicleId}`, domainRange);
+    for (const grouping of ['serotype', 'lineage']){
+        for (const type of ['all', 'disease', 'carriage']) {
+            let typeDiv = document.querySelector(`#global-icicle-${grouping}-${type}`);
+    
+            // Build icicle charts for all countries with available data
+            for (const country of countries) {
+                // Create the content of icicle chart if each individual country
+                let countryContainer = document.createElement('div');
+                countryContainer.classList.add('aside-country-container');
+                countryContainer.classList.add(`aside-${country}-container`);
+    
+                let flagDiv = document.createElement('div');
+                flagDiv.classList.add('icicle-flag-div')
+    
+                let flagAndCode = document.createElement('div');
+                flagAndCode.classList.add(`flag-and-code`);
+    
+                let flagElement = document.createElement('object');
+                flagElement.id = `${country}-flag`;
+                flagElement.classList.add('flag');
+                flagElement.type = 'image/svg+xml';
+                flagElement.data = `images/flags/${country}.svg`;
+    
+                let countryCode = document.createElement('div');
+                countryCode.classList.add('country-code');
+                countryCode.innerHTML = country;
+    
+                flagAndCode.appendChild(countryCode);
+                flagAndCode.appendChild(flagElement);
+    
+                // addEventListener to highlight country in map when hovering its flag
+                flagAndCode.addEventListener('mouseover', hoverFlag);
+                flagAndCode.addEventListener('mouseout', unhoverFlag);
+    
+                let allVac = summary[country]['periods'];
+                let latestVac = allVac[allVac.length - 1];
+                let latestVacDiv = document.createElement('div');
+                latestVacDiv.innerHTML = `${latestVac[0]} ${latestVac[1]}`
+    
+                flagDiv.appendChild(flagAndCode);
+                flagDiv.appendChild(latestVacDiv);
+    
+                let icicleId = `global-${country}-${grouping}-${type}`;
+    
+                let icicleDiv = document.createElement('div');
+                icicleDiv.classList.add('icicle');
+                icicleDiv.id = icicleId;
+    
+                let valuesContainer = document.createElement('div');
+                valuesContainer.classList.add('values-container');
+                
+                let percentageDiv = document.createElement('div');
+                percentageDiv.id = `${icicleId}-percentage`;
+    
+                let absoluteDiv = document.createElement('div');
+                absoluteDiv.id = `${icicleId}-absolute`;
+    
+                valuesContainer.appendChild(percentageDiv);
+                valuesContainer.appendChild(absoluteDiv);
+                
+                countryContainer.appendChild(flagDiv);
+                countryContainer.appendChild(icicleDiv);
+                countryContainer.appendChild(valuesContainer);
+    
+                typeDiv.appendChild(countryContainer);
+    
+                // Draw the icicle chart
+                await drawIcicle(data[country][type], `#${icicleId}`, domainRange, grouping);
+            }
         }
     }
 
@@ -145,34 +152,31 @@ async function icicle(summary, data, domainRange){
     // Initialise value display
     reset();
 
-    // Save state of having an active selection or not
-    let SELECTED = false;
-
     charts.forEach(chart => {
         // Hovering support, can be overridden by active selection
         chart.addEventListener('mouseover', (e) => {
-            if (SELECTED === false) {
+            if (SELECTED_ICICLE === false) {
                 highlight(e);
             }
         });
         chart.addEventListener('mouseout', () => {
-            if (SELECTED === false) {
+            if (SELECTED_ICICLE === false) {
                 reset();
             }
         });
 
         // Click support. Reset if clicked on active selection, otherwise change active selection.
         chart.addEventListener('click', (e) => {
-            if (e.target instanceof SVGRectElement && SELECTED && e.target.getAttribute('fill-opacity') === '1.0') {
+            if (e.target instanceof SVGRectElement && SELECTED_ICICLE && e.target.getAttribute('fill-opacity') === '1.0') {
                 reset();
-                SELECTED = false;
+                SELECTED_ICICLE = false;
             } else {
                 reset();
                 if (e.target instanceof SVGRectElement) {
                     highlight(e);
-                    SELECTED = true;
+                    SELECTED_ICICLE = true;
                 } else {
-                    SELECTED = false;
+                    SELECTED_ICICLE = false;
                 }
             }
         });
@@ -201,7 +205,7 @@ async function icicle(summary, data, domainRange){
 }
 
 
-async function drawIcicle(data, target, domainRange) {
+async function drawIcicle(data, target, domainRange, grouping) {
     // If no data available: display 'No Data', remove .icicle and empty .values-container, escape function
     if (data.length === 0){
         let targetDiv = document.querySelector(target)
@@ -216,7 +220,7 @@ async function drawIcicle(data, target, domainRange) {
         return;
     }
 
-    const hierarchyData = buildHierarchy(data);
+    const hierarchyData = buildHierarchyIcicle(data, grouping);
 
     let width = 640;
     let height = 100;
@@ -272,11 +276,19 @@ async function drawIcicle(data, target, domainRange) {
             )
             .join('rect')
             .attr('fill', d => {
-                // Select different color domain-range for serotype and lineage based on data depth
-                if (d.depth === 1) {
-                    return colorSerotype(d.data.name);
-                } else {
-                    return colorLineage(d.data.name);
+                // Select different color domain-range for serotype and lineage based on data depth and grouping
+                if (grouping === 'serotype') {
+                    if (d.depth === 1) {
+                        return colorSerotype(d.data.name);
+                    } else {
+                        return colorLineage(d.data.name);
+                    }
+                } else if (grouping === 'lineage') {
+                    if (d.depth === 1) {
+                        return colorLineage(d.data.name);
+                    } else {
+                        return colorSerotype(d.data.name);
+                    }
                 }
             })
             .attr('fill-opacity', 0.7)
@@ -294,9 +306,17 @@ async function drawIcicle(data, target, domainRange) {
                 sequence.forEach(node => {
                     output.push(node.data.name);
                 });
-                let path = `Serotype ${output[0]}`
-                if (output.length === 2) {
-                    path += ` - GPSC ${output[1]}`
+                let path = '';
+                if (grouping === 'serotype') {
+                    path += `Serotype ${output[0]}`;
+                    if (output.length === 2) {
+                        path += ` - GPSC ${output[1]}`;
+                    }
+                } else if (grouping === 'lineage') {
+                    path += `GPSC ${output[0]}`;
+                    if (output.length === 2) {
+                        path += ` - Serotype ${output[1]}`;
+                    }
                 }
                 return path;
             })
@@ -309,7 +329,7 @@ async function drawIcicle(data, target, domainRange) {
 
 
 // Helper function that transforms the given data into a hierarchical format.
-function buildHierarchy(data) {
+function buildHierarchyIcicle(data, grouping) {
     const root = { name: 'root', children: [] };
     for (let i = 0; i < data.length; i++) {
         const sequence = data[i][0];
@@ -318,7 +338,10 @@ function buildHierarchy(data) {
             // e.g. if this is a header row
             continue;
         }
-        const parts = sequence.split('-');
+        let parts = sequence.split('-');
+        if (grouping === 'lineage') {
+            parts = parts.reverse()
+        }
         let currentNode = root;
         for (let j = 0; j < parts.length; j++) {
             const children = currentNode['children'];

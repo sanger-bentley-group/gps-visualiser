@@ -203,18 +203,56 @@ async function main() {
     // Update global view charts based on current type selector
     document.querySelectorAll('input[name="aside-type"]').forEach(input => {
         input.addEventListener('change', (e) => {
-            if (e.target.value === 'all') {
-                document.querySelector('#global-icicle-all').classList.remove('removed');
-                document.querySelector('#global-icicle-disease').classList.add('removed');
-                document.querySelector('#global-icicle-carriage').classList.add('removed');
-            } else if (e.target.value === 'disease') {
-                document.querySelector('#global-icicle-all').classList.add('removed');
-                document.querySelector('#global-icicle-disease').classList.remove('removed');
-                document.querySelector('#global-icicle-carriage').classList.add('removed');
-            } else {
-                document.querySelector('#global-icicle-all').classList.add('removed');
-                document.querySelector('#global-icicle-disease').classList.add('removed');
-                document.querySelector('#global-icicle-carriage').classList.remove('removed');
+            let grouping = document.querySelector('input[name="aside-grouping"]:checked').value;
+
+            document.querySelector('#global-icicle-serotype-all').classList.add('removed');
+            document.querySelector('#global-icicle-serotype-disease').classList.add('removed');
+            document.querySelector('#global-icicle-serotype-carriage').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-all').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-disease').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-carriage').classList.add('removed');
+
+            if (grouping === 'serotype' && e.target.value === 'all') {
+                document.querySelector('#global-icicle-serotype-all').classList.remove('removed');
+            } else if (grouping === 'serotype' && e.target.value === 'disease') {
+                document.querySelector('#global-icicle-serotype-disease').classList.remove('removed');
+            } else if (grouping === 'serotype' && e.target.value === 'carriage') {
+                document.querySelector('#global-icicle-serotype-carriage').classList.remove('removed');
+            } else if (grouping === 'lineage' && e.target.value === 'all') {
+                document.querySelector('#global-icicle-lineage-all').classList.remove('removed');
+            } else if (grouping === 'lineage' && e.target.value === 'disease') {
+                document.querySelector('#global-icicle-lineage-disease').classList.remove('removed');
+            } else if (grouping === 'lineage' && e.target.value === 'carriage') {
+                document.querySelector('#global-icicle-lineage-carriage').classList.remove('removed');
+            }
+        });
+    });
+
+    document.querySelectorAll('input[name="aside-grouping"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            resetIcicle()
+
+            let type = document.querySelector('input[name="aside-type"]:checked').value;
+
+            document.querySelector('#global-icicle-serotype-all').classList.add('removed');
+            document.querySelector('#global-icicle-serotype-disease').classList.add('removed');
+            document.querySelector('#global-icicle-serotype-carriage').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-all').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-disease').classList.add('removed');
+            document.querySelector('#global-icicle-lineage-carriage').classList.add('removed');
+
+            if (e.target.value === 'serotype' && type === 'all') {
+                document.querySelector('#global-icicle-serotype-all').classList.remove('removed');
+            } else if (e.target.value === 'serotype' && type === 'disease') {
+                document.querySelector('#global-icicle-serotype-disease').classList.remove('removed');
+            } else if (e.target.value === 'serotype' && type === 'carriage') {
+                document.querySelector('#global-icicle-serotype-carriage').classList.remove('removed');
+            } else if (e.target.value === 'lineage' && type === 'all') {
+                document.querySelector('#global-icicle-lineage-all').classList.remove('removed');
+            } else if (e.target.value === 'lineage' && type === 'disease') {
+                document.querySelector('#global-icicle-lineage-disease').classList.remove('removed');
+            } else if (e.target.value === 'lineage' && type === 'carriage') {
+                document.querySelector('#global-icicle-lineage-carriage').classList.remove('removed');
             }
         });
     });
@@ -419,4 +457,32 @@ async function main() {
         return target.id.slice(0, 2);
     }
 
+}
+
+
+function resetIcicle() {
+    let charts = document.querySelectorAll('.icicle');
+    let path = document.querySelector('#icicle-output');
+
+    // reset global variable in icicle.js
+    SELECTED_ICICLE = false;
+
+    path.innerHTML = '<b>Current Selection: </b>Select a Serotype or Lineage';
+    path.classList.remove('bold')
+
+    charts.forEach(chart => {
+        let chartId = chart.id;
+
+        let percentage = document.querySelector(`#${chartId}-percentage`);
+        let absolute = document.querySelector(`#${chartId}-absolute`);
+
+        let rValue = chart.childNodes[0].getAttribute('data-rValue');
+        
+        percentage.innerHTML = '--%';
+        absolute.innerHTML = `-- / ${rValue}`;
+
+        chart.querySelectorAll('rect').forEach(rect => {
+            rect.setAttribute('fill-opacity', '0.7');
+        });
+    });
 }

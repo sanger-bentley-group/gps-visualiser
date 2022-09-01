@@ -243,7 +243,7 @@ async function drawSunburst(data, target, domainRange, paths) {
         return;
     }
 
-    const hierarchyData = buildHierarchy(data);
+    const hierarchyData = buildHierarchySunburst(data);
 
     let width = 640;
     let radius = width / 2;
@@ -366,7 +366,7 @@ async function drawSunburst(data, target, domainRange, paths) {
 
 
 // Helper function that transforms the given data into a hierarchical format.
-function buildHierarchy(data) {
+function buildHierarchySunburst(data) {
     const root = { name: "root", children: [] };
     for (let i = 0; i < data.length; i++) {
         const sequence = data[i][0];
