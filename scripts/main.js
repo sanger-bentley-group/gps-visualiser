@@ -1,33 +1,35 @@
 // 'data.json' is exported by backend, provide data for all countries
 // 'alpha2.json' is static and provides conversion from alpha-2 code to country name
 
-// Global variable for load state
-let LOADED = false;
 
-// Delay main function until the world-map.svg is loaded
-const mapObject = document.querySelector('#world-map');
-window.addEventListener('DOMContentLoaded', function() {
-    mapObject.addEventListener('load', function(){
-        main();
+// Detect whole page is loaded to represent map is loaded
+// then await for data.json and alpha2.json before proceeding
+window.addEventListener("load", () => {
+    getData("data/data.json", "data/static/alpha2.json")
+    .then( ([data, alpha2]) => {
+        const map = document.querySelector("#world-map").contentDocument;
+
+        // Remove loading overlay once all files are loaded
+        document.querySelector("#loading-overlay").classList.add('hidden');
+        
+        main(map, alpha2, data);
     });
 });
 
-// addEventListener method not detecting SVG loading reliably on all browsers, check whether backup method is needed after 1000ms
-mapObject.onload = setTimeout(() => {
-    if (LOADED === false) {
-        main();
-    }
-}, 1000);
+// Return promise on both fetching of data.json and alpha2.json
+async function getData(dataPath, alpha2Path) {
+    return Promise.all(
+        [
+            fetch(dataPath).then((res) => res.json()),
+            fetch(alpha2Path).then((res) => res.json()),
+        ]);
+}
 
 // Global variable for sunburst selection
 let SUNBURST_SELECTED = false;
 let SUNBURST_SELECTION = null;
 
-async function main() {
-    LOADED = true;
-    const map = mapObject.contentDocument;
-    const alpha2 = await (await fetch('data/static/alpha2.json')).json();
-    const data = await (await fetch('data/data.json')).json();
+async function main(map, alpha2, data) {
     const summary = data['summary']
 
     const overlay = document.querySelector('#country-view-overlay');
